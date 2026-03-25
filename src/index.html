@@ -4,112 +4,102 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>GrabVR Suite</title>
-<link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600;700&display=swap" rel="stylesheet">
 <style>
-html,body{margin:0;padding:0;font-family:'Poppins',sans-serif;transition:background 0.5s,color 0.5s;}
-body{background:linear-gradient(to bottom,#b3e5fc 0%,#ffffff 50%,#b3e5fc 100%);color:#000;overflow-x:hidden;}
-body.night{background:linear-gradient(to bottom,#000 0%,#222 50%,#000 100%);color:#fff;}
-header{position:fixed;top:0;left:0;width:100%;display:flex;align-items:center;justify-content:space-between;padding:15px 30px;box-sizing:border-box;background:transparent;z-index:1000;}
-header h1{margin:0;font-size:20px;font-weight:700;}
-nav{display:flex;gap:12px;}
-nav button{background:transparent;border:none;font-size:16px;font-weight:600;cursor:pointer;transition:color 0.3s;}
-nav button:hover{color:#0288d1;}
-#loginTopBtn{display:block;margin:80px auto 0;padding:8px 20px;font-weight:600;border:2px solid #0288d1;background:transparent;cursor:pointer;transition:all 0.3s;border-radius:6px;}
-#loginTopBtn:hover{background:#0288d1;color:#fff;}
-main{padding-top:120px;max-width:1000px;margin:0 auto;}
-section{display:none;padding:20px;}
-section.active{display:block;}
-#toolButtons{display:flex;flex-wrap:wrap;gap:12px;margin-bottom:20px;justify-content:center;}
-#toolButtons button{padding:12px 20px;border:2px solid #0288d1;background:transparent;font-weight:600;cursor:pointer;border-radius:6px;transition:all 0.3s;}
-#toolButtons button:hover{background:#0288d1;color:#fff;transform:scale(1.05);}
-#toolBox{border:2px solid #0288d1;padding:20px;min-height:220px;background:#fff;border-radius:8px;transition:all 0.3s;}
-body.night #toolBox{background:#222;border-color:#0288d1;color:#fff;}
-#themeToggle{position:fixed;bottom:20px;right:20px;padding:12px;cursor:pointer;border:none;background:#0288d1;color:#fff;font-weight:700;border-radius:50%;font-size:18px;transition:transform 0.5s;}
-#themeToggle:hover{transform:rotate(360deg);}
-footer{text-align:center;font-size:13px;margin:25px 0;color:#000;}
-body.night footer{color:#fff;}
-#loginBox{position:fixed;top:50%;left:50%;transform:translate(-50%,-50%);background:#fff;border:2px solid #0288d1;padding:20px;display:none;flex-direction:column;gap:10px;border-radius:8px;width:320px;z-index:20;}
-body.night #loginBox{background:#222;border-color:#0288d1;color:#fff;}
-#loginBox input{padding:8px;border:1px solid #0288d1;border-radius:6px;width:100%;box-sizing:border-box;}
-#loginBox button{padding:8px;border:none;background:#0288d1;color:#fff;cursor:pointer;border-radius:6px;}
-#loginBox .closeLogin{position:absolute;top:5px;right:5px;background:#f00;color:#fff;width:22px;height:22px;border-radius:50%;font-weight:bold;border:none;cursor:pointer;}
-#profileMenu{position:fixed;top:50%;left:50%;transform:translate(-50%,-50%);background:#fff;border:2px solid #0288d1;padding:15px;display:none;flex-direction:column;border-radius:6px;min-width:250px;z-index:30;}
-body.night #profileMenu{background:#222;border-color:#0288d1;color:#fff;}
-#profileMenu button{margin:3px 0;padding:6px;border:none;background:#0288d1;color:#fff;border-radius:6px;cursor:pointer;}
+@import url('https://fonts.googleapis.com/css2?family=Poppins:wght@400;600&display=swap');
+body{margin:0;font-family:'Poppins',sans-serif;transition:background 0.5s;color:#000;background:linear-gradient(to bottom,#a0d8f1,#fff,#a0d8f1);}
+header{position:sticky;top:0;background:rgba(255,255,255,0.95);display:flex;justify-content:space-between;align-items:center;padding:10px 20px;z-index:1000;box-shadow:0 2px 5px rgba(0,0,0,0.1);}
+header h1{font-weight:600;margin:0;font-size:1.2rem;}
+nav button{margin:0 5px;background:transparent;border:2px solid #5fa9f3;border-radius:5px;color:#000;padding:5px 10px;cursor:pointer;transition:all 0.3s;}
+nav button:hover{background:#5fa9f3;color:#fff;}
+#tool-box{margin:20px auto;max-width:800px;border:2px solid #5fa9f3;border-radius:10px;padding:20px;min-height:200px;}
+.tool-btn{background:transparent;border:2px solid #5fa9f3;border-radius:5px;color:#000;padding:5px 10px;margin:5px;cursor:pointer;transition:all 0.3s;}
+.tool-btn:hover{background:#5fa9f3;color:#fff;}
+#login-modal,#profile-modal{display:none;position:fixed;top:50%;left:50%;transform:translate(-50%,-50%);background:#fff;border:2px solid #5fa9f3;border-radius:10px;padding:20px;z-index:1001;min-width:300px;}
+#login-modal input{width:100%;margin:5px 0;padding:5px;border:1px solid #5fa9f3;border-radius:5px;}
+#login-modal button,#profile-modal button{margin:5px 0;padding:5px 10px;border:2px solid #5fa9f3;background:transparent;border-radius:5px;cursor:pointer;transition:all 0.3s;}
+#login-modal button:hover,#profile-modal button:hover{background:#5fa9f3;color:#fff;}
+#theme-toggle{position:fixed;bottom:20px;right:20px;width:50px;height:50px;border-radius:50%;background:#5fa9f3;color:#fff;font-size:1.5rem;display:flex;align-items:center;justify-content:center;cursor:pointer;transition:all 0.5s;}
+footer{text-align:center;margin:50px 0 20px 0;font-size:0.9rem;}
+.dropdown{position:relative;display:inline-block;}
+.dropdown-content{display:none;position:absolute;background:#fff;min-width:150px;border:2px solid #5fa9f3;border-radius:5px;z-index:1002;}
+.dropdown-content button{display:block;width:100%;text-align:left;}
+.dropdown:hover .dropdown-content{display:block;}
 </style>
 </head>
 <body>
 <header>
 <h1>GrabVR Suite</h1>
 <nav>
-<button id="navHome">Homepage</button>
-<button id="navTools">Tools</button>
-<button id="navGames">Games</button>
+<button id="tools-btn">Tools</button>
+<button id="games-btn">Games</button>
+<div class="dropdown">
+<button>File</button>
+<div class="dropdown-content">
+<button id="import-file">Import JSON/.level</button>
+<button id="export-file">Export JSON/.level</button>
+</div>
+</div>
+<button id="login-btn">Grab Login</button>
 </nav>
 </header>
-<button id="loginTopBtn">Grab Login</button>
-<main>
-<section id="homepage" class="active">
-<h1>Welcome to GrabVR Suite</h1>
-<p>Created by the Pakiv team, a collaboration between Pakker and Ivy. GrabVR Suite is the ultimate toolkit — manage levels, convert assets, analyze content, and unlock your full potential. Our tools empower creators and players alike, whether you want to download levels, convert models, generate 3D maps, or experiment with creative level designs. All features are designed to enhance your GrabVR experience with maximum control and flexibility. Explore our suite and experience seamless integration with your GrabVR workflow.</p>
-</section>
-<section id="tools">
-<div id="toolButtons"></div>
-<div id="toolBox"></div>
-</section>
-<section id="games">
-<h2>Games Coming Soon</h2>
-</section>
-</main>
+
+<div id="tool-box"></div>
+
+<div id="login-modal">
+<button id="login-close">X</button>
+<h3>Login</h3>
+<input type="text" id="username" placeholder="Enter Username">
+<input type="text" id="level-url" placeholder="Enter Level URL">
+<button id="login-submit">Login</button>
+</div>
+
+<div id="profile-modal">
+<button id="profile-close">X</button>
+<h3>Profile Management</h3>
+<p id="profile-username"></p>
+<button id="logout-btn">Logout</button>
+<p>Coming Soon: Profile Settings</p>
+</div>
+
+<div id="theme-toggle">🌙</div>
+
 <footer>
-© 2026 • made by Ivy • <a href="https://discord.gg/G6aNgvM7j9" target="_blank">discord.gg/G6aNgvM7j9</a>
+&copy;2026 | <a href="#">Discord</a> | Made by Ivy
 </footer>
-<div id="loginBox">
-<button class="closeLogin">X</button>
-<input type="text" id="loginUsername" placeholder="Enter username">
-<input type="text" id="loginLevelLink" placeholder="Paste level link to extract userID">
-<button id="guessIDBtn">Guess UserID</button>
-<button id="loginBtn">Login</button>
-</div>
-<div id="profileMenu">
-<button id="logoutBtn">Logout</button>
-<p>Profile Management (Coming Soon)</p>
-</div>
-<button id="themeToggle">🌙</button>
+
 <script>
-window.addEventListener('DOMContentLoaded',()=>{
-const body=document.body;
-const navHome=document.getElementById('navHome');
-const navTools=document.getElementById('navTools');
-const navGames=document.getElementById('navGames');
-const homepage=document.getElementById('homepage');
-const tools=document.getElementById('tools');
-const games=document.getElementById('games');
-const loginTopBtn=document.getElementById('loginTopBtn');
-const loginBox=document.getElementById('loginBox');
-const closeLogin=document.querySelector('#loginBox .closeLogin');
-const loginBtn=document.getElementById('loginBtn');
-const guessBtn=document.getElementById('guessIDBtn');
-const loginUsername=document.getElementById('loginUsername');
-const loginLevelLink=document.getElementById('loginLevelLink');
-const profileMenu=document.getElementById('profileMenu');
-const logoutBtn=document.getElementById('logoutBtn');
-const toolButtons=document.getElementById('toolButtons');
-const toolBox=document.getElementById('toolBox');
-const themeToggle=document.getElementById('themeToggle');
-let loggedUser=null;
-function showSection(sec){[homepage,tools,games].forEach(s=>s.classList.remove('active'));sec.classList.add('active');}
-navHome.addEventListener('click',()=>showSection(homepage));
-navTools.addEventListener('click',()=>showSection(tools));
-navGames.addEventListener('click',()=>showSection(games));
-loginTopBtn.addEventListener('click',()=>{if(loggedUser){profileMenu.style.display='flex'}else{loginBox.style.display='flex'}});
-closeLogin.addEventListener('click',()=>{loginBox.style.display='none'});
-logoutBtn.addEventListener('click',()=>{loggedUser=null;loginTopBtn.textContent='Grab Login';profileMenu.style.display='none'});
-guessBtn.addEventListener('click',()=>{const uid=extractUserIDFromLevel(loginLevelLink.value);if(uid){loginUsername.value=uid;guessBtn.style.display='none'}});
-loginBtn.addEventListener('click',()=>{if(loginUsername.value){loggedUser=loginUsername.value;loginTopBtn.textContent=loggedUser;loginBox.style.display='none';profileMenu.querySelector('p').textContent='Profile Management (Coming Soon)'}});
-themeToggle.addEventListener('click',()=>{body.classList.toggle('night');themeToggle.textContent=body.classList.contains('night')?'☀️':'🌙'});
-function extractUserIDFromLevel(link){try{const url=new URL(link);const lvl=url.searchParams.get('level');if(!lvl)return null;return lvl.split(':')[0]||null}catch{return null}};const toolList=[{name:'Download Level',func:function(){toolBox.innerHTML=`<h3>Download Level</h3><input id="levelInput" placeholder="Enter level link"><input id="levelNameInput" placeholder="Optional level name"><button id="runDownload">Run</button>`;document.getElementById('runDownload').addEventListener('click',()=>{const link=document.getElementById('levelInput').value;const name=document.getElementById('levelNameInput').value||'level';if(link){const ids=extractUserIDFromLevel(link);const timestamp=link.split(':')[1]||Date.now();const a=document.createElement('a');a.href=`https://api.slin.dev/grab/v1/download/${ids}/${timestamp}/1/${name}`;a.download=`${name}.level`;a.click()}})}},{name:'OBJ to SGM',func:function(){toolBox.innerHTML=`<h3>OBJ to SGM</h3><input type="file" id="objFile"><button id="convertObj">Convert</button>`;document.getElementById('convertObj').addEventListener('click',()=>{alert('OBJ converted to SGM!')})}},{name:'Image to Pixel Art',func:function(){toolBox.innerHTML=`<h3>Image to Pixel Art</h3><input type="file" id="imgFile"><button id="convertImg">Convert</button>`;document.getElementById('convertImg').addEventListener('click',()=>{alert('Image converted to Pixel Art Level!')})}},{name:'Image to 3D Map',func:function(){toolBox.innerHTML=`<h3>Image to 3D Map</h3><input type="file" id="mapFile"><button id="generateMap">Generate</button>`;document.getElementById('generateMap').addEventListener('click',()=>{alert('3D Map generated!')})}},{name:'Level Complexity Analyzer (Useless)',func:function(){toolBox.innerHTML=`<h3>Level Complexity Analyzer</h3><p>Tool loaded but does nothing useful.</p>`}},{name:'Player Lookup (Useless)',func:function(){toolBox.innerHTML=`<h3>Player Lookup</h3><p>Tool loaded but does nothing useful.</p>`}}];toolList.forEach(t=>{const btn=document.createElement('button');btn.textContent=t.name;btn.addEventListener('click',t.func);toolButtons.appendChild(btn)});
-});
+let isNight=false;
+const toolBox=document.getElementById('tool-box');
+const loginModal=document.getElementById('login-modal');
+const profileModal=document.getElementById('profile-modal');
+const loginBtn=document.getElementById('login-btn');
+const themeToggle=document.getElementById('theme-toggle');
+const tools=[
+{name:'Level Complexity Analyzer',action:()=>{toolBox.innerHTML='<p>Analyzing level complexity...</p>';}},
+{name:'Player Lookup',action:()=>{toolBox.innerHTML='<p>Looking up player info...</p>';}},
+{name:'OBJ to SGM Converter',action:()=>{toolBox.innerHTML='<p>Convert OBJ to SGM tool loaded.</p>';}},
+{name:'Image to Pixel Art Level',action:()=>{toolBox.innerHTML='<p>Image to Pixel Art Level loaded.</p>';}},
+{name:'Image to 3D Map',action:()=>{toolBox.innerHTML='<p>Image to 3D Map tool loaded.</p>';}},
+{name:'JSON Editor',action:()=>{window.location.href='/grabeditor';}}
+];
+function renderTools(){toolBox.innerHTML='';tools.forEach(t=>{const btn=document.createElement('button');btn.className='tool-btn';btn.textContent=t.name;btn.onclick=t.action;toolBox.appendChild(btn);});}
+renderTools();
+loginBtn.onclick=()=>{loginModal.style.display='block';};
+document.getElementById('login-close').onclick=()=>{loginModal.style.display='none';};
+document.getElementById('profile-close').onclick=()=>{profileModal.style.display='none';};
+document.getElementById('login-submit').onclick=()=>{
+const username=document.getElementById('username').value.trim();
+const levelURL=document.getElementById('level-url').value.trim();
+let userID='';
+if(levelURL.includes('level=')){userID=levelURL.split('level=')[1].split(':')[1]||levelURL.split('level=')[1].split('/')[0];}
+if(username){loginBtn.textContent=username;loginModal.style.display='none';profileModal.style.display='block';document.getElementById('profile-username').textContent=`Username: ${username} | UserID: ${userID}`;}};
+themeToggle.onclick=()=>{
+isNight=!isNight;
+if(isNight){document.body.style.background='linear-gradient(to bottom,#000,#222,#000)';themeToggle.textContent='☀️';}
+else{document.body.style.background='linear-gradient(to bottom,#a0d8f1,#fff,#a0d8f1)';themeToggle.textContent='🌙';}
+};
+document.getElementById('import-file').onclick=()=>{alert('Import JSON/.level (not implemented yet)');};
+document.getElementById('export-file').onclick=()=>{alert('Export JSON/.level (not implemented yet)');};
 </script>
 </body>
 </html>
