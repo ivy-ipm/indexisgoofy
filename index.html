@@ -4,124 +4,47 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>GrabVR Suite</title>
-<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&display=swap" rel="stylesheet">
 <style>
-:root{
-  --bg-day:#f4f7fa; --bg-night:#1e1e2f;
-  --text-day:#1e1e2f; --text-night:#f4f7fa;
-  --accent:#6c63ff; --card-bg-day:#fff; --card-bg-night:#2a2a3f;
-  --btn-bg:#6c63ff; --btn-text:#fff; --btn-hover:#574fd6;
-  --gradient-day:linear-gradient(135deg,#6c63ff,#43e97b);
-  --gradient-night:linear-gradient(135deg,#574fd6,#0d0d2b);
-}
-body{margin:0;font-family:'Inter',sans-serif;transition:0.3s;background:var(--bg-day);color:var(--text-day);}
-body[data-theme="night"]{background:var(--bg-night);color:var(--text-night);}
-header{display:flex;justify-content:space-between;align-items:center;padding:15px 30px;position:sticky;top:0;background:var(--bg-day);transition:0.3s;}
-body[data-theme="night"] header{background:var(--bg-night);}
-header .logo{font-weight:700;font-size:24px;}
-nav button{background:none;border:none;color:inherit;padding:8px 16px;margin-left:5px;font-weight:600;cursor:pointer;transition:0.2s;}
-nav button:hover{color:var(--accent);}
-#themeToggle{position:fixed;bottom:20px;right:20px;padding:12px;border:none;border-radius:50%;cursor:pointer;font-size:18px;background:var(--gradient-day);color:#fff;transition:0.3s;}
-body[data-theme="night"] #themeToggle{background:var(--gradient-night);}
-.container{max-width:1000px;margin:30px auto;padding:0 20px;}
-section{display:none;animation:fadeIn 0.5s ease;}
-section.active{display:block;}
-@keyframes fadeIn{from{opacity:0;}to{opacity:1;}}
-.tool-buttons{display:flex;gap:20px;margin-bottom:30px;flex-wrap:wrap;}
-.tool-buttons button{flex:1 1 180px;padding:20px;font-size:16px;font-weight:600;background:var(--card-bg-day);color:inherit;border-radius:10px;cursor:pointer;transition:0.3s;border:1px solid #ccc;}
-body[data-theme="night"] .tool-buttons button{background:var(--card-bg-night);border:1px solid #555;}
-.tool-buttons button:hover{background:var(--gradient-day);color:#fff;}
-.tool-box{border-radius:10px;padding:20px;min-height:300px;background:var(--card-bg-day);border:1px solid #ccc;transition:0.3s;}
-body[data-theme="night"] .tool-box{background:var(--card-bg-night);border:1px solid #555;}
-input{padding:10px;margin:5px 5px 15px 0;border-radius:6px;border:1px solid #ccc;width:calc(100% - 12px);}
-body[data-theme="night"] input{background:#2a2a3f;color:#f4f7fa;border:1px solid #555;}
-button.action{background:var(--btn-bg);color:var(--btn-text);border:none;padding:8px 12px;border-radius:6px;cursor:pointer;transition:0.2s;}
-button.action:hover{background:var(--btn-hover);}
-footer{text-align:center;margin:30px 0 10px;font-size:12px;}
-footer a{color:var(--accent);text-decoration:underline;}
-.user-login-box{position:fixed;top:50%;left:50%;transform:translate(-50%,-50%);background:var(--card-bg-day);border:1px solid #ccc;padding:20px;display:none;flex-direction:column;gap:10px;border-radius:10px;z-index:200;min-width:280px;transition:0.3s;}
-body[data-theme="night"] .user-login-box{background:var(--card-bg-night);border:1px solid #555;}
-.output{white-space:pre-wrap;height:150px;overflow-y:auto;border:1px solid #ccc;padding:10px;border-radius:6px;margin-top:10px;}
-body[data-theme="night"] .output{border:1px solid #555;}
-.game-canvas{width:100%;height:400px;background:#000;border-radius:10px;margin-top:15px;}
-.card{margin-top:15px;padding:15px;border-radius:10px;background:var(--card-bg-day);border:1px solid #ccc;}
-body[data-theme="night"] .card{background:var(--card-bg-night);border:1px solid #555;}
+body{margin:0;font-family:Inter,sans-serif;transition:0.3s;background:#f4f7fa;color:#1e1e2f}header{display:flex;justify-content:space-between;align-items:center;padding:15px 30px;position:sticky;top:0;z-index:100;background:#f4f7fa;transition:0.3s}header div{font-weight:700;font-size:24px}nav{display:flex;align-items:center;gap:8px}nav button{cursor:pointer;padding:5px 10px;border:none;border-radius:5px;background:#00aaff;color:white}#container{max-width:1000px;margin:30px auto;padding:0 20px}section{display:none;margin-top:20px}section.active{display:block}#toolBox{border:1px solid #ccc;border-radius:10px;padding:20px;min-height:300px;margin-top:20px}input{width:100%;padding:10px;margin-bottom:10px;border-radius:5px;border:1px solid #ccc}button.action{padding:10px;cursor:pointer;border-radius:5px;border:none;background:#00aaff;color:white}canvas{width:100%;height:400px;background:#000;border-radius:10px}#loginBox{position:fixed;top:50%;left:50%;transform:translate(-50%,-50%);background:#fff;padding:20px;display:none;flex-direction:column;border:1px solid #ccc;border-radius:10px;z-index:200}footer{text-align:center;margin-top:20px;font-size:12px;color:#00aaff}
 </style>
 </head>
-<body data-theme="day">
-
+<body>
 <header>
-<div class="logo">GrabVR Suite</div>
+<div>GrabVR Suite</div>
 <nav>
-<button onclick="mainJS.showSection('home')">Homepage</button>
-<button onclick="mainJS.showSection('tools')">Tools</button>
-<button onclick="mainJS.showSection('games')">Games</button>
-<button id="themeToggle" onclick="mainJS.toggleTheme()">🌙</button>
-<button onclick="mainJS.openLogin()">User Login</button>
+<button id="nav_homepage">Homepage</button>
+<button id="nav_tools">Tools</button>
+<button id="nav_games">Games</button>
+<button id="nav_login">User Login</button>
+<button id="themeToggle">🌙</button>
 </nav>
 </header>
-
-<div class="container">
-
-<section id="home" class="active">
-<h2>Welcome to GrabVR Suite</h2>
-<p>Created by <strong>Pakiv Team</strong> (Pakker + Ivy). Explore a suite of tools for GrabVR: download levels, convert models, generate 3D maps from images, and even play GRABcraft. All tools are integrated into a single interface to maximize productivity and creativity for GrabVR enthusiasts.</p>
-
-<div class="card">
-<h3>JS Status</h3>
-<p id="jsStatus">Checking...</p>
-</div>
-
-<div class="card">
-<h3>Useless Tools (For Fun)</h3>
-<ul>
-<li>Player Lookup</li>
-<li>Level Complexity Analyzer</li>
-<li>Pixel-Art Level Creator</li>
-</ul>
-</div>
-
-<div class="card">
-<h3>Useful Tools</h3>
-<ul>
-<li>Level Downloader</li>
-<li>OBJ→SGM Converter</li>
-<li>Image→3D Map Generator</li>
-</ul>
-</div>
-</section>
-
-<section id="tools">
-<div class="tool-buttons">
-<button onclick="mainJS.showTool('levelDownloader')">Level Downloader</button>
-<button onclick="mainJS.showTool('playerLookup')">Player Lookup</button>
-<button onclick="mainJS.showTool('complexityAnalyzer')">Level Complexity Analyzer</button>
-<button onclick="mainJS.showTool('pixelArt')">Pixel-Art Level</button>
-<button onclick="mainJS.showTool('objToSgm')">OBJ→SGM Converter</button>
-<button onclick="mainJS.showTool('image3DMap')">Image→3D Map</button>
-</div>
-<div class="tool-box" id="toolBox"><p>Select a tool above to start.</p></div>
-</section>
-
-<section id="games">
-<h2>GRABcraft</h2>
-<canvas id="grabGame" class="game-canvas"></canvas>
-<div class="card"><h3>Mini Games Coming Soon</h3><p>GrabRunner, GrabPuzzle, GrabArena coming soon! Progress will be saved to your account once logged in.</p></div>
-</section>
-
-<div class="user-login-box" id="loginBox">
+<div id="container"></div>
+<div id="loginBox">
 <h3>User Login</h3>
 <input id="loginUsername" placeholder="Enter Username">
 <input id="loginUserID" placeholder="User ID" readonly>
-<button id="guessBtn" onclick="mainJS.guessUserID()">Guess</button>
-<button id="loginBtn" onclick="mainJS.loginUser()" style="display:none;">Login</button>
-<button onclick="mainJS.closeLogin()">Close</button>
+<button id="guessBtn">Guess</button>
+<button id="loginBtn" style="display:none">Login</button>
+<button id="closeLogin">Close</button>
 </div>
-
-<footer>
-Made by Ivy • <a href="https://discord.gg/G6aNgvM7j9" target="_blank">Discord</a> • © 2026
-</footer>
-
-<script src="main.js"></script>
+<footer>made by ivy • by love from poizonTools team • <a href="https://discord.gg/G6aNgvM7j9" target="_blank">discord.gg/G6aNgvM7j9</a><br>© 2026</footer>
+<script>
+(() => {
+let theme='day';const container=document.getElementById('container');const sections={};function toggleTheme(){if(theme==='day'){document.body.style.background='#1e1e2f';document.body.style.color='#f4f7fa';theme='night';document.getElementById('themeToggle').textContent='☀️';}else{document.body.style.background='#f4f7fa';document.body.style.color='#1e1e2f';theme='day';document.getElementById('themeToggle').textContent='🌙';}}function showSection(id){Object.values(sections).forEach(s=>s.classList.remove('active'));if(sections[id])sections[id].classList.add('active');}document.getElementById('themeToggle').onclick=toggleTheme;document.getElementById('nav_homepage').onclick=()=>showSection('homepage');document.getElementById('nav_tools').onclick=()=>showSection('tools');document.getElementById('nav_games').onclick=()=>showSection('games');document.getElementById('nav_login').onclick=()=>document.getElementById('loginBox').style.display='flex';
+const home=document.createElement('section');home.id='homepage';home.classList.add('active');home.innerHTML='<h2>Welcome to GrabVR Suite</h2><p>Created by <strong>Pakiv Team</strong> (Pakker + Ivy). Explore tools, download levels, convert models, generate 3D maps, and play GRABcraft.</p><div id="jsStatus">JS running ✅</div>';container.appendChild(home);sections['homepage']=home;
+const tools=document.createElement('section');tools.id='tools';const toolButtons=document.createElement('div');toolButtons.style.display='flex';toolButtons.style.flexWrap='wrap';toolButtons.style.gap='10px';const toolBox=document.createElement('div');toolBox.id='toolBox';toolBox.textContent='Select a tool above to start.';['Level Downloader','Player Lookup','Level Complexity Analyzer','Pixel-Art Level','OBJ→SGM Converter','Image→3D Map'].forEach(tool=>{const btn=document.createElement('button');btn.textContent=tool;btn.style.flex='1 1 180px';btn.style.padding='15px';btn.onclick=()=>showTool(tool);toolButtons.appendChild(btn);});tools.appendChild(toolButtons);tools.appendChild(toolBox);container.appendChild(tools);sections['tools']=tools;
+function showTool(tool){toolBox.innerHTML='';switch(tool){case 'Level Downloader':toolBox.innerHTML='<h3>Level Downloader</h3><input id="levelLink" placeholder="Enter Grab level link"><input id="levelName" placeholder="Optional: File Name"><button class="action" id="downloadBtn">Download</button><div id="downloadOutput"></div>';document.getElementById('downloadBtn').onclick=downloadLevel;break;case 'Player Lookup':toolBox.innerHTML='<h3>Player Lookup</h3><input id="lookupUser" placeholder="Enter Player Username"><button class="action" id="lookupBtn">Lookup</button><div id="lookupOutput"></div>';document.getElementById('lookupBtn').onclick=lookupPlayer;break;default:toolBox.textContent=tool+' is a placeholder.';}
+}
+async function downloadLevel(){const link=document.getElementById('levelLink').value.trim();const name=document.getElementById('levelName').value.trim()||'grab-level';const out=document.getElementById('downloadOutput');out.textContent='';if(!link){out.textContent='Enter level link';return;}try{const url=new URL(link);const levelParam=url.searchParams.get('level');const parts=levelParam.split(':');const userID=parts[0],timestamp=parts[1];const a=document.createElement('a');a.href='https://api.slin.dev/grab/v1/download/'+userID+'/'+timestamp+'/1/'+name+'.level';a.download=name+'.level';a.click();out.textContent='Download started: '+name+'.level';}catch(e){out.textContent='Failed to download';}}
+async function lookupPlayer(){const username=document.getElementById('lookupUser').value.trim();const out=document.getElementById('lookupOutput');out.textContent='';if(!username){out.textContent='Enter username';return;}try{const res=await fetch('https://api.slin.dev/grab/v1/user/'+username);const data=await res.json();out.textContent='User ID: '+data.id+'\nLevels:\n'+(data.levels?.join('\n')||'No levels found');}catch(e){out.textContent='Failed to fetch user';}
+}
+const games=document.createElement('section');games.id='games';const gameTitle=document.createElement('h2');gameTitle.textContent='GRABcraft';const gameCanvas=document.createElement('canvas');gameCanvas.style.width='100%';gameCanvas.style.height='400px';gameCanvas.style.background='#000';const gameDesc=document.createElement('p');gameDesc.textContent='Mini-games coming soon! Progress will be saved once logged in.';games.appendChild(gameTitle);games.appendChild(gameCanvas);games.appendChild(gameDesc);container.appendChild(games);sections['games']=games;
+document.getElementById('closeLogin').onclick=()=>document.getElementById('loginBox').style.display='none';
+document.getElementById('guessBtn').onclick=async()=>{const username=document.getElementById('loginUsername').value.trim();if(!username)return alert('Enter username');try{const res=await fetch('https://api.slin.dev/grab/v1/user/'+username);const data=await res.json();document.getElementById('loginUserID').value=data.id||'unknown';document.getElementById('guessBtn').style.display='none';document.getElementById('loginBtn').style.display='inline-block';}catch(e){alert('Failed to fetch user ID');}};
+document.getElementById('loginBtn').onclick=()=>{const username=document.getElementById('loginUsername').value.trim();const id=document.getElementById('loginUserID').value.trim();if(!username||!id)return alert('Invalid login');alert('Logged in as '+username);document.getElementById('loginBox').style.display='none';};
+showSection('homepage');
+})();
+</script>
 </body>
 </html>
