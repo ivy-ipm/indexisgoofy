@@ -4,11 +4,11 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>GrabVR Suite</title>
-<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;700&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600;700&display=swap" rel="stylesheet">
 <style>
 body {
   margin:0;
-  font-family:'Inter',sans-serif;
+  font-family:'Poppins',sans-serif;
   background: linear-gradient(to bottom, #b3d9ff 0%, #ffffff 40%, #ffffff 60%, #b3d9ff 100%);
   color:#000;
   transition:0.3s;
@@ -17,17 +17,15 @@ body.night {
   background: linear-gradient(to bottom, #000000 0%, #222222 40%, #222222 60%, #000000 100%);
   color:#fff;
 }
-header {
-  display:flex; justify-content:space-between; align-items:center; padding:12px 25px; position:sticky; top:0; z-index:100; background:transparent;
-}
-header div {font-weight:bold; font-size:24px;}
+header {display:flex; justify-content:space-between; align-items:center; padding:12px 25px; position:sticky; top:0; z-index:100; background:transparent;}
+header div {font-weight:700; font-size:24px;}
 nav {display:flex; gap:15px;}
-nav button {cursor:pointer; padding:8px 0; border:none; background:transparent; color:inherit; font-weight:700; font-size:16px;}
+nav button {cursor:pointer; padding:8px 0; border:none; background:transparent; color:inherit; font-weight:600; font-size:16px;}
 nav button:hover{text-decoration:underline;}
 #container {max-width:900px; width:95%; margin:25px auto;}
 section {display:none; margin-top:20px;}
 section.active {display:block;}
-#toolBox {border:1px solid #0077cc; border-radius:10px; padding:20px; min-height:300px; background:#fff; color:#000;}
+#toolBox {border:1px solid #0077cc; border-radius:10px; padding:20px; min-height:350px; background:#fff; color:#000;}
 body.night #toolBox {background:#222; color:#fff; border-color:#555;}
 input {width:100%; padding:10px; margin-bottom:10px; border-radius:6px; border:1px solid #0077cc; font-size:14px;}
 button.action {padding:10px 15px; cursor:pointer; border-radius:6px; border:1px solid #0077cc; background:transparent; color:inherit; font-weight:bold;}
@@ -35,16 +33,12 @@ button.action:hover {text-decoration:underline;}
 footer {text-align:center; margin-top:25px; font-size:12px;}
 footer a {color:inherit;text-decoration:underline;}
 #themeToggle {position:fixed; bottom:10px; right:10px; padding:6px 10px; cursor:pointer; border:1px solid #0077cc; border-radius:5px; background:transparent; color:inherit;}
-#loginBox {
-  position:fixed; top:50%; left:50%; transform:translate(-50%,-50%);
-  background:#fff; color:#000; border:1px solid #0077cc; padding:20px; display:none;
-  flex-direction:column; border-radius:10px; min-width:280px; z-index:200;
-}
+#loginBox {position:fixed; top:50%; left:50%; transform:translate(-50%,-50%); background:#fff; color:#000; border:1px solid #0077cc; padding:20px; display:none; flex-direction:column; border-radius:10px; min-width:280px; z-index:200;}
 body.night #loginBox {background:#222; color:#fff; border-color:#555;}
 #loginBox input {margin-bottom:10px;}
 #loginBox button {margin-top:5px;}
 canvas {width:100%; height:300px; background:#e0e0e0; border-radius:8px; margin-top:10px;}
-@media(max-width:600px) {header{flex-direction:column; align-items:flex-start} nav{margin-top:8px; flex-wrap:wrap}}
+@media(max-width:600px){header{flex-direction:column; align-items:flex-start} nav{margin-top:8px; flex-wrap:wrap}}
 </style>
 </head>
 <body>
@@ -52,10 +46,10 @@ canvas {width:100%; height:300px; background:#e0e0e0; border-radius:8px; margin-
 <header>
   <div>GrabVR Suite</div>
   <nav>
-    <button onclick="showSection('homepage')">Homepage</button>
-    <button onclick="showSection('tools')">Tools</button>
-    <button onclick="showSection('games')">Games</button>
-    <button onclick="showLogin()">User Login</button>
+    <button id="navHome">Homepage</button>
+    <button id="navTools">Tools</button>
+    <button id="navGames">Games</button>
+    <button id="navLogin">User Login</button>
   </nav>
 </header>
 
@@ -67,14 +61,7 @@ canvas {width:100%; height:300px; background:#e0e0e0; border-radius:8px; margin-
   </section>
 
   <section id="tools">
-    <div style="display:flex; gap:10px; flex-wrap:wrap; margin-bottom:15px;">
-      <button onclick="showTool('Level Downloader')">Level Downloader</button>
-      <button onclick="showTool('Player Lookup')">Player Lookup</button>
-      <button onclick="showTool('OBJ→SGM Converter')">OBJ→SGM Converter</button>
-      <button onclick="showTool('Image→3D Map')">Image→3D Map</button>
-      <button onclick="showTool('Pixel Art Level')">Pixel Art Level</button>
-      <button onclick="showTool('Grab Complexity Analyzer')">Grab Complexity Analyzer</button>
-    </div>
+    <div id="toolButtons" style="display:flex; gap:10px; flex-wrap:wrap; margin-bottom:15px;"></div>
     <div id="toolBox">Select a tool above to start.</div>
   </section>
 
