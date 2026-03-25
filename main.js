@@ -1,43 +1,67 @@
 document.addEventListener('DOMContentLoaded',()=>{
+const sections=document.querySelectorAll('section');
+const toolButtons=[
+  'Level Downloader','Player Lookup','OBJ→SGM Converter',
+  'Image→3D Map','Pixel Art Level','Grab Complexity Analyzer'
+];
+const toolBox=document.getElementById('toolBox');
+const toolButtonsContainer=document.getElementById('toolButtons');
 
-window.showSection=id=>{
-  document.querySelectorAll('section').forEach(s=>s.classList.remove('active'));
-  document.getElementById(id).classList.add('active');
+// Build tool buttons dynamically
+toolButtons.forEach(tool=>{
+  const btn=document.createElement('button');
+  btn.textContent=tool;
+  btn.className='action';
+  btn.onclick=()=>showTool(tool);
+  toolButtonsContainer.appendChild(btn);
+});
+
+function hideSections(){sections.forEach(s=>s.classList.remove('active'));}
+window.showSection=id=>{hideSections();document.getElementById(id).classList.add('active');}
+window.showLogin=()=>{document.getElementById('loginBox').style.display='flex';}
+
+// Theme toggle
+const themeBtn=document.getElementById('themeToggle');
+themeBtn.onclick=()=>{
+  document.body.classList.toggle('night');
+  themeBtn.textContent=document.body.classList.contains('night')?'Day':'Night';
 }
 
+// Tools
 window.showTool=tool=>{
-  const box=document.getElementById('toolBox'); box.innerHTML='';
+  toolBox.innerHTML='';
   switch(tool){
     case 'Level Downloader':
-      box.innerHTML=`<h3>Level Downloader</h3>
+      toolBox.innerHTML=`<h3>Level Downloader</h3>
       <input id="levelLink" placeholder="Enter Grab level link">
       <input id="levelName" placeholder="Optional: File Name">
-      <button class="action" onclick="downloadLevel()">Download</button>
+      <button class="action" id="downloadBtn">Queue Download</button>
       <div id="downloadOutput"></div>`;
+      document.getElementById('downloadBtn').onclick=downloadLevel;
       break;
     case 'Player Lookup':
-      box.innerHTML=`<h3>Player Lookup</h3>
+      toolBox.innerHTML=`<h3>Player Lookup</h3>
       <input id="playerUsername" placeholder="Enter Player Username">
-      <button class="action" onclick="playerLookup()">Search</button>
+      <button class="action" id="playerBtn">Search</button>
       <div id="playerOutput"></div>`;
+      document.getElementById('playerBtn').onclick=playerLookup;
       break;
     case 'OBJ→SGM Converter':
-      box.innerHTML=`<h3>OBJ→SGM Converter</h3><p>Import OBJ file to convert into GrabVR level format (SGM).</p>`;
+      toolBox.innerHTML=`<h3>OBJ→SGM Converter</h3><p>Import OBJ file to convert into GrabVR level format (SGM).</p>`;
       break;
     case 'Image→3D Map':
-      box.innerHTML=`<h3>Image→3D Map</h3><p>Import image to create 3D map using AI analysis.</p>`;
+      toolBox.innerHTML=`<h3>Image→3D Map</h3><p>Import image to create 3D map using AI analysis.</p>`;
       break;
     case 'Pixel Art Level':
-      box.innerHTML=`<h3>Pixel Art Level</h3><p>Import an image to generate a fun GrabVR pixel art level (useless tool).</p>`;
+      toolBox.innerHTML=`<h3>Pixel Art Level</h3><p>Import an image to generate a fun GrabVR pixel art level (useless tool).</p>`;
       break;
     case 'Grab Complexity Analyzer':
-      box.innerHTML=`<h3>Grab Complexity Analyzer</h3><p>Analyze level complexity (useless tool, max 2000).</p>`;
+      toolBox.innerHTML=`<h3>Grab Complexity Analyzer</h3><p>Analyze level complexity (useless tool, max 2000).</p>`;
       break;
-    default:
-      box.innerHTML='<p>This tool will be available soon...</p>';
   }
 }
 
+// Download Level with queued filename
 window.downloadLevel=()=>{
   const link=document.getElementById('levelLink').value.trim();
   const name=document.getElementById('levelName').value.trim()||'level';
@@ -46,6 +70,7 @@ window.downloadLevel=()=>{
   document.getElementById('downloadOutput').textContent='Download started: '+name+'.level';
 }
 
+// Player Lookup dummy
 window.playerLookup=()=>{
   const user=document.getElementById('playerUsername').value.trim();
   if(!user){alert('Enter username'); return;}
@@ -54,12 +79,13 @@ window.playerLookup=()=>{
   setTimeout(()=>{output.textContent=`Levels for ${user}:\n- Level1\n- Level2\n- Level3`},800);
 }
 
-window.showLogin=()=>{document.getElementById('loginBox').style.display='flex';}
-
-document.getElementById('themeToggle').onclick=()=>{
-  document.body.classList.toggle('night');
-  document.getElementById('themeToggle').textContent=document.body.classList.contains('night')?'Day':'Night';
-}
-
+// GRABcraft Canvas
 const canvas=document.getElementById('gameCanvas');
 if(canvas){const ctx=canvas.getContext('2d'); ctx.fillStyle='#0077cc'; ctx.fillRect(0,0,canvas.width,canvas.height);}
+
+// Navbar events
+document.getElementById('navHome').onclick=()=>showSection('homepage');
+document.getElementById('navTools').onclick=()=>showSection('tools');
+document.getElementById('navGames').onclick=()=>showSection('games');
+document.getElementById('navLogin').onclick=showLogin;
+});
