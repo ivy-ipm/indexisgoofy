@@ -6,228 +6,232 @@
 <title>GrabVR Suite</title>
 <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600&display=swap" rel="stylesheet">
 <style>
-body {
-  margin:0;
-  font-family:'Poppins',sans-serif;
-  background: linear-gradient(160deg, #a0d8f1 0%, #c4e5f7 50%, #a0d8f1 100%);
-  transition: background 0.5s, color 0.5s;
-  color:#000;
+body{
+margin:0;
+font-family:'Poppins',sans-serif;
+background:linear-gradient(160deg,#a0d8f1,#bfe6fb,#a0d8f1);
+color:#000;
+transition:0.4s;
 }
-header {
-  position: sticky;
-  top:0;
-  background: rgba(255,255,255,0.5);
-  backdrop-filter: blur(12px);
-  display:flex;
-  justify-content: space-between;
-  align-items:center;
-  padding:10px 20px;
-  z-index:1000;
+header{
+position:sticky;
+top:0;
+display:flex;
+justify-content:space-between;
+padding:10px 20px;
+background:rgba(255,255,255,0.5);
+backdrop-filter:blur(10px);
 }
-header .logo { font-weight:600; font-size:1.2rem; }
-nav button {
-  margin:0 5px;
-  background: rgba(255,255,255,0.2);
-  backdrop-filter: blur(8px);
-  border:none;
-  border-radius:8px;
-  color:#000;
-  padding:5px 12px;
-  cursor:pointer;
-  transition: all 0.3s;
+nav button{
+margin:0 5px;
+padding:6px 12px;
+border:none;
+border-radius:8px;
+background:rgba(255,255,255,0.2);
+cursor:pointer;
 }
-nav button:hover { background: rgba(95,169,243,0.5); color:#fff; }
-main section {
-  display:none;
-  padding:20px;
-  background: rgba(255,255,255,0);
+main section{display:none;padding:20px;}
+.active{display:block;}
+#toolButtons button{
+margin:5px;
+padding:6px 12px;
+border:none;
+border-radius:8px;
+background:rgba(255,255,255,0.2);
+cursor:pointer;
 }
-main section.active { display:block; }
-#toolButtons button {
-  margin:5px;
-  background: rgba(255,255,255,0.2);
-  backdrop-filter: blur(8px);
-  border:none;
-  border-radius:8px;
-  color:#000;
-  padding:7px 14px;
-  cursor:pointer;
-  transition: all 0.3s;
+#toolBox{
+margin-top:10px;
+padding:15px;
+border-radius:10px;
+background:rgba(255,255,255,0.15);
+backdrop-filter:blur(10px);
 }
-#toolButtons button:hover { background: rgba(95,169,243,0.5); color:#fff; }
-#toolBox {
-  margin-top:10px;
-  padding:15px;
-  border-radius:10px;
-  min-height:100px;
-  background: rgba(255,255,255,0.1);
-  backdrop-filter: blur(8px);
-  transition: all 0.3s ease-in-out;
+input,button{
+font-family:'Poppins';
+margin:5px 0;
+padding:6px;
+border:none;
+border-radius:6px;
 }
-#toolBox.active { transform: scale(1.03); box-shadow: 0 10px 20px rgba(95,169,243,0.4); }
-#loginBox {
-  display:none;
-  position:fixed;
-  top:60px;
-  left:50%;
-  transform:translateX(-50%);
-  background: rgba(255,255,255,0.3);
-  backdrop-filter: blur(12px);
-  border-radius:10px;
-  padding:20px;
-  z-index:1001;
-  min-width:300px;
-}
-#loginBox input { width:100%; margin:5px 0; padding:7px; border:none; border-radius:5px; background: rgba(255,255,255,0.2); }
-#loginBox button { margin:5px 0; padding:7px 12px; border:none; border-radius:8px; cursor:pointer; background: rgba(255,255,255,0.2); transition: all 0.3s; }
-#loginBox button:hover { background: rgba(95,169,243,0.5); color:#fff; }
-#themeToggle {
-  position:fixed;
-  bottom:20px;
-  right:20px;
-  width:50px;
-  height:50px;
-  border-radius:50%;
-  background: rgba(95,169,243,0.7);
-  color:#fff;
-  font-size:1.5rem;
-  display:flex;
-  align-items:center;
-  justify-content:center;
-  cursor:pointer;
-  transition: all 0.5s;
-}
-footer {
-  text-align:center;
-  margin:50px 0 20px 0;
-  font-size:0.9rem;
+canvas{max-width:100%;}
+#themeToggle{
+position:fixed;
+bottom:20px;
+right:20px;
+width:50px;
+height:50px;
+border-radius:50%;
+display:flex;
+align-items:center;
+justify-content:center;
+background:#5fa9f3;
+color:#fff;
+cursor:pointer;
 }
 </style>
 </head>
 <body>
+
 <header>
-  <div class="logo">GrabVR Suite</div>
-  <nav>
-    <button id="navHome">Homepage</button>
-    <button id="navTools">Tools</button>
-    <button id="navGames">Games</button>
-    <button id="navLogin">User Login</button>
-  </nav>
+<div>GrabVR Suite</div>
+<nav>
+<button id="navHome">Homepage</button>
+<button id="navTools">Tools</button>
+<button id="navGames">Games</button>
+</nav>
 </header>
+
 <main>
-  <section id="homepage" class="active">
-    <h1>Welcome to GrabVR Suite</h1>
-    <p>Created by the Pakiv team (Pakker + Ivy). Explore GrabVR tools, games, and utilities all in one place. Use our tools to download levels, analyze them, or generate 3D maps from images. This suite is designed for maximum functionality while being easy to use.</p>
-  </section>
-  <section id="tools">
-    <div id="toolButtons"></div>
-    <div id="toolBox"></div>
-  </section>
-  <section id="games">
-    <p>Coming Soon</p>
-  </section>
+<section id="homepage" class="active">
+<h1>Welcome</h1>
+<p>Real working tools.</p>
+</section>
+
+<section id="tools">
+<div id="toolButtons"></div>
+<div id="toolBox"></div>
+</section>
+
+<section id="games">
+<h2>Coming Soon</h2>
+</section>
 </main>
-<div id="loginBox">
-  <h3>User Login</h3>
-  <input id="loginUsername" placeholder="Enter username">
-  <input id="loginLevelURL" placeholder="Enter Level URL">
-  <input id="loginUserID" placeholder="User ID" readonly>
-  <button id="guessBtn">Guess</button>
-  <button id="loginBtnMain">Login</button>
-  <button onclick="document.getElementById('loginBox').style.display='none'">Close</button>
-</div>
-<button id="themeToggle">🌙</button>
-<footer>
-  made by ivy • by love from poizonTools team • <a href="https://discord.gg/G6aNgvM7j9" target="_blank">discord.gg/G6aNgvM7j9</a><br>© 2026
-</footer>
+
+<div id="themeToggle">🌙</div>
 
 <script>
-document.addEventListener('DOMContentLoaded', ()=>{
-let isNight=false;
+document.addEventListener("DOMContentLoaded",()=>{
+
 const sections={
-  homepage:document.getElementById('homepage'),
-  tools:document.getElementById('tools'),
-  games:document.getElementById('games')
+home:document.getElementById("homepage"),
+tools:document.getElementById("tools"),
+games:document.getElementById("games")
 };
-const navHome=document.getElementById('navHome');
-const navTools=document.getElementById('navTools');
-const navGames=document.getElementById('navGames');
-const navLogin=document.getElementById('navLogin');
-const loginBox=document.getElementById('loginBox');
 
-function showSection(name){
-  Object.values(sections).forEach(s=>s.classList.remove('active'));
-  sections[name].classList.add('active');
+function show(s){
+Object.values(sections).forEach(x=>x.classList.remove("active"));
+sections[s].classList.add("active");
 }
 
-navHome.onclick=()=>showSection('homepage');
-navTools.onclick=()=>showSection('tools');
-navGames.onclick=()=>showSection('games');
-navLogin.onclick=()=>loginBox.style.display='block';
+document.getElementById("navHome").onclick=()=>show("home");
+document.getElementById("navTools").onclick=()=>show("tools");
+document.getElementById("navGames").onclick=()=>show("games");
 
-// Tools
-const toolButtonsDiv=document.getElementById('toolButtons');
-const toolBoxDiv=document.getElementById('toolBox');
+const toolBox=document.getElementById("toolBox");
+const toolButtons=document.getElementById("toolButtons");
 
-function setTool(text){
-  toolBoxDiv.innerHTML=`<p>${text}</p>`;
-  toolBoxDiv.classList.add('active');
-  setTimeout(()=>toolBoxDiv.classList.remove('active'),400);
-}
+function set(html){toolBox.innerHTML=html;}
 
 const tools=[
-  {name:'Level Downloader', action:()=>setTool('Enter a level URL and download the level data.')},
-  {name:'Level Complexity Analyzer', action:()=>setTool('Analyzing level complexity...')},
-  {name:'Player Lookup', action:()=>setTool('Looking up player info...')},
-  {name:'OBJ to SGM Converter', action:()=>setTool('Convert OBJ to SGM loaded.')},
-  {name:'Image to Pixel Art Level', action:()=>setTool('Image to Pixel Art Level loaded.')},
-  {name:'Image to 3D Map', action:()=>setTool('Image to 3D Map loaded.')},
-  {name:'Grab JSON Editor', action:()=>window.location.href='grabeditor.html'}
+
+{
+name:"Level Downloader",
+action:()=>set(`
+<input id="lvlUrl" placeholder="Level URL">
+<input id="fileName" placeholder="File name">
+<button onclick="downloadLevel()">Download</button>
+`)
+},
+
+{
+name:"Player Lookup",
+action:()=>set(`
+<input id="playerUrl" placeholder="Level URL">
+<button onclick="lookupPlayer()">Extract User ID</button>
+<p id="playerResult"></p>
+`)
+},
+
+{
+name:"Image to Pixel Art",
+action:()=>set(`
+<input type="file" id="imgInput">
+<canvas id="pixelCanvas"></canvas>
+`)
+},
+
+{
+name:"Image to 3D Map",
+action:()=>set(`
+<input type="file" id="mapInput">
+<canvas id="mapCanvas"></canvas>
+`)
+},
+
+{
+name:"Grab JSON Editor",
+action:()=>window.location.href="grabeditor.html"
+}
+
 ];
 
 tools.forEach(t=>{
-  const btn=document.createElement('button');
-  btn.textContent=t.name;
-  btn.onclick=t.action;
-  toolButtonsDiv.appendChild(btn);
+const b=document.createElement("button");
+b.textContent=t.name;
+b.onclick=t.action;
+toolButtons.appendChild(b);
 });
 
-// Login
-const loginUsername=document.getElementById('loginUsername');
-const loginLevelURL=document.getElementById('loginLevelURL');
-const loginUserID=document.getElementById('loginUserID');
-const loginBtnMain=document.getElementById('loginBtnMain');
+window.downloadLevel=()=>{
+const url=document.getElementById("lvlUrl").value;
+const name=document.getElementById("fileName").value||"level";
+const id=url.split("level=")[1]?.split(":")[0];
+if(!id)return alert("invalid url");
 
-loginBtnMain.onclick=()=>{
-  const username=loginUsername.value.trim();
-  const levelURL=loginLevelURL.value.trim();
-  let userID='';
-  if(levelURL.includes('level=')){
-    const parts=levelURL.split('level=')[1];
-    userID=parts.includes(':')?parts.split(':')[1]:parts.split('/')[0];
-  }
-  loginUserID.value=userID;
-  if(username){
-    navLogin.textContent=username;
-    loginBox.style.display='none';
-  }
+const link=`https://api.slin.dev/grab/v1/download/${id}`;
+const a=document.createElement("a");
+a.href=link;
+a.download=name+".level";
+a.click();
 };
 
-// Theme
-const themeToggle=document.getElementById('themeToggle');
-themeToggle.onclick=()=>{
-  isNight=!isNight;
-  if(isNight){
-    document.body.style.background='linear-gradient(160deg, #000000, #222222, #000000)';
-    document.body.style.color='#fff';
-    themeToggle.textContent='☀️';
-  } else {
-    document.body.style.background='linear-gradient(160deg, #a0d8f1, #c4e5f7, #a0d8f1)';
-    document.body.style.color='#000';
-    themeToggle.textContent='🌙';
-  }
+window.lookupPlayer=()=>{
+const url=document.getElementById("playerUrl").value;
+const id=url.split("level=")[1]?.split(":")[0];
+document.getElementById("playerResult").textContent="UserID: "+id;
 };
+
+document.addEventListener("change",e=>{
+if(e.target.id==="imgInput"){
+const file=e.target.files[0];
+const img=new Image();
+img.onload=()=>{
+const c=document.getElementById("pixelCanvas");
+const ctx=c.getContext("2d");
+c.width=50;c.height=50;
+ctx.drawImage(img,0,0,50,50);
+};
+img.src=URL.createObjectURL(file);
+}
+
+if(e.target.id==="mapInput"){
+const file=e.target.files[0];
+const img=new Image();
+img.onload=()=>{
+const c=document.getElementById("mapCanvas");
+const ctx=c.getContext("2d");
+c.width=100;c.height=100;
+ctx.drawImage(img,0,0,100,100);
+};
+img.src=URL.createObjectURL(file);
+}
+});
+
+let night=false;
+document.getElementById("themeToggle").onclick=()=>{
+night=!night;
+if(night){
+document.body.style.background="linear-gradient(160deg,#000,#222,#000)";
+document.body.style.color="#fff";
+}else{
+document.body.style.background="linear-gradient(160deg,#a0d8f1,#bfe6fb,#a0d8f1)";
+document.body.style.color="#000";
+}
+};
+
 });
 </script>
+
 </body>
 </html>
