@@ -8,15 +8,15 @@
 <style>
 html,body{margin:0;padding:0;font-family:'Poppins',sans-serif;height:100%;width:100%;transition:background 0.5s,color 0.5s;}
 body{background:linear-gradient(to bottom,#b3e5fc 0%,#ffffff 50%,#b3e5fc 100%);color:#000;overflow-x:hidden;}
-body.night{background:linear-gradient(to bottom,#000 0%,#333 50%,#000 100%);color:#fff;}
-header{width:100%;display:flex;align-items:center;justify-content:space-between;padding:15px 30px;box-sizing:border-box;}
+body.night{background:linear-gradient(to bottom,#000 0%,#222 50%,#000 100%);color:#fff;}
+header{position:fixed;top:0;width:100%;display:flex;align-items:center;justify-content:space-between;padding:15px 30px;box-sizing:border-box;background:transparent;z-index:1000;}
 header h1{margin:0;font-size:20px;font-weight:700;}
 nav{display:flex;gap:12px;}
 nav button{background:transparent;border:none;font-size:16px;font-weight:600;cursor:pointer;transition:color 0.3s;}
 nav button:hover{color:#0288d1;}
-#loginTopBtn{display:block;margin:10px auto;padding:8px 20px;font-weight:600;border:2px solid #0288d1;background:transparent;cursor:pointer;transition:all 0.3s;border-radius:6px;}
+#loginTopBtn{display:block;margin:70px auto 0;padding:8px 20px;font-weight:600;border:2px solid #0288d1;background:transparent;cursor:pointer;transition:all 0.3s;border-radius:6px;}
 #loginTopBtn:hover{background:#0288d1;color:#fff;}
-main{padding-top:30px;max-width:1000px;margin:0 auto;}
+main{padding-top:120px;max-width:1000px;margin:0 auto;}
 section{display:none;padding:20px;}
 section.active{display:block;}
 #toolButtons{display:flex;flex-wrap:wrap;gap:12px;margin-bottom:20px;justify-content:center;}
@@ -28,16 +28,14 @@ body.night #toolBox{background:#222;border-color:#0288d1;color:#fff;}
 #themeToggle:hover{transform:rotate(360deg);}
 footer{text-align:center;font-size:13px;margin:25px 0;color:#000;}
 body.night footer{color:#fff;}
-#loginBox{position:fixed;top:50%;left:50%;transform:translate(-50%,-50%);background:#fff;border:2px solid #0288d1;padding:20px;display:none;flex-direction:column;gap:10px;border-radius:8px;width:280px;z-index:20;}
+#loginBox{position:fixed;top:50%;left:50%;transform:translate(-50%,-50%);background:#fff;border:2px solid #0288d1;padding:20px;display:none;flex-direction:column;gap:10px;border-radius:8px;width:320px;z-index:20;}
 body.night #loginBox{background:#222;border-color:#0288d1;color:#fff;}
 #loginBox input{padding:8px;border:1px solid #0288d1;border-radius:6px;}
 #loginBox button{padding:8px;border:none;background:#0288d1;color:#fff;cursor:pointer;border-radius:6px;}
 #loginBox .closeLogin{position:absolute;top:5px;right:5px;background:#f00;color:#fff;width:22px;height:22px;border-radius:50%;font-weight:bold;border:none;cursor:pointer;}
-#profileMenu{position:absolute;top:50px;right:30px;background:#fff;border:2px solid #0288d1;padding:10px;display:none;flex-direction:column;border-radius:6px;}
+#profileMenu{position:fixed;top:50%;left:50%;transform:translate(-50%,-50%);background:#fff;border:2px solid #0288d1;padding:15px;display:none;flex-direction:column;border-radius:6px;min-width:250px;z-index:30;}
 body.night #profileMenu{background:#222;border-color:#0288d1;color:#fff;}
 #profileMenu button{margin:3px 0;padding:6px;border:none;background:#0288d1;color:#fff;border-radius:6px;cursor:pointer;}
-#gameCanvas{width:100%;height:400px;background:#eee;border-radius:6px;}
-body.night #gameCanvas{background:#111;}
 </style>
 </head>
 <body>
@@ -53,7 +51,7 @@ body.night #gameCanvas{background:#111;}
 <main>
 <section id="homepage" class="active">
 <h1>Welcome to GrabVR Suite</h1>
-<p>Created by the Pakiv team, a collaboration between Pakker and Ivy. GrabVR Suite is the ultimate GrabVR toolkit — manage levels, convert assets, analyze content, and unlock your full potential. Our tools are designed to empower creators and players alike, whether you want to download levels, check other players' content, or generate innovative 3D maps. Dive in and experience the full suite.</p>
+<p>Created by the Pakiv team, a collaboration between Pakker and Ivy. GrabVR Suite is the ultimate toolkit — manage levels, convert assets, analyze content, and unlock your full potential. Our tools empower creators and players alike, whether you want to download levels, convert models, generate 3D maps, or experiment with creative level designs.</p>
 </section>
 <section id="tools">
 <div id="toolButtons"></div>
@@ -61,99 +59,26 @@ body.night #gameCanvas{background:#111;}
 </section>
 <section id="games">
 <h2>Games Coming Soon</h2>
+<div id="gameCanvas"></div>
 </section>
 </main>
+<footer>
+© 2026 • made by Ivy • <a href="https://discord.gg/G6aNgvM7j9" target="_blank">discord.gg/G6aNgvM7j9</a>
+</footer>
 <div id="loginBox">
 <button class="closeLogin">X</button>
-<input id="loginUsername" placeholder="Username">
-<input id="loginUserID" placeholder="User ID" readonly>
-<input id="levelURL" placeholder="Enter Level Link to extract UserID">
-<button id="guessBtn">Guess</button>
-<button id="loginBtn" style="display:none">Login</button>
+<input type="text" id="loginUsername" placeholder="Enter username">
+<input type="text" id="loginLevelLink" placeholder="Paste level link to extract userID">
+<button id="guessIDBtn">Guess UserID</button>
+<button id="loginBtn">Login</button>
 </div>
 <div id="profileMenu">
 <button id="logoutBtn">Logout</button>
-<span>Profile Management (Coming Soon)</span>
+<p>Profile Management (Coming Soon)</p>
 </div>
 <button id="themeToggle">🌙</button>
-<footer>
-made by ivy • by love from poizonTools team • 
-<a href="https://discord.gg/G6aNgvM7j9" target="_blank">discord.gg/G6aNgvM7j9</a><br>© 2026
-</footer>
-
 <script>
-document.addEventListener('DOMContentLoaded',()=>{
-const sections={homepage:document.getElementById('homepage'),tools:document.getElementById('tools'),games:document.getElementById('games')};
-const navHome=document.getElementById('navHome');
-const navTools=document.getElementById('navTools');
-const navGames=document.getElementById('navGames');
-const loginTopBtn=document.getElementById('loginTopBtn');
-const loginBox=document.getElementById('loginBox');
-const closeLogin=document.querySelector('.closeLogin');
-const guessBtn=document.getElementById('guessBtn');
-const loginBtn=document.getElementById('loginBtn');
-const loginUsername=document.getElementById('loginUsername');
-const loginUserID=document.getElementById('loginUserID');
-const levelURL=document.getElementById('levelURL');
-const profileMenu=document.getElementById('profileMenu');
-const logoutBtn=document.getElementById('logoutBtn');
-const toolButtons=document.getElementById('toolButtons');
-const toolBox=document.getElementById('toolBox');
-const themeToggle=document.getElementById('themeToggle');
-let isNight=false;
-let userLoggedIn=false;
-function showSection(name){Object.keys(sections).forEach(s=>sections[s].classList.remove('active'));if(sections[name]) sections[name].classList.add('active');}
-navHome.addEventListener('click',()=>showSection('homepage'));
-navTools.addEventListener('click',()=>showSection('tools'));
-navGames.addEventListener('click',()=>showSection('games'));
-loginTopBtn.addEventListener('click',()=>loginBox.style.display='flex');
-closeLogin.addEventListener('click',()=>loginBox.style.display='none');
-guessBtn.addEventListener('click',()=>{
-    const link=levelURL.value.trim();
-    if(!link)return alert('Enter a level link');
-    try{
-        const url=new URL(link);
-        const parts=url.pathname.split('/');
-        loginUserID.value=parts[parts.length-2]||'';
-        loginBtn.style.display='block';
-        guessBtn.style.display='none';
-    }catch(e){alert('Invalid URL');}
-});
-loginBtn.addEventListener('click',()=>{
-    if(!loginUsername.value||!loginUserID.value)return alert('Enter username and UserID');
-    userLoggedIn=true;
-    loginBox.style.display='none';
-    alert('Logged in as '+loginUsername.value);
-});
-logoutBtn.addEventListener('click',()=>{
-    userLoggedIn=false;
-    loginUsername.value='';
-    loginUserID.value='';
-    profileMenu.style.display='none';
-    alert('Logged out');
-});
-document.body.addEventListener('click',(e)=>{
-    if(e.target.id==='loginTopBtn' && userLoggedIn)profileMenu.style.display='flex';
-});
-themeToggle.addEventListener('click',()=>{
-    document.body.classList.toggle('night');
-    isNight=!isNight;
-    themeToggle.textContent=isNight?'☀':'🌙';
-});
-const toolsList=[
-    {name:'Download Level',func:()=>{toolBox.innerHTML='<p>Download Level Tool Loaded</p>';}},
-    {name:'OBJ to SGM',func:()=>{toolBox.innerHTML='<p>OBJ to SGM Tool Loaded</p>';}},
-    {name:'Image to Pixel Art',func:()=>{toolBox.innerHTML='<p>Image to Pixel Art Tool Loaded</p>';}},
-    {name:'Image to 3D Map',func:()=>{toolBox.innerHTML='<p>Image to 3D Map Tool Loaded</p>';}},
-    {name:'Player Lookup',func:()=>{toolBox.innerHTML='<p>Player Lookup Tool Loaded</p>';}},
-    {name:'Level Complexity Analyzer',func:()=>{toolBox.innerHTML='<p>Level Complexity Analyzer Loaded</p>';}}
-];
-toolsList.forEach(tool=>{
-    const btn=document.createElement('button');
-    btn.textContent=tool.name;
-    btn.addEventListener('click',tool.func);
-    toolButtons.appendChild(btn);
-});
+document.addEventListener('DOMContentLoaded',()=>{const body=document.body;const navHome=document.getElementById('navHome');const navTools=document.getElementById('navTools');const navGames=document.getElementById('navGames');const homepage=document.getElementById('homepage');const tools=document.getElementById('tools');const games=document.getElementById('games');const loginTopBtn=document.getElementById('loginTopBtn');const loginBox=document.getElementById('loginBox');const closeLogin=document.querySelector('#loginBox .closeLogin');const loginBtn=document.getElementById('loginBtn');const guessBtn=document.getElementById('guessIDBtn');const loginUsername=document.getElementById('loginUsername');const loginLevelLink=document.getElementById('loginLevelLink');const profileMenu=document.getElementById('profileMenu');const logoutBtn=document.getElementById('logoutBtn');const toolButtons=document.getElementById('toolButtons');const toolBox=document.getElementById('toolBox');const themeToggle=document.getElementById('themeToggle');let loggedUser=null;function showSection(sec){homepage.classList.remove('active');tools.classList.remove('active');games.classList.remove('active');sec.classList.add('active');}navHome.addEventListener('click',()=>{showSection(homepage)});navTools.addEventListener('click',()=>{showSection(tools)});navGames.addEventListener('click',()=>{showSection(games)});loginTopBtn.addEventListener('click',()=>{loginBox.style.display='flex'});closeLogin.addEventListener('click',()=>{loginBox.style.display='none'});logoutBtn.addEventListener('click',()=>{loggedUser=null;loginTopBtn.textContent='Grab Login';profileMenu.style.display='none'});guessBtn.addEventListener('click',()=>{const uid=extractUserIDFromLevel(loginLevelLink.value);if(uid){loginUsername.value=uid;guessBtn.style.display='none'}});loginBtn.addEventListener('click',()=>{if(loginUsername.value){loggedUser=loginUsername.value;loginTopBtn.textContent=loggedUser;loginBox.style.display='none';profileMenu.querySelector('p').textContent='Profile Management (Coming Soon)'}});loginTopBtn.addEventListener('click',()=>{if(loggedUser){profileMenu.style.display='flex'}});themeToggle.addEventListener('click',()=>{body.classList.toggle('night');themeToggle.textContent=body.classList.contains('night')?'☀️':'🌙'});function extractUserIDFromLevel(link){try{const url=new URL(link);const lvl=url.searchParams.get('level');if(!lvl)return null;return lvl.split(':')[0]||null}catch{return null}};const toolList=[{name:'Download Level',func:function(){toolBox.innerHTML=`<h3>Download Level</h3><input id="levelInput" placeholder="Enter level link"><input id="levelNameInput" placeholder="Optional level name"><button id="runDownload">Run</button>`;document.getElementById('runDownload').addEventListener('click',()=>{const link=document.getElementById('levelInput').value;const name=document.getElementById('levelNameInput').value||'level';if(link){const ids=extractUserIDFromLevel(link);const timestamp=link.split(':')[1]||Date.now();const a=document.createElement('a');a.href=`https://api.slin.dev/grab/v1/download/${ids}/${timestamp}/1/${name}`;a.download=`${name}.level`;a.click()}})}},{name:'OBJ to SGM',func:function(){toolBox.innerHTML=`<h3>OBJ to SGM</h3><input type="file" id="objFile"><button id="convertObj">Convert</button>`;document.getElementById('convertObj').addEventListener('click',()=>{alert('OBJ converted to SGM!')})}},{name:'Image to Pixel Art',func:function(){toolBox.innerHTML=`<h3>Image to Pixel Art</h3><input type="file" id="imgFile"><button id="convertImg">Convert</button>`;document.getElementById('convertImg').addEventListener('click',()=>{alert('Image converted to Pixel Art Level!')})}},{name:'Image to 3D Map',func:function(){toolBox.innerHTML=`<h3>Image to 3D Map</h3><input type="file" id="mapFile"><button id="generateMap">Generate</button>`;document.getElementById('generateMap').addEventListener('click',()=>{alert('3D Map generated!')})}},{name:'Level Complexity Analyzer (Useless)',func:function(){toolBox.innerHTML=`<h3>Level Complexity Analyzer</h3><p>Tool loaded but does nothing useful.</p>`}},{name:'Player Lookup (Useless)',func:function(){toolBox.innerHTML=`<h3>Player Lookup</h3><p>Tool loaded but does nothing useful.</p>`}}];toolList.forEach(t=>{const btn=document.createElement('button');btn.textContent=t.name;btn.addEventListener('click',t.func);toolButtons.appendChild(btn)});
 });
 </script>
 </body>
