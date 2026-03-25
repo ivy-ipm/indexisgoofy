@@ -1,108 +1,139 @@
 document.addEventListener('DOMContentLoaded', () => {
-const sections = document.querySelectorAll('section');
-const toolButtons = [
-  'Level Downloader', 'Player Lookup', 'OBJ→SGM Converter',
-  'Image→3D Map', 'Pixel Art Level', 'Grab Complexity Analyzer'
-];
-const toolBox = document.getElementById('toolBox');
+const sections = document.querySelectorAll('main section');
 const toolButtonsContainer = document.getElementById('toolButtons');
+const toolBox = document.getElementById('toolBox');
+const toolList = ['Level Downloader','Player Lookup','OBJ→SGM Converter','Image→3D Map','Pixel Art Level','Grab Complexity Analyzer'];
 
-// Function to hide all sections
-function hideSections() { sections.forEach(s => s.classList.remove('active')); }
-
-// Show section
-window.showSection = id => { hideSections(); document.getElementById(id).classList.add('active'); }
-window.showLogin = () => { document.getElementById('loginBox').style.display = 'flex'; }
+// Navbar buttons
+document.getElementById('navHome').addEventListener('click',()=>showSection('homepage'));
+document.getElementById('navTools').addEventListener('click',()=>showSection('tools'));
+document.getElementById('navGames').addEventListener('click',()=>showSection('games'));
+document.getElementById('navLogin').addEventListener('click',()=>document.getElementById('loginBox').style.display='flex');
 
 // Theme toggle
 const themeBtn = document.getElementById('themeToggle');
-themeBtn.onclick = () => {
+themeBtn.onclick=()=>{
   document.body.classList.toggle('night');
-  themeBtn.textContent = document.body.classList.contains('night') ? 'Day' : 'Night';
+  themeBtn.textContent = document.body.classList.contains('night')?'Day':'Night';
 }
 
-// Build tool buttons dynamically
-toolButtons.forEach(tool => {
-  const btn = document.createElement('button');
-  btn.textContent = tool;
-  btn.className = 'action';
-  btn.addEventListener('click', () => showTool(tool));
+// Show section
+function showSection(id){
+  sections.forEach(s=>s.classList.remove('active'));
+  document.getElementById(id).classList.add('active');
+}
+
+// Build tool buttons
+toolList.forEach(tool=>{
+  const btn=document.createElement('button');
+  btn.textContent=tool;
+  btn.className='action';
+  btn.addEventListener('click',()=>showTool(tool));
   toolButtonsContainer.appendChild(btn);
 });
 
-// Show tool content
-window.showTool = tool => {
-  toolBox.innerHTML = '';
-  switch (tool) {
+// Show selected tool
+function showTool(tool){
+  toolBox.innerHTML='';
+  switch(tool){
     case 'Level Downloader':
-      toolBox.innerHTML = `
+      toolBox.innerHTML=`
         <h3>Level Downloader</h3>
         <input id="levelLink" placeholder="Enter Grab level link">
         <input id="levelName" placeholder="Optional: File Name">
         <button class="action" id="downloadBtn">Queue Download</button>
         <div id="downloadOutput"></div>`;
-      document.getElementById('downloadBtn').addEventListener('click', downloadLevel);
+      document.getElementById('downloadBtn').addEventListener('click',downloadLevel);
       break;
-
     case 'Player Lookup':
-      toolBox.innerHTML = `
+      toolBox.innerHTML=`
         <h3>Player Lookup</h3>
         <input id="playerUsername" placeholder="Enter Player Username">
         <button class="action" id="playerBtn">Search</button>
         <div id="playerOutput"></div>`;
-      document.getElementById('playerBtn').addEventListener('click', playerLookup);
+      document.getElementById('playerBtn').addEventListener('click',playerLookup);
       break;
-
     case 'OBJ→SGM Converter':
-      toolBox.innerHTML = `<h3>OBJ→SGM Converter</h3><p>Import OBJ file to convert into GrabVR level format (SGM).</p>`;
+      toolBox.innerHTML=`<h3>OBJ→SGM Converter</h3><p>Import OBJ to convert into GrabVR SGM format.</p>`;
       break;
-
     case 'Image→3D Map':
-      toolBox.innerHTML = `<h3>Image→3D Map</h3><p>Import image to create 3D map using AI analysis.</p>`;
+      toolBox.innerHTML=`<h3>Image→3D Map</h3><p>Import an image to generate a 3D map.</p>`;
       break;
-
     case 'Pixel Art Level':
-      toolBox.innerHTML = `<h3>Pixel Art Level</h3><p>Import an image to generate a fun GrabVR pixel art level (useless tool).</p>`;
+      toolBox.innerHTML=`<h3>Pixel Art Level</h3><p>Convert image into pixel art GrabVR level (useless).</p>`;
       break;
-
     case 'Grab Complexity Analyzer':
-      toolBox.innerHTML = `<h3>Grab Complexity Analyzer</h3><p>Analyze level complexity (useless tool, max 2000).</p>`;
+      toolBox.innerHTML=`<h3>Grab Complexity Analyzer</h3><p>Analyze level complexity (max 2000, useless tool).</p>`;
       break;
   }
 }
 
-// Level Downloader function
-window.downloadLevel = () => {
-  const link = document.getElementById('levelLink').value.trim();
-  const name = document.getElementById('levelName').value.trim() || 'level';
-  if (!link) { alert('Enter a link'); return; }
-  const a = document.createElement('a');
-  a.href = link;
-  a.download = name + '.level';
-  a.click();
-  document.getElementById('downloadOutput').textContent = 'Download started: ' + name + '.level';
+// Level Downloader
+async function downloadLevel(){
+  const link=document.getElementById('levelLink').value.trim();
+  const name=document.getElementById('levelName').value.trim()||'level';
+  const output=document.getElementById('downloadOutput');
+  if(!link){alert('Enter a link');return;}
+  try{
+    output.textContent='Fetching level...';
+    const res=await fetch(link);
+    if(!res.ok)throw new Error('Failed to fetch level');
+    const blob=await res.blob();
+    const url=URL.createObjectURL(blob);
+    const a=document.createElement('a');
+    a.href=url;
+    a.download=name+'.level';
+    document.body.appendChild(a);
+    a.click();
+    a.remove();
+    URL.revokeObjectURL(url);
+    output.textContent='Download started: '+name+'.level';
+  }catch(e){output.textContent='Failed to download level: '+e.message;}
 }
 
 // Player Lookup dummy
-window.playerLookup = () => {
-  const user = document.getElementById('playerUsername').value.trim();
-  if (!user) { alert('Enter username'); return; }
-  const output = document.getElementById('playerOutput');
-  output.textContent = 'Fetching user data...';
-  setTimeout(() => { output.textContent = `Levels for ${user}:\n- Level1\n- Level2\n- Level3`; }, 800);
+function playerLookup(){
+  const user=document.getElementById('playerUsername').value.trim();
+  if(!user){alert('Enter username');return;}
+  const output=document.getElementById('playerOutput');
+  output.textContent='Fetching user data...';
+  setTimeout(()=>{output.textContent=`Levels for ${user}:\n- Level1\n- Level2\n- Level3`;},800);
 }
 
-// GRABcraft Canvas
-const canvas = document.getElementById('gameCanvas');
-if (canvas) {
-  const ctx = canvas.getContext('2d');
-  ctx.fillStyle = '#0077cc';
-  ctx.fillRect(0, 0, canvas.width, canvas.height);
+// GRABcraft
+const canvas=document.getElementById('gameCanvas');
+if(canvas){
+  const ctx=canvas.getContext('2d');
+  ctx.fillStyle='#0077cc';
+  ctx.fillRect(0,0,canvas.width,canvas.height);
 }
 
-// Navbar buttons
-document.getElementById('navHome').addEventListener('click', () => showSection('homepage'));
-document.getElementById('navTools').addEventListener('click', () => showSection('tools'));
-document.getElementById('navGames').addEventListener('click', () => showSection('games'));
-document.getElementById('navLogin').addEventListener('click', showLogin);
+// UserLogin
+const loginBox=document.getElementById('loginBox');
+const guessBtn=document.getElementById('guessBtn');
+const loginBtn=document.getElementById('loginBtn');
+const loginUsername=document.getElementById('loginUsername');
+const loginUserID=document.getElementById('loginUserID');
+
+guessBtn.addEventListener('click',async()=>{
+  const username=loginUsername.value.trim();
+  if(!username){alert('Enter username');return;}
+  loginUserID.value='Fetching...';
+  setTimeout(()=>{
+    const dummyID='abc123'+Math.floor(Math.random()*1000);
+    loginUserID.value=dummyID;
+    guessBtn.style.display='none';
+    loginBtn.style.display='inline-block';
+  },800);
+});
+
+loginBtn.addEventListener('click',()=>{
+  const username=loginUsername.value.trim();
+  const userID=loginUserID.value;
+  if(!username||!userID){alert('Missing info');return;}
+  localStorage.setItem('grabvrUser',JSON.stringify({username,userID}));
+  alert(`Logged in as ${username} (ID: ${userID})`);
+  loginBox.style.display='none';
+});
+
 });
