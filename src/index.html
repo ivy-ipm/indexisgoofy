@@ -6,17 +6,21 @@
 <title>GrabVR Suite</title>
 <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600&display=swap" rel="stylesheet">
 <style>
-body{margin:0;font-family:'Poppins',sans-serif;background:linear-gradient(160deg,#a0d8f1,#bfe6fb,#a0d8f1);color:#000}
+body{margin:0;font-family:'Poppins',sans-serif;background:linear-gradient(160deg,#a0d8f1,#bfe6fb,#a0d8f1);color:#000;transition:0.3s}
 header{position:sticky;top:0;display:flex;justify-content:space-between;padding:10px 20px;background:rgba(255,255,255,0.5);backdrop-filter:blur(10px)}
-nav button{margin:0 5px;padding:6px 12px;border:none;border-radius:8px;background:rgba(255,255,255,0.2);cursor:pointer}
+nav button{margin:0 5px;padding:6px 12px;border:none;border-radius:8px;background:rgba(255,255,255,0.2);cursor:pointer;transition:0.2s}
+nav button:hover{background:rgba(95,169,243,0.5);color:#fff}
 main section{display:none;padding:20px}
 .active{display:block}
-#toolButtons button{margin:5px;padding:6px 12px;border:none;border-radius:8px;background:rgba(255,255,255,0.2);cursor:pointer}
-.toolUI{margin-top:10px;padding:15px;border-radius:10px;background:rgba(255,255,255,0.15)}
+#toolButtons button{margin:5px;padding:6px 12px;border:none;border-radius:8px;background:rgba(255,255,255,0.2);cursor:pointer;transition:0.2s}
+#toolButtons button:hover{background:rgba(95,169,243,0.5);color:#fff}
+.toolUI{margin-top:10px;padding:15px;border-radius:10px;background:rgba(255,255,255,0.15);backdrop-filter:blur(5px)}
 input,button{font-family:'Poppins';margin:5px 0;padding:6px;border:none;border-radius:6px}
-.level{background:rgba(255,255,255,0.2);padding:10px;border-radius:8px;margin:5px 0}
-#loginBox{display:none;position:fixed;top:60px;left:50%;transform:translateX(-50%);background:rgba(255,255,255,0.6);padding:20px;border-radius:10px}
-#themeToggle{position:fixed;bottom:20px;right:20px;width:50px;height:50px;border-radius:50%;display:flex;align-items:center;justify-content:center;background:#5fa9f3;color:#fff;cursor:pointer}
+.level{background:rgba(255,255,255,0.2);padding:10px;border-radius:8px;margin:5px 0;display:flex;align-items:center;justify-content:space-between}
+.level-info{display:flex;align-items:center}
+.level-info img{width:60px;height:60px;border-radius:6px;margin-right:10px}
+#loginBox,#profileBox{display:none;position:fixed;top:60px;left:50%;transform:translateX(-50%);background:rgba(255,255,255,0.6);padding:20px;border-radius:10px;z-index:1001}
+#themeToggle{position:fixed;bottom:20px;right:20px;width:50px;height:50px;border-radius:50%;display:flex;align-items:center;justify-content:center;background:#5fa9f3;color:#fff;cursor:pointer;transition:0.3s}
 footer{text-align:center;margin:50px 0 20px 0;font-size:0.9rem}
 </style>
 </head>
@@ -35,24 +39,24 @@ footer{text-align:center;margin:50px 0 20px 0;font-size:0.9rem}
 <main>
 <section id="homepage" class="active">
 <h1>Welcome to GrabVR Suite</h1>
-<p>Created by the Pakiv team (Pakker + Ivy). Explore GrabVR tools, games, and utilities all in one place.</p>
+<p>Created by the Pakiv team (Pakker + Ivy). Explore GrabVR tools, games, and utilities all in one place. Use our tools to download levels, analyze them, or generate 3D maps from images. This suite is designed for maximum functionality while being easy to use.</p>
 </section>
 
 <section id="tools">
 <div id="toolButtons"></div>
 
-<div id="playerTool" class="toolUI" style="display:none">
-<input id="playerUrl" placeholder="Level URL">
-<button id="lookupBtn">Lookup</button>
+<div id="playerTool" class="toolUI">
+<h3>Player Lookup</h3>
+<input id="playerUrl" placeholder="Enter GrabVR Level URL">
 <div id="levels"></div>
 </div>
 
-<div id="downloadTool" class="toolUI" style="display:none">
-<input id="lvlUrl" placeholder="Level URL">
+<div id="downloadTool" class="toolUI">
+<h3>Level Downloader</h3>
+<input id="lvlUrl" placeholder="Enter GrabVR Level URL">
 <input id="fileName" placeholder="File name">
 <button id="downloadManual">Download</button>
 </div>
-
 </section>
 
 <section id="games">
@@ -62,7 +66,17 @@ footer{text-align:center;margin:50px 0 20px 0;font-size:0.9rem}
 
 <div id="loginBox">
 <input id="loginUsername" placeholder="Username">
+<input id="loginLevelURL" placeholder="Your Level URL (optional)">
 <button id="loginSubmit">Login</button>
+<button id="loginClose">Close</button>
+</div>
+
+<div id="profileBox">
+<h3>Profile</h3>
+<p id="profileName"></p>
+<p id="profileID"></p>
+<button id="logoutBtn">Logout</button>
+<button id="profileClose">Close</button>
 </div>
 
 <div id="themeToggle">🌙</div>
@@ -72,100 +86,117 @@ made by ivy • by love from poizonTools team • <a href="https://discord.gg/G6
 </footer>
 
 <script>
+document.addEventListener("DOMContentLoaded",()=>{
+
 const sections={
 home:document.getElementById("homepage"),
 tools:document.getElementById("tools"),
 games:document.getElementById("games")
 };
-
-function show(s){
-Object.values(sections).forEach(x=>x.classList.remove("active"));
-sections[s].classList.add("active");
-}
-
+function show(s){Object.values(sections).forEach(x=>x.classList.remove("active"));sections[s].classList.add("active")}
 navHome.onclick=()=>show("home");
 navTools.onclick=()=>show("tools");
 navGames.onclick=()=>show("games");
 
+// Login/Profile
+const navLogin=document.getElementById("navLogin");
+const loginBox=document.getElementById("loginBox");
+const loginUsername=document.getElementById("loginUsername");
+const loginLevelURL=document.getElementById("loginLevelURL");
+const profileBox=document.getElementById("profileBox");
+const profileName=document.getElementById("profileName");
+const profileID=document.getElementById("profileID");
+
 navLogin.onclick=()=>loginBox.style.display="block";
-loginSubmit.onclick=()=>{
-const name=loginUsername.value.trim();
-if(name){
-navLogin.textContent=name;
-loginBox.style.display="none";
-}
+document.getElementById("loginClose").onclick=()=>loginBox.style.display="none";
+document.getElementById("profileClose").onclick=()=>profileBox.style.display="none";
+document.getElementById("logoutBtn").onclick=()=>{
+navLogin.textContent="User Login";
+profileBox.style.display="none";
 };
 
+// Tools buttons
 const toolButtons=document.getElementById("toolButtons");
 const playerTool=document.getElementById("playerTool");
 const downloadTool=document.getElementById("downloadTool");
 
 ["Player Lookup","Level Downloader"].forEach(name=>{
-const b=document.createElement("button");
-b.textContent=name;
-b.onclick=()=>{
+const btn=document.createElement("button");
+btn.textContent=name;
+btn.onclick=()=>{
 playerTool.style.display="none";
 downloadTool.style.display="none";
 if(name==="Player Lookup")playerTool.style.display="block";
 if(name==="Level Downloader")downloadTool.style.display="block";
 };
-toolButtons.appendChild(b);
+toolButtons.appendChild(btn);
 });
 
-lookupBtn.onclick=async()=>{
-const url=playerUrl.value;
+// Player Lookup with thumbnails
+const levels=document.getElementById("levels");
+document.getElementById("playerUrl").addEventListener("change",async()=>{
+levels.innerHTML="";
+const url=document.getElementById("playerUrl").value;
 const id=url.split("level=")[1]?.split(":")[0];
-if(!id)return alert("invalid url");
-
+if(!id)return;
 levels.innerHTML="Loading...";
-
 try{
 const res=await fetch(`https://api.slin.dev/grab/v1/list/${id}`);
 const data=await res.json();
-
 levels.innerHTML="";
 data.levels.forEach(l=>{
 const div=document.createElement("div");
 div.className="level";
-
+const info=document.createElement("div");
+info.className="level-info";
+const img=document.createElement("img");
+img.src=l.thumbnail||"https://via.placeholder.com/60";
+const text=document.createElement("div");
+text.innerHTML=`<b>${l.name}</b><br>Difficulty: ${l.difficulty||"N/A"}`;
+info.appendChild(img);
+info.appendChild(text);
 const btn=document.createElement("button");
 btn.textContent="Download";
-btn.onclick=()=>{
-const a=document.createElement("a");
-a.href=`https://api.slin.dev/grab/v1/download/${l.id}`;
-a.download=l.name+".level";
-a.click();
-};
-
-div.innerHTML=`<b>${l.name}</b><br>`;
+btn.onclick=()=>{const a=document.createElement("a");a.href=`https://api.slin.dev/grab/v1/download/${l.id}`;a.download=l.name+".level";a.click()};
+div.appendChild(info);
 div.appendChild(btn);
 levels.appendChild(div);
 });
+}catch{levels.innerHTML="Failed to fetch levels";}
+});
 
-}catch{
-levels.innerHTML="Failed";
-}
-};
-
-downloadManual.onclick=()=>{
-const url=lvlUrl.value;
-const name=fileName.value||"level";
+// Manual download
+document.getElementById("downloadManual").onclick=()=>{
+const url=document.getElementById("lvlUrl").value;
+const name=document.getElementById("fileName").value||"level";
 const id=url.split("level=")[1]?.split(":")[0];
 if(!id)return alert("invalid url");
-
 const a=document.createElement("a");
 a.href=`https://api.slin.dev/grab/v1/download/${id}`;
 a.download=name+".level";
 a.click();
 };
 
+// Login Submit: auto fetch userID
+document.getElementById("loginSubmit").onclick=()=>{
+const username=loginUsername.value.trim();
+const lvlURL=loginLevelURL.value.trim();
+let userID="";
+if(lvlURL.includes("level="))userID=lvlURL.split("level=")[1].split(":")[0];
+if(username){navLogin.textContent=username;loginBox.style.display="none";profileBox.style.display="block";profileName.textContent="Username: "+username;profileID.textContent="UserID: "+userID}
+};
+
+// Theme toggle
 let night=false;
+const themeToggle=document.getElementById("themeToggle");
 themeToggle.onclick=()=>{
 night=!night;
 document.body.style.background=night?"linear-gradient(160deg,#000,#222,#000)":"linear-gradient(160deg,#a0d8f1,#bfe6fb,#a0d8f1)";
 document.body.style.color=night?"#fff":"#000";
 themeToggle.textContent=night?"☀️":"🌙";
 };
+
+});
 </script>
 
 </body>
