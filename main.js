@@ -121,4 +121,7 @@ async function lookupPlayer(){
 
 // Expose public functions
 return {toggleTheme, showSection, openLogin, closeLogin, showTool, downloadLevel, guessUserID, loginUser, analyzeComplexity, lookupPlayer};
+
+  // Update JS Status
+document.getElementById('jsStatus').textContent = "main.js is running ✅";
 })();
