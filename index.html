@@ -3,216 +3,236 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>GrabVR Terminal</title>
-
+<title>GrabVR Suite</title>
 <style>
+:root {
+  --bg-color:#000;
+  --text-color:#00ff88;
+  --border-color:#00ff88;
+  --btn-bg:#00ff88;
+  --btn-text:#000;
+}
+[data-theme="light"] {
+  --bg-color:#fff;
+  --text-color:#008800;
+  --border-color:#008800;
+  --btn-bg:#008800;
+  --btn-text:#fff;
+}
 body {
-  margin: 0;
-  background: black;
-  color: #00ff88;
+  margin:0;
+  background:var(--bg-color);
+  color:var(--text-color);
   font-family: monospace;
-  display: flex;
-  flex-direction: column;
-  align-items: center;
 }
-
-.header {
-  text-align: center;
-  margin-top: 20px;
+header {
+  display:flex; justify-content:space-between; align-items:center;
+  padding:10px 20px; border-bottom:1px solid var(--border-color);
+  position:sticky; top:0; background:var(--bg-color); z-index:100;
 }
-
-.header h1 { margin: 0; font-size: 28px; }
-.header span { font-size: 12px; opacity: 0.7; }
-
-.container {
-  width: 600px;
-  max-width: 95%;
-  margin-top: 20px;
+header .logo { font-weight:bold; font-size:20px; }
+nav button {
+  background:none; border:1px solid var(--border-color);
+  color:var(--text-color); padding:5px 10px; margin-left:5px;
+  cursor:pointer;
 }
-
-.output {
-  background: #000;
-  border: 1px solid #00ff88;
-  padding: 15px;
-  height: 300px;
-  overflow-y: auto;
-  margin-bottom: 10px;
-  white-space: pre-wrap;
+nav button:last-child { margin-left:20px; }
+.container { max-width:1000px; margin:20px auto; padding:0 10px; }
+section { display:none; }
+section.active { display:block; }
+.card { border:1px solid var(--border-color); padding:15px; margin-bottom:20px; }
+.output, .player-output, .complexity-output { 
+  background:var(--bg-color); border:1px solid var(--border-color);
+  padding:10px; height:250px; overflow-y:auto; white-space:pre-wrap; margin-bottom:10px; 
 }
-
-.input {
-  display: flex;
-  flex-direction: column;
-  gap: 5px;
+input { padding:8px; margin-right:5px; background:var(--bg-color); border:1px solid var(--border-color); color:var(--text-color); outline:none; }
+button.action { background:var(--btn-bg); color:var(--btn-text); border:none; cursor:pointer; padding:8px 12px; }
+img.level-img { max-width:100%; margin-top:10px; border:1px solid var(--border-color); }
+.game-canvas { border:1px solid var(--border-color); width:100%; height:500px; margin-top:10px; }
+.user-login-box { position:fixed; top:50%; left:50%; transform:translate(-50%,-50%);
+  background:var(--bg-color); border:1px solid var(--border-color); padding:20px; display:none;
+  flex-direction:column; gap:10px; z-index:200; width:300px;
 }
-
-input {
-  background: black;
-  border: 1px solid #00ff88;
-  color: #00ff88;
-  padding: 10px;
-  outline: none;
-}
-
-button {
-  background: #00ff88;
-  color: black;
-  border: none;
-  padding: 10px;
-  cursor: pointer;
-}
-
-img {
-  margin-top: 10px;
-  max-width: 100%;
-  border: 1px solid #00ff88;
-}
-
-.footer {
-  margin-top: 15px;
-  text-align: center;
-  font-size: 12px;
-  color: #00ff88;
-}
-
-.footer a {
-  color: #00ff88;
-  text-decoration: underline;
-}
+.user-login-box input { width:100%; }
+.user-login-box button { width:100%; }
+.theme-toggle { margin-left:10px; }
 </style>
 </head>
+<body data-theme="dark">
 
-<body>
-
-<div class="header">
-  <h1>GrabVR Terminal</h1>
-  <span>V1</span>
-</div>
+<header>
+  <div class="logo">GrabVR Suite</div>
+  <nav>
+    <button onclick="showSection('home')">Homepage</button>
+    <button onclick="showSection('tools')">Tools</button>
+    <button onclick="showSection('games')">Games</button>
+    <button class="theme-toggle" onclick="toggleTheme()">Day/Night</button>
+    <button onclick="openLogin()">User Login</button>
+  </nav>
+</header>
 
 <div class="container">
-  <div class="output" id="output"></div>
 
-  <div class="input">
-    <input id="linkInput" placeholder="Enter Grab level link...">
-    <input id="nameInput" placeholder="Enter ANY file name (optional)">
-    <button onclick="run()">EXEC</button>
-  </div>
+<!-- Homepage -->
+<section id="home" class="active">
+  <h2>Welcome to GrabVR Suite</h2>
+  <p>Pakiv Team (Pakker + Ivy) brings you all the best GrabVR tools in one suite.</p>
+  <div class="card"><h3>About Pakiv</h3>
+  <p>We create tools, games, and utilities for GrabVR enthusiasts. Our mission: make GrabVR accessible and fun.</p></div>
+</section>
 
-  <div class="footer">
-    made by ivy • by love from poizonTools team • 
-    <a href="https://discord.gg/G6aNgvM7j9" target="_blank">discord.gg/G6aNgvM7j9</a>
-    <br>© 2026
+<!-- Tools -->
+<section id="tools">
+  <h2>Level Downloader</h2>
+  <div>
+    <input id="levelLink" placeholder="Enter Grab Level Link">
+    <input id="levelName" placeholder="Custom Filename (optional)">
+    <button class="action" onclick="downloadLevel()">Download</button>
   </div>
+  <div class="output" id="levelOutput"></div>
+
+  <h2>Player Lookup</h2>
+  <div>
+    <input id="playerName" placeholder="Enter Player Username">
+    <button class="action" onclick="lookupPlayer()">Search</button>
+  </div>
+  <div class="player-output" id="playerOutput"></div>
+
+  <h2>Level Complexity Analyzer</h2>
+  <div>
+    <input id="complexityLink" placeholder="Enter Level Link">
+    <button class="action" onclick="analyzeComplexity()">Analyze</button>
+  </div>
+  <div class="complexity-output" id="complexityOutput"></div>
+</section>
+
+<!-- Games -->
+<section id="games">
+  <h2>GRABcraft</h2>
+  <p>Play GRABcraft in your browser! Arrow keys to move.</p>
+  <canvas class="game-canvas" id="grabGame"></canvas>
+
+  <h2>Mini-Games</h2>
+  <div class="card">
+    <h3>GrabRunner</h3>
+    <p>Endless runner mini-game coming soon!</p>
+  </div>
+  <div class="card">
+    <h3>GrabPuzzle</h3>
+    <p>Complete Grab puzzles to earn points.</p>
+  </div>
+  <div class="card">
+    <h3>GrabArena</h3>
+    <p>Battle against other players in GrabVR arena mode.</p>
+  </div>
+</section>
+
+<!-- User Login Box -->
+<div class="user-login-box" id="loginBox">
+  <h3>User Login</h3>
+  <input id="loginUsername" placeholder="Enter Username">
+  <input id="loginUserID" placeholder="User ID" readonly>
+  <button id="guessBtn" onclick="guessUserID()">Guess</button>
+  <button id="loginBtn" onclick="loginUser()" style="display:none;">Login</button>
+  <button onclick="closeLogin()">Close</button>
 </div>
 
+<footer>
+made by Ivy • <a href="https://discord.gg/G6aNgvM7j9" target="_blank">Discord</a> • © 2026
+</footer>
+
 <script>
-function log(msg, id=null) {
-  const output = document.getElementById('output');
-  const time = new Date().toLocaleTimeString();
+// Theme toggle
+function toggleTheme() { document.body.dataset.theme = document.body.dataset.theme==='dark'?'light':'dark'; }
+// Menu switching
+function showSection(id) { document.querySelectorAll('section').forEach(s=>s.classList.remove('active')); document.getElementById(id).classList.add('active'); }
 
-  if (id) {
-    const div = document.createElement("div");
-    div.id = id;
-    div.textContent = `[${time}] ${msg}`;
-    output.appendChild(div);
-  } else {
-    output.innerHTML += `[${time}] ${msg}\n`;
-  }
-
-  output.scrollTop = output.scrollHeight;
+// Level downloader
+function logLevel(msg) { const output=document.getElementById('levelOutput'); const time=new Date().toLocaleTimeString(); output.innerHTML+=`[${time}] ${msg}\n`; output.scrollTop=output.scrollHeight;}
+function downloadLevel() {
+  const link=document.getElementById('levelLink').value.trim();
+  let name=document.getElementById('levelName').value.trim();
+  if(!link){logLevel("No input");return;}
+  const urlParts=link.split('level=')[1]?.split(':');
+  if(!urlParts||urlParts.length<2){logLevel("Invalid link");return;}
+  const userID=urlParts[0], timestamp=urlParts[1];
+  if(!name) name=`${timestamp}.level`;
+  const downloadURL=`https://api.slin.dev/grab/v1/download/${userID}/${timestamp}/1/${encodeURIComponent(name)}`;
+  const a=document.createElement('a'); a.href=downloadURL; a.click();
+  logLevel(`Downloading level as "${name}"`);
 }
 
-function updateLog(id, newMsg) {
-  const el = document.getElementById(id);
-  if (el) {
-    const time = new Date().toLocaleTimeString();
-    el.textContent = `[${time}] ${newMsg}`;
-  }
-}
-
-function extractIDs(link) {
+// Player lookup
+async function lookupPlayer() {
+  const player=document.getElementById('playerName').value.trim();
+  const output=document.getElementById('playerOutput'); output.innerHTML='';
+  if(!player){output.innerHTML='No username';return;}
   try {
-    const url = new URL(link);
-    const levelParam = url.searchParams.get('level');
-    if (!levelParam) return null;
-    const parts = levelParam.split(':');
-    if (parts.length < 2) return null;
-    return { userID: parts[0], timestamp: parts[1] };
-  } catch {
-    return null;
-  }
+    const res=await fetch(`https://api.slin.dev/grab/v1/player/${player}`);
+    if(!res.ok)throw new Error();
+    const data=await res.json();
+    output.innerHTML+=`UserID: ${data.userID}\nLevels:\n`;
+    data.levels.forEach(l=>{
+      const btn=document.createElement('button');
+      btn.textContent=`Download ${l.timestamp}`;
+      btn.onclick=()=>{ const url=`https://api.slin.dev/grab/v1/download/${data.userID}/${l.timestamp}/1/${l.timestamp}.level`; const a=document.createElement('a'); a.href=url; a.click();}
+      output.appendChild(btn); output.innerHTML+='\n';
+    });
+  } catch { output.innerHTML='Player not found'; }
 }
 
-async function run() {
-  const input = document.getElementById('linkInput').value.trim();
-  let filename = document.getElementById('nameInput').value.trim();
+// Level complexity analyzer (fake demo)
+function analyzeComplexity(){
+  const link=document.getElementById('complexityLink').value.trim();
+  const output=document.getElementById('complexityOutput'); output.innerHTML='';
+  if(!link){output.innerHTML='No link'; return;}
+  const complexity=Math.floor(Math.random()*10)+1;
+  output.innerHTML=`Complexity Level: ${complexity}/10`;
+}
 
-  if (!input) {
-    log("No input provided");
-    return;
-  }
+// User login
+function openLogin(){document.getElementById('loginBox').style.display='flex';}
+function closeLogin(){document.getElementById('loginBox').style.display='none';}
+async function guessUserID(){
+  const username=document.getElementById('loginUsername').value.trim();
+  if(!username) return;
+  try{
+    const res=await fetch(`https://api.slin.dev/grab/v1/player/${username}`);
+    const data=await res.json();
+    document.getElementById('loginUserID').value=data.userID;
+    document.getElementById('guessBtn').style.display='none';
+    document.getElementById('loginBtn').style.display='block';
+  }catch{alert("Could not find user ID");}
+}
+function loginUser(){
+  const username=document.getElementById('loginUsername').value.trim();
+  const userID=document.getElementById('loginUserID').value.trim();
+  if(!username||!userID) return;
+  localStorage.setItem('grabvrUser', JSON.stringify({username,userID}));
+  alert(`Logged in as ${username}`);
+  closeLogin();
+}
 
-  log("Parsing input...");
-  const ids = extractIDs(input);
+// load logged-in user
+window.onload=()=>{
+  const saved=localStorage.getItem('grabvrUser');
+  if(saved){const user=JSON.parse(saved); console.log("Logged in as", user.username);}
+}
 
-  if (!ids) {
-    log("Failed to extract level ID");
-    return;
-  }
-
-  const { userID, timestamp } = ids;
-  log(`User ID: ${userID}`);
-  log(`Level Timestamp: ${timestamp}`);
-
-  // default name
-  if (!filename) {
-    filename = `${timestamp}.level`;
-  }
-
-  // prevent breaking URL only
-  filename = filename.replace(/\//g, "_");
-
-  // ensure extension
-  if (!filename.endsWith(".level")) {
-    filename += ".level";
-  }
-
-  log(`Selected filename: ${filename}`);
-  log("Fetching Private API..");
-
-  const encodedName = encodeURIComponent(filename);
-  const downloadURL = `https://api.slin.dev/grab/v1/download/${userID}/${timestamp}/1/${encodedName}`;
-
-  const a = document.createElement('a');
-  a.href = downloadURL;
-  a.click();
-
-  log("Download started");
-
-  try {
-    const infoURL = `https://api.slin.dev/grab/v1/level/${userID}:${timestamp}`;
-    const res = await fetch(infoURL);
-    if (!res.ok) throw new Error();
-
-    const data = await res.json();
-    const name = data.name || "unknown_level";
-    const image = data.image || "";
-
-    log(`Level Name: ${name}`);
-    log("Checking version...", "versionLine");
-    updateLog("versionLine", `Resolved filename: ${filename}`);
-
-    if (image) {
-      const img = document.createElement("img");
-      img.src = image;
-      document.getElementById('output').appendChild(img);
-    }
-
-  } catch {
-    log("Failed to fetch level info (download already started)");
-  }
+// GRABcraft
+const canvas=document.getElementById('grabGame');
+if(canvas){
+  const ctx=canvas.getContext('2d');
+  let x=50,y=50;
+  document.addEventListener('keydown', e=>{
+    if(e.key==='ArrowUp') y-=5;
+    if(e.key==='ArrowDown') y+=5;
+    if(e.key==='ArrowLeft') x-=5;
+    if(e.key==='ArrowRight') x+=5;
+  });
+  function gameLoop(){ctx.clearRect(0,0,canvas.width,canvas.height); ctx.fillStyle='green'; ctx.fillRect(x,y,20,20); requestAnimationFrame(gameLoop);}
+  gameLoop();
 }
 </script>
-
 </body>
 </html>
