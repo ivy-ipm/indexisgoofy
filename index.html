@@ -13,14 +13,28 @@ body {
   font-family: monospace;
   display: flex;
   flex-direction: column;
-  justify-content: center;
   align-items: center;
-  height: 100vh;
+}
+
+.header {
+  text-align: center;
+  margin-top: 20px;
+}
+
+.header h1 {
+  margin: 0;
+  font-size: 28px;
+}
+
+.header span {
+  font-size: 12px;
+  opacity: 0.7;
 }
 
 .container {
   width: 600px;
   max-width: 95%;
+  margin-top: 20px;
 }
 
 .output {
@@ -76,6 +90,11 @@ img {
 
 <body>
 
+<div class="header">
+  <h1>GrabVR Terminal</h1>
+  <span>V1</span>
+</div>
+
 <div class="container">
   <div class="output" id="output"></div>
 
@@ -112,11 +131,6 @@ function extractIDs(link) {
   }
 }
 
-const encodedAPI = "aHR0cHM6Ly9hcGkuc2xpbi5kZXYvZ3JhYi92MQ==";
-function getAPI() {
-  return atob(encodedAPI);
-}
-
 async function run() {
   const input = document.getElementById('linkInput').value.trim();
 
@@ -140,10 +154,8 @@ async function run() {
   log("Fetching Private API..");
 
   try {
-    const apiBase = getAPI();
-
-    const infoURL = `${apiBase}/level/${userID}:${timestamp}`;
-    const downloadURL = `${apiBase}/download/${userID}/${timestamp}`;
+    const infoURL = `https://api.slin.dev/grab/v1/level/${userID}:${timestamp}`;
+    const downloadURL = `https://api.slin.dev/grab/v1/download/${userID}/${timestamp}/1`;
 
     const res = await fetch(infoURL);
     if (!res.ok) throw new Error();
@@ -154,6 +166,12 @@ async function run() {
     const image = data.image || "";
 
     log(`Level Name: ${name}`);
+    log("Resolving version: 1");
+
+    setTimeout(() => {
+      log(`Resolved filename: ${timestamp}.level`);
+    }, 400);
+
     log("Preparing download...");
 
     if (image) {
@@ -164,7 +182,7 @@ async function run() {
 
     const a = document.createElement('a');
     a.href = downloadURL;
-    a.download = `${name.replace(/\s/g,'_')}-${timestamp}.level`;
+    a.download = `${timestamp}.level`;
     a.click();
 
     log("Download started");
