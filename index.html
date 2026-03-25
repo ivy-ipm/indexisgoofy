@@ -6,7 +6,6 @@
 <title>GrabVR Suite</title>
 <style>
 @import url('https://fonts.googleapis.com/css2?family=Courier+Prime&display=swap');
-
 body {
   margin: 0;
   font-family: 'Courier Prime', monospace;
@@ -16,12 +15,10 @@ body {
   flex-direction: column;
   align-items: center;
 }
-
 body.night {
   background: linear-gradient(to bottom, #000000 0%, #333333 50%, #000000 100%);
   color: #fff;
 }
-
 header {
   display: flex;
   justify-content: space-between;
@@ -32,150 +29,27 @@ header {
   top: 0;
   z-index: 100;
 }
-
-header div {
-  font-weight: bold;
-  font-size: 24px;
-}
-
-nav {
-  display: flex;
-  gap: 15px;
-}
-
-nav button {
-  cursor: pointer;
-  padding: 8px 0;
-  border: none;
-  background: transparent;
-  color: inherit;
-  font-weight: bold;
-  font-size: 16px;
-  transition: 0.2s;
-}
-
-nav button:hover {
-  text-decoration: underline;
-}
-
-#container {
-  max-width: 900px;
-  width: 95%;
-  margin: 25px auto;
-}
-
-section {
-  display: none;
-  margin-top: 20px;
-}
-
-section.active {
-  display: block;
-}
-
-#toolBox {
-  border: 1px solid #0077cc;
-  border-radius: 10px;
-  padding: 20px;
-  min-height: 300px;
-  margin-top: 20px;
-  background: #fff;
-  color: #000;
-}
-
-body.night #toolBox {
-  background: #222;
-  color: #fff;
-  border-color: #555;
-}
-
-input {
-  width: 100%;
-  padding: 10px;
-  margin-bottom: 10px;
-  border-radius: 6px;
-  border: 1px solid #0077cc;
-  font-size: 14px;
-}
-
-button.action {
-  padding: 10px 15px;
-  cursor: pointer;
-  border-radius: 6px;
-  border: 1px solid #0077cc;
-  background: transparent;
-  color: inherit;
-  font-weight: bold;
-}
-
-button.action:hover {
-  text-decoration: underline;
-}
-
-canvas {
-  width: 100%;
-  height: 300px;
-  background: #e0e0e0;
-  border-radius: 8px;
-  margin-top: 10px;
-}
-
-#loginBox {
-  position: fixed;
-  top: 50%;
-  left: 50%;
-  transform: translate(-50%,-50%);
-  background: #fff;
-  color: #000;
-  border: 1px solid #0077cc;
-  padding: 20px;
-  display: none;
-  flex-direction: column;
-  border-radius: 10px;
-  z-index: 200;
-  min-width: 280px;
-}
-
-body.night #loginBox {
-  background: #222;
-  color: #fff;
-  border-color: #555;
-}
-
-#loginBox input {
-  margin-bottom: 10px;
-}
-
-#loginBox button {
-  margin-top: 5px;
-}
-
-footer {
-  text-align: center;
-  margin-top: 25px;
-  font-size: 12px;
-}
-
-footer a {
-  color: inherit;
-  text-decoration: underline;
-}
-
-#themeToggle {
-  position: fixed;
-  bottom: 10px;
-  right: 10px;
-  padding: 6px 10px;
-  cursor: pointer;
-  border: 1px solid #0077cc;
-  border-radius: 5px;
-  background: transparent;
-  color: inherit;
-}
-@media(max-width:600px){
-  header{flex-direction:column;align-items:flex-start}
-  nav{margin-top:8px;flex-wrap:wrap}
-}
+header div { font-weight: bold; font-size: 24px; }
+nav { display: flex; gap: 15px; }
+nav button { cursor: pointer; padding: 8px 0; border: none; background: transparent; color: inherit; font-weight: bold; font-size: 16px; }
+nav button:hover { text-decoration: underline; }
+#container { max-width: 900px; width: 95%; margin: 25px auto; }
+section { display: none; margin-top: 20px; }
+section.active { display: block; }
+#toolBox { border: 1px solid #0077cc; border-radius: 10px; padding: 20px; min-height: 300px; margin-top: 20px; background: #fff; color: #000; }
+body.night #toolBox { background: #222; color: #fff; border-color: #555; }
+input { width: 100%; padding: 10px; margin-bottom: 10px; border-radius: 6px; border: 1px solid #0077cc; font-size: 14px; }
+button.action { padding: 10px 15px; cursor: pointer; border-radius: 6px; border: 1px solid #0077cc; background: transparent; color: inherit; font-weight: bold; }
+button.action:hover { text-decoration: underline; }
+canvas { width: 100%; height: 300px; background: #e0e0e0; border-radius: 8px; margin-top: 10px; }
+#loginBox { position: fixed; top: 50%; left: 50%; transform: translate(-50%,-50%); background: #fff; color: #000; border: 1px solid #0077cc; padding: 20px; display: none; flex-direction: column; border-radius: 10px; z-index: 200; min-width: 280px; }
+body.night #loginBox { background: #222; color: #fff; border-color: #555; }
+#loginBox input { margin-bottom: 10px; }
+#loginBox button { margin-top: 5px; }
+footer { text-align: center; margin-top: 25px; font-size: 12px; }
+footer a { color: inherit; text-decoration: underline; }
+#themeToggle { position: fixed; bottom: 10px; right: 10px; padding: 6px 10px; cursor: pointer; border: 1px solid #0077cc; border-radius: 5px; background: transparent; color: inherit; }
+@media(max-width:600px){ header{flex-direction:column;align-items:flex-start} nav{margin-top:8px;flex-wrap:wrap} }
 </style>
 </head>
 <body>
@@ -210,7 +84,7 @@ footer a {
 <button id="themeToggle">Night</button>
 
 <script>
-(() => {
+window.addEventListener('DOMContentLoaded', ()=>{
 const container=document.getElementById('container');
 const sections={};
 
@@ -257,12 +131,8 @@ function showTool(tool){
       <div id="downloadOutput"></div>`;
       document.getElementById('downloadBtn').onclick=downloadLevel;
       break;
-    case 'Player Lookup':
-      toolBox.innerHTML=`<h3>Player Lookup (Placeholder)</h3><p>Coming soon...</p>`;break;
-    case 'OBJ→SGM Converter':
-      toolBox.innerHTML=`<h3>OBJ→SGM Converter (Placeholder)</h3><p>Coming soon...</p>`;break;
-    case 'Image→3D Map':
-      toolBox.innerHTML=`<h3>Image→3D Map (Placeholder)</h3><p>Coming soon...</p>`;break;
+    default:
+      toolBox.innerHTML='<p>Coming soon...</p>';
   }
 }
 
@@ -281,7 +151,7 @@ document.getElementById('themeToggle').onclick=()=>{
   document.body.classList.toggle('night');
   document.getElementById('themeToggle').textContent=document.body.classList.contains('night')?'Day':'Night';
 }
-})();
+});
 </script>
 </body>
 </html>
