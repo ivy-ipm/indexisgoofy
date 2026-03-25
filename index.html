@@ -6,64 +6,68 @@
 <title>GrabVR Suite</title>
 <style>
 @import url('https://fonts.googleapis.com/css2?family=Courier+Prime&display=swap');
-body {
-  margin: 0;
-  font-family: 'Courier Prime', monospace;
-  background: linear-gradient(to bottom, #b3d9ff 0%, #ffffff 50%, #b3d9ff 100%);
-  color: #000;
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-}
-body.night {
-  background: linear-gradient(to bottom, #000000 0%, #333333 50%, #000000 100%);
-  color: #fff;
-}
-header {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  padding: 12px 25px;
-  width: 100%;
-  position: sticky;
-  top: 0;
-  z-index: 100;
-}
-header div { font-weight: bold; font-size: 24px; }
-nav { display: flex; gap: 15px; }
-nav button { cursor: pointer; padding: 8px 0; border: none; background: transparent; color: inherit; font-weight: bold; font-size: 16px; }
-nav button:hover { text-decoration: underline; }
-#container { max-width: 900px; width: 95%; margin: 25px auto; }
-section { display: none; margin-top: 20px; }
-section.active { display: block; }
-#toolBox { border: 1px solid #0077cc; border-radius: 10px; padding: 20px; min-height: 300px; margin-top: 20px; background: #fff; color: #000; }
-body.night #toolBox { background: #222; color: #fff; border-color: #555; }
-input { width: 100%; padding: 10px; margin-bottom: 10px; border-radius: 6px; border: 1px solid #0077cc; font-size: 14px; }
-button.action { padding: 10px 15px; cursor: pointer; border-radius: 6px; border: 1px solid #0077cc; background: transparent; color: inherit; font-weight: bold; }
-button.action:hover { text-decoration: underline; }
-canvas { width: 100%; height: 300px; background: #e0e0e0; border-radius: 8px; margin-top: 10px; }
-#loginBox { position: fixed; top: 50%; left: 50%; transform: translate(-50%,-50%); background: #fff; color: #000; border: 1px solid #0077cc; padding: 20px; display: none; flex-direction: column; border-radius: 10px; z-index: 200; min-width: 280px; }
-body.night #loginBox { background: #222; color: #fff; border-color: #555; }
-#loginBox input { margin-bottom: 10px; }
-#loginBox button { margin-top: 5px; }
-footer { text-align: center; margin-top: 25px; font-size: 12px; }
-footer a { color: inherit; text-decoration: underline; }
-#themeToggle { position: fixed; bottom: 10px; right: 10px; padding: 6px 10px; cursor: pointer; border: 1px solid #0077cc; border-radius: 5px; background: transparent; color: inherit; }
+body { margin:0; font-family:'Courier Prime', monospace; background: linear-gradient(to bottom, #b3d9ff 0%, #fff 50%, #b3d9ff 100%); color:#000; }
+body.night { background: linear-gradient(to bottom, #000 0%, #333 50%, #000 100%); color:#fff; }
+header { display:flex; justify-content:space-between; align-items:center; padding:12px 25px; position:sticky; top:0; z-index:100; }
+header div{ font-weight:bold; font-size:24px; }
+nav{ display:flex; gap:15px; }
+nav button{ cursor:pointer; padding:8px 0; border:none; background:transparent; color:inherit; font-weight:bold; font-size:16px; }
+nav button:hover{ text-decoration:underline; }
+#container{ max-width:900px; width:95%; margin:25px auto; }
+section{ display:none; margin-top:20px; }
+section.active{ display:block; }
+#toolBox{ border:1px solid #0077cc; border-radius:10px; padding:20px; min-height:300px; background:#fff; color:#000; }
+body.night #toolBox{ background:#222; color:#fff; border-color:#555; }
+input{ width:100%; padding:10px; margin-bottom:10px; border-radius:6px; border:1px solid #0077cc; font-size:14px; }
+button.action{ padding:10px 15px; cursor:pointer; border-radius:6px; border:1px solid #0077cc; background:transparent; color:inherit; font-weight:bold; }
+button.action:hover{ text-decoration:underline; }
+footer{ text-align:center; margin-top:25px; font-size:12px; }
+footer a{ color:inherit; text-decoration:underline; }
+#themeToggle{ position:fixed; bottom:10px; right:10px; padding:6px 10px; cursor:pointer; border:1px solid #0077cc; border-radius:5px; background:transparent; color:inherit; }
+#loginBox{ position:fixed; top:50%; left:50%; transform:translate(-50%,-50%); background:#fff; color:#000; border:1px solid #0077cc; padding:20px; display:none; flex-direction:column; border-radius:10px; min-width:280px; z-index:200; }
+body.night #loginBox{ background:#222; color:#fff; border-color:#555; }
+#loginBox input{ margin-bottom:10px; }
+#loginBox button{ margin-top:5px; }
+canvas{ width:100%; height:300px; background:#e0e0e0; border-radius:8px; margin-top:10px; }
 @media(max-width:600px){ header{flex-direction:column;align-items:flex-start} nav{margin-top:8px;flex-wrap:wrap} }
 </style>
 </head>
 <body>
+
 <header>
   <div>GrabVR Suite</div>
   <nav>
-    <button id="nav_homepage">Homepage</button>
-    <button id="nav_tools">Tools</button>
-    <button id="nav_games">Games</button>
-    <button id="nav_login">User Login</button>
+    <button onclick="showSection('homepage')">Homepage</button>
+    <button onclick="showSection('tools')">Tools</button>
+    <button onclick="showSection('games')">Games</button>
+    <button onclick="document.getElementById('loginBox').style.display='flex'">User Login</button>
   </nav>
 </header>
 
-<div id="container"></div>
+<div id="container">
+  <section id="homepage" class="active">
+    <h2>Welcome to GrabVR Suite</h2>
+    <p>Created by <strong>Pakiv Team</strong> (Pakker + Ivy). Explore all-in-one tools for GrabVR: download levels, analyze complexity, convert OBJ or images to GrabVR levels, play GRABcraft, and manage your account easily. Every tool is designed to enhance your GrabVR experience with simplicity and fun. Useless tools like complexity analyzer and pixel art generator are also here for fun, while real tools like OBJ→SGM converter and Image→3D Map provide actual level creation power.</p>
+    <div id="jsStatus">JS running ✅</div>
+  </section>
+
+  <section id="tools">
+    <div style="display:flex; gap:10px; flex-wrap:wrap; margin-bottom:15px;">
+      <button onclick="showTool('Level Downloader')">Level Downloader</button>
+      <button onclick="showTool('Player Lookup')">Player Lookup</button>
+      <button onclick="showTool('OBJ→SGM Converter')">OBJ→SGM Converter</button>
+      <button onclick="showTool('Image→3D Map')">Image→3D Map</button>
+      <button onclick="showTool('Pixel Art Level')">Pixel Art Level</button>
+      <button onclick="showTool('Grab Complexity Analyzer')">Grab Complexity Analyzer</button>
+    </div>
+    <div id="toolBox">Select a tool above to start.</div>
+  </section>
+
+  <section id="games">
+    <h3>GRABcraft</h3>
+    <canvas id="gameCanvas"></canvas>
+  </section>
+</div>
 
 <div id="loginBox">
   <h3>User Login</h3>
@@ -72,67 +76,40 @@ footer a { color: inherit; text-decoration: underline; }
   <input id="loginUserID" placeholder="User ID" readonly>
   <button id="guessBtn">Guess</button>
   <button id="loginBtn" style="display:none">Login</button>
-  <button id="closeLogin">Close</button>
+  <button onclick="document.getElementById('loginBox').style.display='none'">Close</button>
 </div>
 
 <footer>
   made by ivy • by love from poizonTools team • 
-  <a href="https://discord.gg/G6aNgvM7j9" target="_blank">discord.gg/G6aNgvM7j9</a><br>
-  © 2026
+  <a href="https://discord.gg/G6aNgvM7j9" target="_blank">discord.gg/G6aNgvM7j9</a><br>© 2026
 </footer>
 
 <button id="themeToggle">Night</button>
 
 <script>
-window.addEventListener('DOMContentLoaded', ()=>{
-const container=document.getElementById('container');
-const sections={};
-
 function showSection(id){
-  Object.values(sections).forEach(s=>s.classList.remove('active'));
-  if(sections[id])sections[id].classList.add('active');
+  document.querySelectorAll('section').forEach(s=>s.classList.remove('active'));
+  document.getElementById(id).classList.add('active');
 }
 
-document.getElementById('nav_homepage').onclick=()=>showSection('homepage');
-document.getElementById('nav_tools').onclick=()=>showSection('tools');
-document.getElementById('nav_games').onclick=()=>showSection('games');
-document.getElementById('nav_login').onclick=()=>document.getElementById('loginBox').style.display='flex';
-
-const home=document.createElement('section');
-home.id='homepage';
-home.classList.add('active');
-home.innerHTML=`
-<h2>Welcome to GrabVR Suite</h2>
-<p>Created by <strong>Pakiv Team</strong> (Pakker + Ivy). Explore all-in-one tools for GrabVR: download levels, analyze complexity, convert OBJ or images to GrabVR levels, play GRABcraft, and manage your account easily. Every tool is designed to enhance your GrabVR experience with simplicity and fun.</p>
-<div id="jsStatus">JS running ✅</div>`;
-container.appendChild(home);sections['homepage']=home;
-
-const tools=document.createElement('section');tools.id='tools';
-const toolButtons=document.createElement('div');toolButtons.style.display='flex';toolButtons.style.flexWrap='wrap';toolButtons.style.gap='10px';
-const toolBox=document.createElement('div');toolBox.id='toolBox';toolBox.textContent='Select a tool above to start.';
-['Level Downloader','Player Lookup','OBJ→SGM Converter','Image→3D Map'].forEach(tool=>{
-  const btn=document.createElement('button');
-  btn.textContent=tool;
-  btn.style.flex='1 1 180px';
-  btn.onclick=()=>showTool(tool);
-  toolButtons.appendChild(btn);
-});
-tools.appendChild(toolButtons);tools.appendChild(toolBox);container.appendChild(tools);sections['tools']=tools;
-
 function showTool(tool){
-  toolBox.innerHTML='';
+  const box=document.getElementById('toolBox');
+  box.innerHTML='';
   switch(tool){
     case 'Level Downloader':
-      toolBox.innerHTML=`
-      <h3>Level Downloader</h3>
+      box.innerHTML=`<h3>Level Downloader</h3>
       <input id="levelLink" placeholder="Enter Grab level link">
       <input id="levelName" placeholder="Optional: File Name">
-      <button class="action" id="downloadBtn">Download</button>
+      <button class="action" onclick="downloadLevel()">Download</button>
       <div id="downloadOutput"></div>`;
-      document.getElementById('downloadBtn').onclick=downloadLevel;
       break;
-    default:
-      toolBox.innerHTML='<p>Coming soon...</p>';
+    case 'Player Lookup':
+    case 'OBJ→SGM Converter':
+    case 'Image→3D Map':
+    case 'Pixel Art Level':
+    case 'Grab Complexity Analyzer':
+      box.innerHTML='<p>This tool will be available soon...</p>';
+      break;
   }
 }
 
@@ -150,8 +127,7 @@ function downloadLevel(){
 document.getElementById('themeToggle').onclick=()=>{
   document.body.classList.toggle('night');
   document.getElementById('themeToggle').textContent=document.body.classList.contains('night')?'Day':'Night';
-}
-});
+};
 </script>
 </body>
 </html>
