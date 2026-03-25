@@ -53,7 +53,7 @@ body.night #gameCanvas{background:#111;}
 <main>
 <section id="homepage" class="active">
 <h1>Welcome to GrabVR Suite</h1>
-<p>Created by the Pakiv team, a collaboration between Pakker and Ivy. GrabVR Suite is the ultimate GrabVR toolkit — manage levels, convert assets, analyze content, explore GRABcraft, and unlock your full potential. Our tools are designed to empower creators and players alike, whether you want to download levels, check other players' content, or generate innovative 3D maps. Dive in and experience the full suite.</p>
+<p>Created by the Pakiv team, a collaboration between Pakker and Ivy. GrabVR Suite is the ultimate GrabVR toolkit — manage levels, convert assets, analyze content, and unlock your full potential. Our tools are designed to empower creators and players alike, whether you want to download levels, check other players' content, or generate innovative 3D maps. Dive in and experience the full suite.</p>
 </section>
 <section id="tools">
 <div id="toolButtons"></div>
@@ -80,6 +80,88 @@ body.night #gameCanvas{background:#111;}
 made by ivy • by love from poizonTools team • 
 <a href="https://discord.gg/G6aNgvM7j9" target="_blank">discord.gg/G6aNgvM7j9</a><br>© 2026
 </footer>
-<script src="main.js"></script>
+
+<script>
+const sections={homepage:document.getElementById('homepage'),tools:document.getElementById('tools'),games:document.getElementById('games')};
+const navHome=document.getElementById('navHome');
+const navTools=document.getElementById('navTools');
+const navGames=document.getElementById('navGames');
+const loginTopBtn=document.getElementById('loginTopBtn');
+const loginBox=document.getElementById('loginBox');
+const closeLogin=document.querySelector('.closeLogin');
+const guessBtn=document.getElementById('guessBtn');
+const loginBtn=document.getElementById('loginBtn');
+const loginUsername=document.getElementById('loginUsername');
+const loginUserID=document.getElementById('loginUserID');
+const levelURL=document.getElementById('levelURL');
+const profileMenu=document.getElementById('profileMenu');
+const logoutBtn=document.getElementById('logoutBtn');
+const toolButtons=document.getElementById('toolButtons');
+const toolBox=document.getElementById('toolBox');
+const themeToggle=document.getElementById('themeToggle');
+let isNight=false;
+let userLoggedIn=false;
+
+function showSection(name){Object.keys(sections).forEach(s=>sections[s].classList.remove('active'));if(sections[name]) sections[name].classList.add('active');}
+navHome.addEventListener('click',()=>showSection('homepage'));
+navTools.addEventListener('click',()=>showSection('tools'));
+navGames.addEventListener('click',()=>showSection('games'));
+
+loginTopBtn.addEventListener('click',()=>loginBox.style.display='flex');
+closeLogin.addEventListener('click',()=>loginBox.style.display='none');
+
+guessBtn.addEventListener('click',()=>{
+    const link=levelURL.value.trim();
+    if(!link)return alert('Enter a level link');
+    try{
+        const url=new URL(link);
+        const parts=url.pathname.split('/');
+        loginUserID.value=parts[parts.length-2]||'';
+        loginBtn.style.display='block';
+        guessBtn.style.display='none';
+    }catch(e){alert('Invalid URL');}
+});
+
+loginBtn.addEventListener('click',()=>{
+    if(!loginUsername.value||!loginUserID.value)return alert('Enter username and UserID');
+    userLoggedIn=true;
+    loginBox.style.display='none';
+    alert('Logged in as '+loginUsername.value);
+});
+
+logoutBtn.addEventListener('click',()=>{
+    userLoggedIn=false;
+    loginUsername.value='';
+    loginUserID.value='';
+    profileMenu.style.display='none';
+    alert('Logged out');
+});
+
+document.body.addEventListener('click',(e)=>{
+    if(e.target.id==='loginTopBtn' && userLoggedIn)profileMenu.style.display='flex';
+});
+
+themeToggle.addEventListener('click',()=>{
+    document.body.classList.toggle('night');
+    isNight=!isNight;
+    themeToggle.textContent=isNight?'☀':'🌙';
+});
+
+const toolsList=[
+    {name:'Download Level',desc:'Download a Grab level using its URL',func:()=>{toolBox.innerHTML='<p>Download Level Tool Loaded</p>';}},
+    {name:'OBJ to SGM',desc:'Convert OBJ file to SGM format',func:()=>{toolBox.innerHTML='<p>OBJ to SGM Tool Loaded</p>';}},
+    {name:'Image to Pixel Art',desc:'Convert image to Grab pixel art level (useless tool)',func:()=>{toolBox.innerHTML='<p>Image to Pixel Art Tool Loaded</p>';}},
+    {name:'Image to 3D Map',desc:'Convert image to 3D map using AI',func:()=>{toolBox.innerHTML='<p>Image to 3D Map Tool Loaded</p>';}},
+    {name:'Player Lookup',desc:'Lookup player levels (useless tool)',func:()=>{toolBox.innerHTML='<p>Player Lookup Tool Loaded</p>';}},
+    {name:'Level Complexity Analyzer',desc:'Analyze level complexity (useless tool)',func:()=>{toolBox.innerHTML='<p>Level Complexity Analyzer Loaded</p>';}}
+];
+
+toolsList.forEach(tool=>{
+    const btn=document.createElement('button');
+    btn.textContent=tool.name;
+    btn.addEventListener('click',tool.func);
+    toolButtons.appendChild(btn);
+});
+</script>
 </body>
 </html>
