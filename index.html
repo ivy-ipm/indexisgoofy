@@ -82,6 +82,7 @@ made by ivy • by love from poizonTools team •
 </footer>
 
 <script>
+document.addEventListener('DOMContentLoaded',()=>{
 const sections={homepage:document.getElementById('homepage'),tools:document.getElementById('tools'),games:document.getElementById('games')};
 const navHome=document.getElementById('navHome');
 const navTools=document.getElementById('navTools');
@@ -101,15 +102,12 @@ const toolBox=document.getElementById('toolBox');
 const themeToggle=document.getElementById('themeToggle');
 let isNight=false;
 let userLoggedIn=false;
-
 function showSection(name){Object.keys(sections).forEach(s=>sections[s].classList.remove('active'));if(sections[name]) sections[name].classList.add('active');}
 navHome.addEventListener('click',()=>showSection('homepage'));
 navTools.addEventListener('click',()=>showSection('tools'));
 navGames.addEventListener('click',()=>showSection('games'));
-
 loginTopBtn.addEventListener('click',()=>loginBox.style.display='flex');
 closeLogin.addEventListener('click',()=>loginBox.style.display='none');
-
 guessBtn.addEventListener('click',()=>{
     const link=levelURL.value.trim();
     if(!link)return alert('Enter a level link');
@@ -121,14 +119,12 @@ guessBtn.addEventListener('click',()=>{
         guessBtn.style.display='none';
     }catch(e){alert('Invalid URL');}
 });
-
 loginBtn.addEventListener('click',()=>{
     if(!loginUsername.value||!loginUserID.value)return alert('Enter username and UserID');
     userLoggedIn=true;
     loginBox.style.display='none';
     alert('Logged in as '+loginUsername.value);
 });
-
 logoutBtn.addEventListener('click',()=>{
     userLoggedIn=false;
     loginUsername.value='';
@@ -136,31 +132,28 @@ logoutBtn.addEventListener('click',()=>{
     profileMenu.style.display='none';
     alert('Logged out');
 });
-
 document.body.addEventListener('click',(e)=>{
     if(e.target.id==='loginTopBtn' && userLoggedIn)profileMenu.style.display='flex';
 });
-
 themeToggle.addEventListener('click',()=>{
     document.body.classList.toggle('night');
     isNight=!isNight;
     themeToggle.textContent=isNight?'☀':'🌙';
 });
-
 const toolsList=[
-    {name:'Download Level',desc:'Download a Grab level using its URL',func:()=>{toolBox.innerHTML='<p>Download Level Tool Loaded</p>';}},
-    {name:'OBJ to SGM',desc:'Convert OBJ file to SGM format',func:()=>{toolBox.innerHTML='<p>OBJ to SGM Tool Loaded</p>';}},
-    {name:'Image to Pixel Art',desc:'Convert image to Grab pixel art level (useless tool)',func:()=>{toolBox.innerHTML='<p>Image to Pixel Art Tool Loaded</p>';}},
-    {name:'Image to 3D Map',desc:'Convert image to 3D map using AI',func:()=>{toolBox.innerHTML='<p>Image to 3D Map Tool Loaded</p>';}},
-    {name:'Player Lookup',desc:'Lookup player levels (useless tool)',func:()=>{toolBox.innerHTML='<p>Player Lookup Tool Loaded</p>';}},
-    {name:'Level Complexity Analyzer',desc:'Analyze level complexity (useless tool)',func:()=>{toolBox.innerHTML='<p>Level Complexity Analyzer Loaded</p>';}}
+    {name:'Download Level',func:()=>{toolBox.innerHTML='<p>Download Level Tool Loaded</p>';}},
+    {name:'OBJ to SGM',func:()=>{toolBox.innerHTML='<p>OBJ to SGM Tool Loaded</p>';}},
+    {name:'Image to Pixel Art',func:()=>{toolBox.innerHTML='<p>Image to Pixel Art Tool Loaded</p>';}},
+    {name:'Image to 3D Map',func:()=>{toolBox.innerHTML='<p>Image to 3D Map Tool Loaded</p>';}},
+    {name:'Player Lookup',func:()=>{toolBox.innerHTML='<p>Player Lookup Tool Loaded</p>';}},
+    {name:'Level Complexity Analyzer',func:()=>{toolBox.innerHTML='<p>Level Complexity Analyzer Loaded</p>';}}
 ];
-
 toolsList.forEach(tool=>{
     const btn=document.createElement('button');
     btn.textContent=tool.name;
     btn.addEventListener('click',tool.func);
     toolButtons.appendChild(btn);
+});
 });
 </script>
 </body>
