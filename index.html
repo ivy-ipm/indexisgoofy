@@ -17,40 +17,31 @@
     <button id="navLogin">User Login</button>
   </nav>
 </header>
-
 <main>
   <section id="homepage" class="active">
     <h1>Welcome to GrabVR Suite</h1>
-    <p>Created by the <strong>Pakiv</strong> team (Pakker + Ivy). Explore GrabVR tools, games, and utilities all in one place.</p>
+    <p>Created by the Pakiv team (Pakker + Ivy). Explore GrabVR tools, games, and utilities all in one place. Use our tools to download levels, analyze them, or generate 3D maps from images. This suite is designed for maximum functionality while being easy to use.</p>
   </section>
-
   <section id="tools">
     <div id="toolButtons"></div>
     <div id="toolBox"></div>
   </section>
-
   <section id="games">
-    <h2>GRABcraft</h2>
-    <canvas id="gameCanvas" width="600" height="400" style="border:1px solid #ccc;"></canvas>
+    <canvas id="gameCanvas" width="600" height="400"></canvas>
   </section>
 </main>
-
-<div id="loginBox" style="display:none;position:fixed;top:50%;left:50%;transform:translate(-50%,-50%);background:#fff;padding:20px;box-shadow:0 0 15px rgba(0,0,0,0.2);z-index:200;">
+<div id="loginBox">
   <h3>User Login</h3>
   <input id="loginUsername" placeholder="Enter username">
   <input id="loginUserID" placeholder="User ID" readonly>
   <button id="guessBtn">Guess</button>
-  <button id="loginBtn" style="display:none;">Login</button>
+  <button id="loginBtn">Login</button>
   <button onclick="document.getElementById('loginBox').style.display='none'">Close</button>
 </div>
-
-<button id="themeToggle" style="position:fixed;bottom:20px;right:20px;padding:8px 12px;cursor:pointer;">Night</button>
-
+<button id="themeToggle">Night</button>
 <footer>
-  made by ivy • by love from poizonTools team • <a href="https://discord.gg/G6aNgvM7j9" target="_blank">discord.gg/G6aNgvM7j9</a><br>
-  © 2026
+  made by ivy • by love from poizonTools team • <a href="https://discord.gg/G6aNgvM7j9" target="_blank">discord.gg/G6aNgvM7j9</a><br>© 2026
 </footer>
-
 <script src="main.js"></script>
 </body>
 </html>
