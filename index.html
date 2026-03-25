@@ -8,29 +8,34 @@
 <style>
 html,body{margin:0;padding:0;font-family:'Poppins',sans-serif;height:100%;width:100%;transition:background 0.5s,color 0.5s;}
 body{background:linear-gradient(to bottom,#b3e5fc 0%,#ffffff 50%,#b3e5fc 100%);color:#000;overflow-x:hidden;}
-body.night{background:linear-gradient(to bottom,#000000 0%,#333333 50%,#000000 100%);color:#fff;}
-header{position:fixed;top:0;left:0;width:100%;display:flex;align-items:center;justify-content:space-between;padding:15px 30px;background:transparent;z-index:10;}
-nav{display:flex;justify-content:center;width:100%;}
+body.night{background:linear-gradient(to bottom,#000 0%,#333 50%,#000 100%);color:#fff;}
+header{position:fixed;top:0;left:0;width:100%;display:flex;align-items:center;justify-content:center;padding:15px 0;background:transparent;z-index:10;flex-direction:column;}
+nav{display:flex;justify-content:center;width:100%;margin-bottom:10px;}
 nav button{background:transparent;border:none;margin:0 10px;font-size:16px;font-weight:600;cursor:pointer;transition:color 0.3s;}
 nav button:hover{color:#0288d1;}
-#loginTopBtn{display:block;margin:10px auto;padding:8px 20px;font-weight:600;border:2px solid #0288d1;background:transparent;cursor:pointer;transition:all 0.3s;}
+#loginTopBtn{display:block;margin:0 auto;padding:8px 20px;font-weight:600;border:2px solid #0288d1;background:transparent;cursor:pointer;transition:all 0.3s;border-radius:6px;}
 #loginTopBtn:hover{background:#0288d1;color:#fff;}
 main{padding-top:120px;max-width:1000px;margin:0 auto;}
-section{display:none;padding:20px 0;}
+section{display:none;padding:20px;}
 section.active{display:block;}
 #toolButtons{display:flex;flex-wrap:wrap;gap:12px;margin-bottom:20px;justify-content:center;}
-#toolButtons button{padding:12px 20px;border:2px solid #0288d1;background:transparent;font-weight:600;cursor:pointer;transition:all 0.3s;}
+#toolButtons button{padding:12px 20px;border:2px solid #0288d1;background:transparent;font-weight:600;cursor:pointer;border-radius:6px;transition:all 0.3s;}
 #toolButtons button:hover{background:#0288d1;color:#fff;}
-#toolBox{border:2px solid #0288d1;padding:20px;min-height:220px;background:#fff;}
+#toolBox{border:2px solid #0288d1;padding:20px;min-height:220px;background:#fff;border-radius:8px;}
 body.night #toolBox{background:#222;border-color:#0288d1;color:#fff;}
-#themeToggle{position:fixed;bottom:20px;right:20px;padding:10px 15px;cursor:pointer;border:none;background:#0288d1;color:#fff;font-weight:700;border-radius:5px;}
+#themeToggle{position:fixed;bottom:20px;right:20px;padding:12px;cursor:pointer;border:none;background:#0288d1;color:#fff;font-weight:700;border-radius:50%;font-size:18px;transition:transform 0.5s;}
+#themeToggle:hover{transform:rotate(360deg);}
 footer{text-align:center;font-size:13px;margin:25px 0;color:#000;}
 body.night footer{color:#fff;}
-#loginBox{position:fixed;top:50%;left:50%;transform:translate(-50%,-50%);background:#fff;border:2px solid #0288d1;padding:20px;display:none;flex-direction:column;gap:10px;}
+#loginBox{position:fixed;top:50%;left:50%;transform:translate(-50%,-50%);background:#fff;border:2px solid #0288d1;padding:20px;display:none;flex-direction:column;gap:10px;border-radius:8px;width:250px;z-index:20;}
 body.night #loginBox{background:#222;border-color:#0288d1;color:#fff;}
-#loginBox input{padding:8px;border:1px solid #0288d1;}
-#loginBox button{padding:8px;border:none;background:#0288d1;color:#fff;cursor:pointer;}
-#gameCanvas{width:100%;height:400px;background:#eee;}
+#loginBox input{padding:8px;border:1px solid #0288d1;border-radius:6px;}
+#loginBox button{padding:8px;border:none;background:#0288d1;color:#fff;cursor:pointer;border-radius:6px;}
+#loginBox .closeLogin{position:absolute;top:5px;right:5px;background:#f00;color:#fff;width:22px;height:22px;border-radius:50%;font-weight:bold;border:none;cursor:pointer;}
+#profileMenu{position:absolute;top:50px;right:30px;background:#fff;border:2px solid #0288d1;padding:10px;display:none;flex-direction:column;border-radius:6px;}
+body.night #profileMenu{background:#222;border-color:#0288d1;color:#fff;}
+#profileMenu button{margin:3px 0;padding:6px;border:none;background:#0288d1;color:#fff;border-radius:6px;cursor:pointer;}
+#gameCanvas{width:100%;height:400px;background:#eee;border-radius:6px;}
 body.night #gameCanvas{background:#111;}
 </style>
 </head>
@@ -46,7 +51,7 @@ body.night #gameCanvas{background:#111;}
 <main>
 <section id="homepage" class="active">
 <h1>Welcome to GrabVR Suite</h1>
-<p>Created by the Pakiv team, a dedicated collaboration between Pakker and Ivy. GrabVR Suite is the ultimate collection of tools for players and creators in the GrabVR universe. Manage levels, convert assets, analyze content, and play GRABcraft, all in one integrated experience. Explore our suite to unlock the full potential of your GrabVR content.</p>
+<p>Created by the Pakiv team, a collaboration between Pakker and Ivy. GrabVR Suite is the ultimate GrabVR toolkit — manage levels, convert assets, analyze content, explore GRABcraft, and unlock your full potential. Our tools are designed to empower creators and players alike, whether you want to download levels, check other players' content, or generate innovative 3D maps. Dive in and experience the full suite.</p>
 </section>
 <section id="tools">
 <div id="toolButtons"></div>
@@ -58,19 +63,23 @@ body.night #gameCanvas{background:#111;}
 </section>
 </main>
 <div id="loginBox">
+<button class="closeLogin">X</button>
 <input id="loginUsername" placeholder="Username">
 <input id="loginUserID" placeholder="User ID" readonly>
 <button id="guessBtn">Guess</button>
 <button id="loginBtn" style="display:none">Login</button>
 </div>
-<button id="themeToggle">Night</button>
+<div id="profileMenu">
+<button id="logoutBtn">Logout</button>
+<span>Profile Management (Coming Soon)</span>
+</div>
+<button id="themeToggle">🌙</button>
 <footer>
 made by ivy • by love from poizonTools team • 
 <a href="https://discord.gg/G6aNgvM7j9" target="_blank">discord.gg/G6aNgvM7j9</a><br>© 2026
 </footer>
 <script>
 window.onload=function(){
-try{
 const sections=document.querySelectorAll('main section');
 const toolButtonsContainer=document.getElementById('toolButtons');
 const toolBox=document.getElementById('toolBox');
@@ -81,16 +90,26 @@ const navGames=document.getElementById('navGames');
 const loginTopBtn=document.getElementById('loginTopBtn');
 const themeBtn=document.getElementById('themeToggle');
 const loginBox=document.getElementById('loginBox');
+const closeLogin=document.querySelector('.closeLogin');
 const guessBtn=document.getElementById('guessBtn');
 const loginBtn=document.getElementById('loginBtn');
 const loginUsername=document.getElementById('loginUsername');
 const loginUserID=document.getElementById('loginUserID');
+const profileMenu=document.getElementById('profileMenu');
+const logoutBtn=document.getElementById('logoutBtn');
 
 navHome.addEventListener('click',()=>showSection('homepage'));
 navTools.addEventListener('click',()=>showSection('tools'));
 navGames.addEventListener('click',()=>showSection('games'));
 loginTopBtn.addEventListener('click',()=>{loginBox.style.display='flex';});
-themeBtn.addEventListener('click',()=>{document.body.classList.toggle('night');themeBtn.textContent=document.body.classList.contains('night')?'Day':'Night';});
+closeLogin.addEventListener('click',()=>{loginBox.style.display='none';});
+themeBtn.addEventListener('click',toggleTheme);
+logoutBtn.addEventListener('click',()=>{localStorage.removeItem('grabvrUser');profileMenu.style.display='none';alert('Logged out');loginTopBtn.style.display='block';});
+
+function toggleTheme(){
+document.body.classList.toggle('night');
+if(document.body.classList.contains('night')){themeBtn.textContent='☀️';}else{themeBtn.textContent='🌙';}
+}
 
 function showSection(id){
 sections.forEach(s=>s.classList.remove('active'));
@@ -109,7 +128,11 @@ function showTool(tool){
 toolBox.innerHTML='';
 switch(tool){
 case'Level Downloader':
-toolBox.innerHTML=`<h3>Level Downloader</h3><input id="levelLink" placeholder="Enter Grab level link"><input id="levelName" placeholder="Optional: File Name"><button id="downloadBtn">Queue Download</button><div id="downloadOutput"></div>`;
+toolBox.innerHTML=`<h3>Level Downloader</h3>
+<input id="levelLink" placeholder="Enter Grab level link">
+<input id="levelName" placeholder="Optional: File Name">
+<button id="downloadBtn">Queue Download</button>
+<div id="downloadOutput"></div>`;
 document.getElementById('downloadBtn').addEventListener('click',downloadLevel);
 break;
 case'Player Lookup':
@@ -188,8 +211,18 @@ if(!username||!userID){alert('Missing info');return;}
 localStorage.setItem('grabvrUser',JSON.stringify({username,userID}));
 alert(`Logged in as ${username} (ID: ${userID})`);
 loginBox.style.display='none';
+loginTopBtn.style.display='none';
 });
-}catch(e){console.error('JS Error:',e);}
+
+if(localStorage.getItem('grabvrUser')){
+const user=JSON.parse(localStorage.getItem('grabvrUser'));
+loginTopBtn.style.display='none';
+profileMenu.style.display='flex';
+const profileBtn=document.createElement('button');
+profileBtn.textContent=user.username;
+profileBtn.addEventListener('click',()=>{profileMenu.style.display=profileMenu.style.display==='flex'?'none':'flex';});
+document.body.appendChild(profileBtn);
+}
 };
 </script>
 </body>
