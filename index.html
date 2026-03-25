@@ -6,7 +6,7 @@
 <title>GrabVR Suite</title>
 <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600;700&display=swap" rel="stylesheet">
 <style>
-html,body{margin:0;padding:0;font-family:'Poppins',sans-serif;height:100%;width:100%;transition:background 0.5s,color 0.5s;}
+html,body{margin:0;padding:0;font-family:'Poppins',sans-serif;transition:background 0.5s,color 0.5s;}
 body{background:linear-gradient(to bottom,#b3e5fc 0%,#ffffff 50%,#b3e5fc 100%);color:#000;overflow-x:hidden;}
 body.night{background:linear-gradient(to bottom,#000 0%,#222 50%,#000 100%);color:#fff;}
 header{position:fixed;top:0;left:0;width:100%;display:flex;align-items:center;justify-content:space-between;padding:15px 30px;box-sizing:border-box;background:transparent;z-index:1000;}
@@ -21,8 +21,8 @@ section{display:none;padding:20px;}
 section.active{display:block;}
 #toolButtons{display:flex;flex-wrap:wrap;gap:12px;margin-bottom:20px;justify-content:center;}
 #toolButtons button{padding:12px 20px;border:2px solid #0288d1;background:transparent;font-weight:600;cursor:pointer;border-radius:6px;transition:all 0.3s;}
-#toolButtons button:hover{background:#0288d1;color:#fff;}
-#toolBox{border:2px solid #0288d1;padding:20px;min-height:220px;background:#fff;border-radius:8px;}
+#toolButtons button:hover{background:#0288d1;color:#fff;transform:scale(1.05);}
+#toolBox{border:2px solid #0288d1;padding:20px;min-height:220px;background:#fff;border-radius:8px;transition:all 0.3s;}
 body.night #toolBox{background:#222;border-color:#0288d1;color:#fff;}
 #themeToggle{position:fixed;bottom:20px;right:20px;padding:12px;cursor:pointer;border:none;background:#0288d1;color:#fff;font-weight:700;border-radius:50%;font-size:18px;transition:transform 0.5s;}
 #themeToggle:hover{transform:rotate(360deg);}
@@ -51,7 +51,7 @@ body.night #profileMenu{background:#222;border-color:#0288d1;color:#fff;}
 <main>
 <section id="homepage" class="active">
 <h1>Welcome to GrabVR Suite</h1>
-<p>Created by the Pakiv team, a collaboration between Pakker and Ivy. GrabVR Suite is the ultimate toolkit — manage levels, convert assets, analyze content, and unlock your full potential. Our tools empower creators and players alike, whether you want to download levels, convert models, generate 3D maps, or experiment with creative level designs. All features are designed to enhance your GrabVR experience with maximum control and flexibility.</p>
+<p>Created by the Pakiv team, a collaboration between Pakker and Ivy. GrabVR Suite is the ultimate toolkit — manage levels, convert assets, analyze content, and unlock your full potential. Our tools empower creators and players alike, whether you want to download levels, convert models, generate 3D maps, or experiment with creative level designs. All features are designed to enhance your GrabVR experience with maximum control and flexibility. Explore our suite and experience seamless integration with your GrabVR workflow.</p>
 </section>
 <section id="tools">
 <div id="toolButtons"></div>
