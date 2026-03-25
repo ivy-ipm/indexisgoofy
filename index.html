@@ -1,0 +1,174 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Grab Level Downloader</title>
+<style>
+/* General styles */
+body {
+  margin: 0;
+  font-family: Arial, sans-serif;
+  background: linear-gradient(135deg, #0f172a, #1e293b);
+  color: white;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  height: 100vh;
+}
+
+.container {
+  background: #0b1220;
+  padding: 30px;
+  border-radius: 16px;
+  width: 500px;
+  max-width: 90%;
+  box-shadow: 0 0 40px rgba(0,0,0,0.6);
+}
+
+h1 {
+  margin-bottom: 20px;
+  font-size: 24px;
+  text-align: center;
+}
+
+input {
+  width: 100%;
+  padding: 12px;
+  border-radius: 10px;
+  border: none;
+  outline: none;
+  margin-bottom: 15px;
+  background: #1e293b;
+  color: white;
+}
+
+button {
+  width: 100%;
+  padding: 12px;
+  border: none;
+  border-radius: 10px;
+  background: #3b82f6;
+  color: white;
+  font-size: 16px;
+  cursor: pointer;
+  transition: 0.2s;
+}
+
+button:hover {
+  background: #2563eb;
+}
+
+.status {
+  margin-top: 15px;
+  font-size: 14px;
+  text-align: center;
+  opacity: 0.9;
+}
+
+.loader {
+  margin: 15px auto;
+  border: 4px solid #1e293b;
+  border-top: 4px solid #3b82f6;
+  border-radius: 50%;
+  width: 30px;
+  height: 30px;
+  animation: spin 1s linear infinite;
+  display: none;
+}
+
+.info {
+  margin-top: 15px;
+  padding: 15px;
+  background: #1e293b;
+  border-radius: 10px;
+  font-size: 14px;
+}
+
+@keyframes spin {
+  to { transform: rotate(360deg); }
+}
+
+/* Responsive */
+@media (max-width: 500px) {
+  .container {
+    padding: 20px;
+  }
+}
+</style>
+</head>
+
+<body>
+<div class="container">
+  <h1>Grab Level Downloader</h1>
+  <input id="linkInput" placeholder="Paste Grab level link here">
+  <button onclick="downloadLevel()">Download Level</button>
+
+  <div class="loader" id="loader"></div>
+  <div class="status" id="status"></div>
+  <div class="info" id="levelInfo" style="display:none;"></div>
+</div>
+
+<script>
+function extractID(link) {
+  const match = link.match(/(\d+)/);
+  return match ? match[0] : null;
+}
+
+async function downloadLevel() {
+  const input = document.getElementById('linkInput').value.trim();
+  const status = document.getElementById('status');
+  const loader = document.getElementById('loader');
+  const info = document.getElementById('levelInfo');
+
+  info.style.display = 'none';
+  status.textContent = '';
+
+  if (!input) {
+    status.textContent = "Enter a valid link";
+    return;
+  }
+
+  const id = extractID(input);
+  if (!id) {
+    status.textContent = "Invalid link format";
+    return;
+  }
+
+  status.textContent = "Fetching level...";
+  loader.style.display = "block";
+
+  try {
+    const res = await fetch(`https://api.slin.dev/grab/v1/level/${id}`);
+    const data = await res.json();
+
+    if (!data || !data.name) throw new Error("No data");
+
+    // Show level info
+    info.style.display = 'block';
+    info.innerHTML = `
+      <strong>Name:</strong> ${data.name}<br>
+      <strong>Creator:</strong> ${data.creator || 'Unknown'}<br>
+      <strong>Complexity:</strong> ${data.complexity || 'N/A'}<br>
+      <strong>ID:</strong> ${id}
+    `;
+
+    // Download JSON
+    const blob = new Blob([JSON.stringify(data, null, 2)], { type: "application/json" });
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement('a');
+    a.href = url;
+    a.download = `grab-level-${id}.json`;
+    a.click();
+    URL.revokeObjectURL(url);
+
+    status.textContent = "Download started";
+  } catch (err) {
+    status.textContent = "Failed to fetch level";
+  }
+
+  loader.style.display = "none";
+}
+</script>
+</body>
+</html>
