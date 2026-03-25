@@ -1,127 +1,154 @@
+// main.js
 const mainJS = (() => {
-let user = { username:'', userID:'' };
-const toolBox = document.getElementById('toolBox');
+  let currentTool = null;
+  let user = null;
+  let theme = 'day';
+  const toolBox = document.getElementById('toolBox');
 
-function toggleTheme(){
-  const body = document.body;
-  const current = body.dataset.theme;
-  const newTheme = current==='day'?'night':'day';
-  body.dataset.theme = newTheme;
-  document.getElementById('themeToggle').textContent = newTheme==='day'?'🌙':'☀️';
-}
+  // Update JS status
+  document.getElementById('jsStatus')?.textContent = "main.js is running ✅";
 
-function showSection(id){
-  document.querySelectorAll('section').forEach(s=>s.classList.remove('active'));
-  document.getElementById(id).classList.add('active');
-}
+  // Section switching
+  function showSection(sectionID) {
+    document.querySelectorAll('section').forEach(sec => sec.classList.remove('active'));
+    const sec = document.getElementById(sectionID);
+    if(sec) sec.classList.add('active');
+  }
 
-function openLogin(){document.getElementById('loginBox').style.display='flex';}
-function closeLogin(){document.getElementById('loginBox').style.display='none';}
+  // Theme toggle
+  function toggleTheme() {
+    if(theme==='day'){
+      document.body.setAttribute('data-theme','night');
+      document.getElementById('themeToggle').textContent='☀️';
+      theme='night';
+    }else{
+      document.body.setAttribute('data-theme','day');
+      document.getElementById('themeToggle').textContent='🌙';
+      theme='day';
+    }
+  }
 
-function showTool(tool){
-  toolBox.innerHTML='';
-  if(tool==='levelDownloader'){
-    toolBox.innerHTML=`
+  // User login modal
+  function openLogin(){document.getElementById('loginBox').style.display='flex';}
+  function closeLogin(){document.getElementById('loginBox').style.display='none';}
+
+  async function guessUserID(){
+    const username = document.getElementById('loginUsername').value.trim();
+    if(!username){alert("Enter username"); return;}
+    // Simulate API call
+    try{
+      // Replace with actual API call
+      const response = await fetch(`https://api.slin.dev/grab/v1/user/${username}`);
+      const data = await response.json();
+      document.getElementById('loginUserID').value = data.id || "unknown";
+      document.getElementById('guessBtn').style.display='none';
+      document.getElementById('loginBtn').style.display='inline-block';
+    }catch(e){
+      alert("Failed to fetch user ID");
+    }
+  }
+
+  function loginUser(){
+    const username = document.getElementById('loginUsername').value.trim();
+    const id = document.getElementById('loginUserID').value.trim();
+    if(!username||!id){alert("Invalid login"); return;}
+    user={username,id};
+    closeLogin();
+    alert(`Logged in as ${username}`);
+  }
+
+  // Tool injection
+  function showTool(tool){
+    currentTool=tool;
+    toolBox.innerHTML='';
+    switch(tool){
+      case 'levelDownloader':
+        renderLevelDownloader();
+        break;
+      case 'playerLookup':
+        renderPlayerLookup();
+        break;
+      case 'complexityAnalyzer':
+        toolBox.innerHTML='<p>Level Complexity Analyzer is useless (for fun).</p>';
+        break;
+      case 'pixelArt':
+        toolBox.innerHTML='<p>Pixel-Art Level Creator is useless (import image to create JSON levels).</p>';
+        break;
+      case 'objToSgm':
+        renderObjToSgm();
+        break;
+      case 'image3DMap':
+        renderImage3DMap();
+        break;
+      default:
+        toolBox.innerHTML='<p>Select a tool above.</p>';
+    }
+  }
+
+  // Level Downloader
+  function renderLevelDownloader(){
+    const html=`
       <h3>Level Downloader</h3>
-      <input id="levelLink" placeholder="Enter Grab Level Link">
-      <input id="levelName" placeholder="Custom Filename (optional)">
+      <input id="levelLink" placeholder="Enter Grab level link">
+      <input id="levelName" placeholder="Optional: File Name">
       <button class="action" onclick="mainJS.downloadLevel()">Download</button>
-      <div id="levelOutput" class="output"></div>
+      <div id="downloadOutput" class="output"></div>
     `;
-  }else if(tool==='playerLookup'){
-    toolBox.innerHTML=`
+    toolBox.innerHTML=html;
+  }
+
+  async function downloadLevel(){
+    const link=document.getElementById('levelLink').value.trim();
+    const name=document.getElementById('levelName').value.trim();
+    const out=document.getElementById('downloadOutput');
+    out.textContent='';
+    if(!link){out.textContent='Enter a level link';return;}
+    try{
+      const url=new URL(link);
+      const levelParam=url.searchParams.get('level');
+      if(!levelParam){out.textContent='Invalid link';return;}
+      const parts=levelParam.split(':');
+      const userID=parts[0],timestamp=parts[1];
+      const fileName=name?name:`grab-level-${timestamp}.level`;
+      const downloadURL=`https://api.slin.dev/grab/v1/download/${userID}/${timestamp}/1/${fileName}`;
+      const a=document.createElement('a');
+      a.href=downloadURL;
+      a.download=fileName;
+      a.click();
+      out.textContent=`Download started: ${fileName}`;
+    }catch(e){out.textContent='Failed to process level link';}
+  }
+
+  // Player Lookup
+  function renderPlayerLookup(){
+    const html=`
       <h3>Player Lookup</h3>
-      <input id="playerName" placeholder="Enter Player Username">
-      <button class="action" onclick="mainJS.lookupPlayer()">Search</button>
-      <div id="playerOutput" class="output"></div>
+      <input id="lookupUser" placeholder="Enter Player Username">
+      <button class="action" onclick="mainJS.lookupPlayer()">Lookup</button>
+      <div id="lookupOutput" class="output"></div>
     `;
-  }else if(tool==='complexityAnalyzer'){
-    toolBox.innerHTML=`
-      <h3>Level Complexity Analyzer</h3>
-      <input id="complexityLink" placeholder="Enter Level Link">
-      <button class="action" onclick="mainJS.analyzeComplexity()">Analyze</button>
-      <div id="complexityOutput" class="output"></div>
-    `;
-  }else{
-    toolBox.innerHTML=`<p>Tool placeholder</p>`;
+    toolBox.innerHTML=html;
   }
-}
 
-// Example: Level Downloader
-async function downloadLevel(){
-  const link = document.getElementById('levelLink').value.trim();
-  const nameInput = document.getElementById('levelName').value.trim() || 'level.level';
-  if(!link) return alert("Enter a level link");
-
-  // Example: extract IDs from GrabVR link
-  const levelParam = link.split('level=')[1];
-  if(!levelParam) return alert("Invalid link");
-  const parts = levelParam.split(':');
-  const userID = parts[0], timestamp=parts[1], version=1;
-
-  // Build backend call
-  const res = await fetch(`/api/download?userID=${userID}&timestamp=${timestamp}&version=${version}&name=${encodeURIComponent(nameInput)}`);
-  const data = await res.json();
-
-  const a = document.createElement('a');
-  a.href = data.url;
-  a.download = nameInput;
-  a.click();
-
-  const out = document.getElementById('levelOutput');
-  out.textContent = `Download started: ${nameInput}`;
-}
-
-// User Login
-async function guessUserID(){
-  const username = document.getElementById('loginUsername').value.trim();
-  if(!username) return alert("Enter a username");
-  const res = await fetch(`/api/player?username=${username}`);
-  const data = await res.json();
-  if(data.userID){
-    document.getElementById('loginUserID').value=data.userID;
-    document.getElementById('guessBtn').style.display='none';
-    document.getElementById('loginBtn').style.display='inline-block';
-  }else{
-    alert("User not found");
+  async function lookupPlayer(){
+    const username=document.getElementById('lookupUser').value.trim();
+    const out=document.getElementById('lookupOutput');
+    out.textContent='';
+    if(!username){out.textContent='Enter username';return;}
+    try{
+      const res=await fetch(`https://api.slin.dev/grab/v1/user/${username}`);
+      const data=await res.json();
+      out.textContent=`User ID: ${data.id}\nLevels:\n${data.levels?.join('\n')||'No levels found'}`;
+    }catch(e){out.textContent='Failed to fetch user';}
   }
-}
-function loginUser(){
-  const username=document.getElementById('loginUsername').value;
-  const userID=document.getElementById('loginUserID').value;
-  if(!username||!userID) return;
-  user.username=username;
-  user.userID=userID;
-  localStorage.setItem('grabUser',JSON.stringify(user));
-  closeLogin();
-  alert(`Logged in as ${username}`);
-}
 
-// Complexity Analyzer
-function analyzeComplexity(){
-  const link=document.getElementById('complexityLink').value.trim();
-  if(!link) return alert("Enter a level link");
-  const complexity=Math.floor(Math.random()*2000)+1;
-  document.getElementById('complexityOutput').textContent=`Level Complexity: ${complexity}/2000`;
-}
+  // OBJ→SGM converter
+  function renderObjToSgm(){toolBox.innerHTML='<p>OBJ→SGM Converter (upload OBJ to convert) - coming soon</p>';}
+  // Image→3D Map generator
+  function renderImage3DMap(){toolBox.innerHTML='<p>Image→3D Map Generator (upload image to convert) - coming soon</p>';}
 
-// Player Lookup
-async function lookupPlayer(){
-  const name=document.getElementById('playerName').value.trim();
-  if(!name) return alert("Enter player username");
-  const res=await fetch(`/api/player?username=${name}`);
-  const data=await res.json();
-  const out=document.getElementById('playerOutput');
-  if(data.levels){
-    out.textContent=`Levels for ${name}:\n`+data.levels.map(l=>`${l.name} (${l.timestamp})`).join('\n');
-  }else{
-    out.textContent="No levels found.";
-  }
-}
+  // Complexity analyzer placeholder
+  function analyzeComplexity(level){return Math.min(Math.floor(Math.random()*2000),2000);}
 
-// Expose public functions
-return {toggleTheme, showSection, openLogin, closeLogin, showTool, downloadLevel, guessUserID, loginUser, analyzeComplexity, lookupPlayer};
-
-  // Update JS Status
-document.getElementById('jsStatus').textContent = "main.js is running ✅";
+  return {showSection,toggleTheme,openLogin,closeLogin,showTool,downloadLevel,guessUserID,loginUser,analyzeComplexity,lookupPlayer};
 })();
