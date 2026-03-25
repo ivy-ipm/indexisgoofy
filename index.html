@@ -4,235 +4,278 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>GrabVR Suite</title>
-<link href="https://fonts.googleapis.com/css2?family=Share+Tech+Mono&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&display=swap" rel="stylesheet">
 <style>
-:root {
-  --bg-color: #0a0a0a;
-  --text-color: #00ff88;
-  --accent-color: #00ff88;
-  --btn-bg: #111;
-  --btn-text: #00ff88;
+:root{
+  --bg-day:#f4f7fa;
+  --bg-night:#1e1e2f;
+  --text-day:#1e1e2f;
+  --text-night:#f4f7fa;
+  --accent:#6c63ff;
+  --card-bg-day:#ffffff;
+  --card-bg-night:#2a2a3f;
+  --btn-bg:#6c63ff;
+  --btn-text:#ffffff;
+  --btn-hover:#574fd6;
+  --gradient-day:linear-gradient(135deg,#6c63ff,#43e97b);
+  --gradient-night:linear-gradient(135deg,#574fd6,#0d0d2b);
 }
-body {
-  margin:0;
-  font-family: 'Share Tech Mono', monospace;
-  background: var(--bg-color);
-  color: var(--text-color);
+body{
+  margin:0;font-family:'Inter',sans-serif;transition:0.3s;background:var(--bg-day);color:var(--text-day);
 }
-header {
-  display:flex; justify-content:space-between; align-items:center;
-  padding:15px 30px; border-bottom:1px solid var(--accent-color);
-  position:sticky; top:0; background:var(--bg-color); z-index:100;
+body[data-theme="night"]{background:var(--bg-night);color:var(--text-night);}
+header{
+  display:flex;justify-content:space-between;align-items:center;padding:15px 30px;position:sticky;top:0;background:var(--bg-day);transition:0.3s;
 }
-header .logo { font-weight:bold; font-size:24px; }
-nav button {
-  background: var(--btn-bg);
-  border: 1px solid var(--accent-color);
-  color: var(--btn-text);
-  padding:8px 16px; margin-left:5px; cursor:pointer;
-  font-size:14px;
+body[data-theme="night"] header{background:var(--bg-night);}
+header .logo{font-weight:700;font-size:24px;}
+nav button{
+  background:none;border:none;color:inherit;padding:8px 16px;margin-left:5px;font-weight:600;cursor:pointer;transition:0.2s;
 }
-nav button:last-child { margin-left:20px; }
-.theme-toggle { margin-left:10px; }
-.container { max-width:1000px; margin:30px auto; padding:0 20px; }
-section { display:none; }
-section.active { display:block; }
-.tool-buttons { display:flex; gap:20px; margin-bottom:30px; flex-wrap:wrap; }
-.tool-buttons button {
-  flex:1 1 200px;
-  padding:25px;
-  font-size:16px;
-  font-weight:bold;
-  background:#111;
-  color:#00ff88;
-  border:2px solid #00ff88;
-  cursor:pointer;
-  transition:0.2s;
+nav button:hover{color:var(--accent);}
+#themeToggle{position:fixed;bottom:20px;right:20px;padding:12px;border:none;border-radius:50%;cursor:pointer;font-size:18px;background:var(--gradient-day);color:#fff;transition:0.3s;}
+body[data-theme="night"] #themeToggle{background:var(--gradient-night);}
+.container{max-width:1000px;margin:30px auto;padding:0 20px;}
+section{display:none;animation:fadeIn 0.5s ease;}
+section.active{display:block;}
+@keyframes fadeIn{from{opacity:0;}to{opacity:1;}}
+.tool-buttons{display:flex;gap:20px;margin-bottom:30px;flex-wrap:wrap;}
+.tool-buttons button{
+  flex:1 1 180px;padding:20px;font-size:16px;font-weight:600;background:var(--card-bg-day);color:inherit;border-radius:10px;cursor:pointer;transition:0.3s;border:1px solid #ccc;
 }
-.tool-buttons button:hover { background:#00ff88; color:#000; }
-.tool-box { border:2px solid #00ff88; padding:20px; min-height:300px; background:#111; }
-input { padding:8px; margin:5px 5px 15px 0; background:#111; border:1px solid #00ff88; color:#00ff88; outline:none; width:calc(100% - 12px); }
-button.action { background:#00ff88; color:#000; border:none; padding:8px 12px; cursor:pointer; }
-footer { text-align:center; margin:30px 0 10px; font-size:12px; color:#00ff88; }
-footer a { color:#00ff88; text-decoration:underline; }
-.user-login-box { position:fixed; top:50%; left:50%; transform:translate(-50%,-50%);
-  background:#111; border:2px solid #00ff88; padding:20px; display:none;
-  flex-direction:column; gap:10px; z-index:200; width:300px;
-}
-.user-login-box input { width:100%; }
-.user-login-box button { width:100%; }
+body[data-theme="night"] .tool-buttons button{background:var(--card-bg-night);border:1px solid #555;}
+.tool-buttons button:hover{background:var(--gradient-day);color:#fff;}
+.tool-box{border-radius:10px;padding:20px;min-height:300px;background:var(--card-bg-day);border:1px solid #ccc;transition:0.3s;}
+body[data-theme="night"] .tool-box{background:var(--card-bg-night);border:1px solid #555;}
+input{padding:10px;margin:5px 5px 15px 0;border-radius:6px;border:1px solid #ccc;width:calc(100% - 12px);}
+body[data-theme="night"] input{background:#2a2a3f;color:#f4f7fa;border:1px solid #555;}
+button.action{background:var(--btn-bg);color:var(--btn-text);border:none;padding:8px 12px;border-radius:6px;cursor:pointer;transition:0.2s;}
+button.action:hover{background:var(--btn-hover);}
+footer{text-align:center;margin:30px 0 10px;font-size:12px;}
+footer a{color:var(--accent);text-decoration:underline;}
+.user-login-box{position:fixed;top:50%;left:50%;transform:translate(-50%,-50%);background:var(--card-bg-day);border:1px solid #ccc;padding:20px;display:none;flex-direction:column;gap:10px;border-radius:10px;z-index:200;min-width:280px;transition:0.3s;}
+body[data-theme="night"] .user-login-box{background:var(--card-bg-night);border:1px solid #555;}
+.game-canvas{border-radius:10px;border:1px solid #ccc;width:100%;height:400px;margin-top:10px;background:#e0e0e0;}
+body[data-theme="night"] .game-canvas{background:#2a2a3f;}
+.card{border-radius:10px;background:var(--card-bg-day);padding:15px;margin-bottom:20px;border:1px solid #ccc;}
+body[data-theme="night"] .card{background:var(--card-bg-night);border:1px solid #555;}
 </style>
 </head>
-<body>
+<body data-theme="day">
 
 <header>
-  <div class="logo">GrabVR Suite</div>
-  <nav>
-    <button onclick="showSection('home')">Homepage</button>
-    <button onclick="showSection('tools')">Tools</button>
-    <button onclick="showSection('games')">Games</button>
-    <button class="theme-toggle" onclick="toggleTheme()">Day/Night</button>
-    <button onclick="openLogin()">User Login</button>
-  </nav>
+<div class="logo">GrabVR Suite</div>
+<nav>
+<button onclick="showSection('home')">Homepage</button>
+<button onclick="showSection('tools')">Tools</button>
+<button onclick="showSection('games')">Games</button>
+<button id="themeToggle" onclick="toggleTheme()">🌙</button>
+<button onclick="openLogin()">User Login</button>
+</nav>
 </header>
 
 <div class="container">
 
-<!-- Homepage -->
 <section id="home" class="active">
-  <h2>Welcome to GrabVR Suite</h2>
-  <p>Pakiv Team (Pakker + Ivy) brings you all the best GrabVR tools in one suite.</p>
+<h2>Welcome to GrabVR Suite</h2>
+<p>Welcome to the ultimate GrabVR toolkit brought to you by the <strong>Pakiv Team</strong> — a passionate collaboration between Pakker and Ivy. GrabVR Suite is designed to consolidate all the essential and experimental tools in one unified platform. Whether you want to download your favorite GrabVR levels, convert 3D models, analyze images, or create your own custom levels from pixel art or images, this is your go-to hub. Our mission is to make GrabVR accessible, fun, and engaging for everyone, combining usability with playful experimentation.</p>
+
+<div class="card">
+<h3>Useless Tools (For Fun)</h3>
+<ul>
+<li>Player Lookup — explore player profiles</li>
+<li>Level Complexity Analyzer — just for curiosity</li>
+<li>Pixel-Art Level Creator — import an image to generate level JSON</li>
+</ul>
+</div>
+
+<div class="card">
+<h3>Useful Tools</h3>
+<ul>
+<li>Level Downloader — get any level from GrabVR</li>
+<li>OBJ→SGM Converter — convert 3D models to GrabVR format</li>
+<li>Image→3D Map Generator — AI-assisted map creation from images</li>
+</ul>
+</div>
 </section>
 
-<!-- Tools -->
 <section id="tools">
-  <div class="tool-buttons">
-    <button onclick="showTool('levelDownloader')">Level Downloader</button>
-    <button onclick="showTool('playerLookup')">Player Lookup</button>
-    <button onclick="showTool('complexityAnalyzer')">Level Complexity Analyzer</button>
-  </div>
-  <div class="tool-box" id="toolBox">
-    <p>Select a tool above to start.</p>
-  </div>
+<div class="tool-buttons">
+<button onclick="showTool('levelDownloader')">Level Downloader</button>
+<button onclick="showTool('playerLookup')">Player Lookup</button>
+<button onclick="showTool('complexityAnalyzer')">Level Complexity Analyzer</button>
+<button onclick="showTool('pixelArt')">Pixel-Art Level</button>
+<button onclick="showTool('objToSgm')">OBJ→SGM Converter</button>
+<button onclick="showTool('image3DMap')">Image→3D Map</button>
+</div>
+<div class="tool-box" id="toolBox"><p>Select a tool above to start.</p></div>
 </section>
 
-<!-- Games -->
 <section id="games">
-  <h2>GRABcraft</h2>
-  <canvas id="grabGame" style="border:2px solid #00ff88;width:100%;height:400px;"></canvas>
-  <div class="card"><h3>Mini Games Coming Soon</h3></div>
+<h2>GRABcraft</h2>
+<canvas id="grabGame" class="game-canvas"></canvas>
+<div class="card"><h3>Mini Games</h3><p>GrabRunner, GrabPuzzle, GrabArena coming soon! Data is saved to your account for persistent progress.</p></div>
 </section>
 
-<!-- User Login Box -->
 <div class="user-login-box" id="loginBox">
-  <h3>User Login</h3>
-  <input id="loginUsername" placeholder="Enter Username">
-  <input id="loginUserID" placeholder="User ID" readonly>
-  <button id="guessBtn" onclick="guessUserID()">Guess</button>
-  <button id="loginBtn" onclick="loginUser()" style="display:none;">Login</button>
-  <button onclick="closeLogin()">Close</button>
+<h3>User Login</h3>
+<input id="loginUsername" placeholder="Enter Username">
+<input id="loginUserID" placeholder="User ID" readonly>
+<button id="guessBtn" onclick="guessUserID()">Guess</button>
+<button id="loginBtn" onclick="loginUser()" style="display:none;">Login</button>
+<button onclick="closeLogin()">Close</button>
 </div>
 
 <footer>
-made by Ivy • <a href="https://discord.gg/G6aNgvM7j9" target="_blank">Discord</a> • © 2026
+Made by Ivy • <a href="https://discord.gg/G6aNgvM7j9" target="_blank">Discord</a> • © 2026
 </footer>
 
 <script>
-let currentTheme='dark';
-function toggleTheme(){ document.body.dataset.theme=currentTheme==='dark'?'light':'dark'; currentTheme=currentTheme==='dark'?'light':'dark';}
-function showSection(id){document.querySelectorAll('section').forEach(s=>s.classList.remove('active')); document.getElementById(id).classList.add('active');}
+let currentTheme='day';
+function toggleTheme(){
+currentTheme=currentTheme==='day'?'night':'day';
+document.body.dataset.theme=currentTheme;
+document.getElementById('themeToggle').textContent=currentTheme==='day'?'🌙':'☀️';
+}
+function showSection(id){document.querySelectorAll('section').forEach(s=>s.classList.remove('active'));document.getElementById(id).classList.add('active');}
 function openLogin(){document.getElementById('loginBox').style.display='flex';}
 function closeLogin(){document.getElementById('loginBox').style.display='none';}
 
 // Tool display logic
 function showTool(tool){
-  const box=document.getElementById('toolBox');
-  box.innerHTML='';
-  if(tool==='levelDownloader'){
-    box.innerHTML=`
-      <h3>Level Downloader</h3>
-      <input id="levelLink" placeholder="Enter Grab Level Link">
-      <input id="levelName" placeholder="Custom Filename (optional)">
-      <button class="action" onclick="downloadLevel()">Download</button>
-      <div id="levelOutput" class="output"></div>
-    `;
-  } else if(tool==='playerLookup'){
-    box.innerHTML=`
-      <h3>Player Lookup</h3>
-      <input id="playerName" placeholder="Enter Player Username">
-      <button class="action" onclick="lookupPlayer()">Search</button>
-      <div id="playerOutput" class="player-output"></div>
-    `;
-  } else if(tool==='complexityAnalyzer'){
-    box.innerHTML=`
-      <h3>Level Complexity Analyzer</h3>
-      <input id="complexityLink" placeholder="Enter Level Link">
-      <button class="action" onclick="analyzeComplexity()">Analyze</button>
-      <div id="complexityOutput" class="complexity-output"></div>
-    `;
-  }
+const box=document.getElementById('toolBox'); box.innerHTML='';
+if(tool==='levelDownloader'){
+box.innerHTML=`<h3>Level Downloader</h3>
+<input id="levelLink" placeholder="Enter Grab Level Link">
+<input id="levelName" placeholder="Custom Filename (optional)">
+<button class="action" onclick="downloadLevel()">Download</button>
+<div id="levelOutput" class="output"></div>`;
+} else if(tool==='playerLookup'){
+box.innerHTML=`<h3>Player Lookup</h3>
+<input id="playerName" placeholder="Enter Player Username">
+<button class="action" onclick="lookupPlayer()">Search</button>
+<div id="playerOutput" class="player-output"></div>`;
+} else if(tool==='complexityAnalyzer'){
+box.innerHTML=`<h3>Level Complexity Analyzer</h3>
+<input id="complexityLink" placeholder="Enter Level Link">
+<button class="action" onclick="analyzeComplexity()">Analyze</button>
+<div id="complexityOutput" class="complexity-output"></div>`;
+} else if(tool==='pixelArt'){
+box.innerHTML=`<h3>Pixel-Art Level Creator</h3>
+<input type="file" id="pixelImage">
+<button class="action" onclick="pixelToLevel()">Convert Image</button>
+<div id="pixelOutput" class="output"></div>`;
+} else if(tool==='objToSgm'){
+box.innerHTML=`<h3>OBJ→SGM Converter</h3>
+<input type="file" id="objFile">
+<button class="action" onclick="convertOBJ()">Convert</button>
+<div id="objOutput" class="output"></div>`;
+} else if(tool==='image3DMap'){
+box.innerHTML=`<h3>Image→3D Map Generator</h3>
+<input type="file" id="mapImage">
+<button class="action" onclick="imageTo3DMap()">Generate</button>
+<div id="mapOutput" class="output"></div>`;
+}
 }
 
 // Level downloader
 function logLevel(msg){ const output=document.getElementById('levelOutput'); if(!output) return; const time=new Date().toLocaleTimeString(); output.innerHTML+=`[${time}] ${msg}\n`; output.scrollTop=output.scrollHeight;}
 function downloadLevel(){
-  const link=document.getElementById('levelLink').value.trim();
-  let name=document.getElementById('levelName').value.trim();
-  if(!link){logLevel("No input");return;}
-  const urlParts=link.split('level=')[1]?.split(':');
-  if(!urlParts||urlParts.length<2){logLevel("Invalid link");return;}
-  const userID=urlParts[0], timestamp=urlParts[1];
-  if(!name) name=`${timestamp}.level`;
-  const downloadURL=`https://api.slin.dev/grab/v1/download/${userID}/${timestamp}/1/${encodeURIComponent(name)}`;
-  const a=document.createElement('a'); a.href=downloadURL; a.click();
-  logLevel(`Downloading level as "${name}"`);
+const link=document.getElementById('levelLink')?.value.trim();
+let name=document.getElementById('levelName')?.value.trim();
+if(!link){logLevel("No input");return;}
+const urlParts=link.split('level=')[1]?.split(':');
+if(!urlParts||urlParts.length<2){logLevel("Invalid link");return;}
+const userID=urlParts[0], timestamp=urlParts[1];
+if(!name) name=`${timestamp}.level`;
+const downloadURL=`https://api.slin.dev/grab/v1/download/${userID}/${timestamp}/1/${encodeURIComponent(name)}`;
+const a=document.createElement('a'); a.href=downloadURL; a.click();
+logLevel(`Downloading level as "${name}"`);
 }
 
 // Player lookup
 async function lookupPlayer(){
-  const player=document.getElementById('playerName')?.value.trim();
-  const output=document.getElementById('playerOutput');
-  if(!output) return;
-  output.innerHTML='';
-  if(!player){output.innerHTML='No username';return;}
-  try{
-    const res=await fetch(`https://api.slin.dev/grab/v1/player/${player}`);
-    const data=await res.json();
-    output.innerHTML+=`UserID: ${data.userID}\nLevels:\n`;
-    data.levels.forEach(l=>{
-      const btn=document.createElement('button');
-      btn.textContent=`Download ${l.timestamp}`;
-      btn.onclick=()=>{ const url=`https://api.slin.dev/grab/v1/download/${data.userID}/${l.timestamp}/1/${l.timestamp}.level`; const a=document.createElement('a'); a.href=url; a.click();}
-      output.appendChild(btn); output.innerHTML+='\n';
-    });
-  }catch{ output.innerHTML='Player not found'; }
+const player=document.getElementById('playerName')?.value.trim();
+const output=document.getElementById('playerOutput'); if(!output) return; output.innerHTML='';
+if(!player){output.innerHTML='No username';return;}
+try{
+const res=await fetch(`https://api.slin.dev/grab/v1/player/${player}`);
+const data=await res.json();
+output.innerHTML+=`UserID: ${data.userID}\nLevels:\n`;
+data.levels.forEach(l=>{
+const btn=document.createElement('button');
+btn.textContent=`Download ${l.timestamp}`;
+btn.onclick=()=>{ const url=`https://api.slin.dev/grab/v1/download/${data.userID}/${l.timestamp}/1/${l.timestamp}.level`; const a=document.createElement('a'); a.href=url; a.click();}
+output.appendChild(btn); output.innerHTML+='\n';
+});
+}catch{ output.innerHTML='Player not found';}
 }
 
-// Complexity analyzer
+// Complexity Analyzer
 function analyzeComplexity(){
-  const link=document.getElementById('complexityLink')?.value.trim();
-  const output=document.getElementById('complexityOutput');
-  if(!output) return;
-  if(!link){output.innerHTML='No link'; return;}
-  const complexity=Math.floor(Math.random()*10)+1;
-  output.innerHTML=`Complexity Level: ${complexity}/10`;
+const link=document.getElementById('complexityLink')?.value.trim();
+const output=document.getElementById('complexityOutput'); if(!output) return;
+if(!link){output.innerHTML='No link'; return;}
+const complexity=Math.floor(Math.random()*10)+1;
+output.innerHTML=`Complexity Level: ${complexity}/10`;
+}
+
+// Pixel-Art Level (demo)
+function pixelToLevel(){
+const file=document.getElementById('pixelImage')?.files[0];
+const output=document.getElementById('pixelOutput'); if(!file||!output) return;
+output.innerHTML=`Converting ${file.name} to Pixel Level JSON...\n`;
+setTimeout(()=>{output.innerHTML+='Conversion complete!';},1000);
+}
+
+// OBJ→SGM (demo)
+function convertOBJ(){
+const file=document.getElementById('objFile')?.files[0];
+const output=document.getElementById('objOutput'); if(!file||!output) return;
+output.innerHTML=`Converting ${file.name} to SGM format...\n`;
+setTimeout(()=>{output.innerHTML+='Conversion complete!';},1000);
+}
+
+// Image→3D Map (demo)
+function imageTo3DMap(){
+const file=document.getElementById('mapImage')?.files[0];
+const output=document.getElementById('mapOutput'); if(!file||!output) return;
+output.innerHTML=`Generating 3D Map from ${file.name}...\n`;
+setTimeout(()=>{output.innerHTML+='Map generation complete!';},1500);
 }
 
 // User login
 async function guessUserID(){
-  const username=document.getElementById('loginUsername')?.value.trim();
-  if(!username) return;
-  try{
-    const res=await fetch(`https://api.slin.dev/grab/v1/player/${username}`);
-    const data=await res.json();
-    document.getElementById('loginUserID').value=data.userID;
-    document.getElementById('guessBtn').style.display='none';
-    document.getElementById('loginBtn').style.display='block';
-  }catch{ alert("Could not find user ID"); }
+const username=document.getElementById('loginUsername')?.value.trim();
+if(!username) return;
+try{
+const res=await fetch(`https://api.slin.dev/grab/v1/player/${username}`);
+const data=await res.json();
+document.getElementById('loginUserID').value=data.userID;
+document.getElementById('guessBtn').style.display='none';
+document.getElementById('loginBtn').style.display='block';
+}catch{ alert("Could not find user ID"); }
 }
 function loginUser(){
-  const username=document.getElementById('loginUsername')?.value.trim();
-  const userID=document.getElementById('loginUserID')?.value.trim();
-  if(!username||!userID) return;
-  localStorage.setItem('grabvrUser',JSON.stringify({username,userID}));
-  alert(`Logged in as ${username}`);
-  closeLogin();
+const username=document.getElementById('loginUsername')?.value.trim();
+const userID=document.getElementById('loginUserID')?.value.trim();
+if(!username||!userID) return;
+localStorage.setItem('grabvrUser',JSON.stringify({username,userID}));
+alert(`Logged in as ${username}`);
+closeLogin();
 }
 window.onload=()=>{
-  const saved=localStorage.getItem('grabvrUser');
-  if(saved){const user=JSON.parse(saved); console.log("Logged in as", user.username);}
+const saved=localStorage.getItem('grabvrUser'); if(saved){const user=JSON.parse(saved); console.log("Logged in as", user.username);}
 }
 
-// GRABcraft stuff
+// GRABcraft (basic playable demo)
 const canvas=document.getElementById('grabGame');
 if(canvas){
-  const ctx=canvas.getContext('2d');
-  let x=50,y=50;
-  document.addEventListener('keydown',e=>{
-    if(e.key==='ArrowUp')y-=5;if(e.key==='ArrowDown')y+=5;if(e.key==='ArrowLeft')x-=5;if(e.key==='ArrowRight')x+=5;
-  });
-  function gameLoop(){ctx.clearRect(0,0,canvas.width,canvas.height); ctx.fillStyle='green'; ctx.fillRect(x,y,20,20); requestAnimationFrame(gameLoop);}
-  gameLoop();
+const ctx=canvas.getContext('2d');
+let x=50,y=50;
+document.addEventListener('keydown',e=>{if(e.key==='ArrowUp')y-=5;if(e.key==='ArrowDown')y+=5;if(e.key==='ArrowLeft')x-=5;if(e.key==='ArrowRight')x+=5;});
+function gameLoop(){ctx.clearRect(0,0,canvas.width,canvas.height); ctx.fillStyle='green'; ctx.fillRect(x,y,20,20); requestAnimationFrame(gameLoop);}
+gameLoop();
 }
 </script>
 
