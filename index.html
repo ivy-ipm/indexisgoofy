@@ -6,14 +6,14 @@
 <title>GrabVR Suite</title>
 <style>
 @import url('https://fonts.googleapis.com/css2?family=Courier+Prime&display=swap');
-body {margin:0;font-family:'Courier Prime',monospace; background:linear-gradient(to bottom,#b3d9ff 0%,#fff 50%,#b3d9ff 100%); color:#000;}
-body.night {background:linear-gradient(to bottom,#000 0%,#333 50%,#000 100%); color:#fff;}
-header {display:flex; justify-content:space-between; align-items:center; padding:12px 25px; position:sticky; top:0; z-index:100;}
+body {margin:0;font-family:'Courier Prime',monospace; background:linear-gradient(to bottom,#b3d9ff 0%,#fff 50%,#b3d9ff 100%); color:#000; transition:0.3s;}
+body.night{background:linear-gradient(to bottom,#000 0%,#333 50%,#000 100%); color:#fff;}
+header{display:flex; justify-content:space-between; align-items:center; padding:12px 25px; position:sticky; top:0; z-index:100;}
 header div{font-weight:bold; font-size:24px;}
 nav{display:flex; gap:15px;}
 nav button{cursor:pointer; padding:8px 0; border:none; background:transparent; color:inherit; font-weight:bold; font-size:16px;}
 nav button:hover{text-decoration:underline;}
-#container{max-width:900px;width:95%;margin:25px auto;}
+#container{max-width:900px; width:95%; margin:25px auto;}
 section{display:none;margin-top:20px;}
 section.active{display:block;}
 #toolBox{border:1px solid #0077cc; border-radius:10px; padding:20px; min-height:300px; background:#fff; color:#000;}
@@ -28,7 +28,8 @@ footer a{color:inherit;text-decoration:underline;}
 body.night #loginBox{background:#222; color:#fff; border-color:#555;}
 #loginBox input{margin-bottom:10px;}
 #loginBox button{margin-top:5px;}
-@media(max-width:600px){ header{flex-direction:column; align-items:flex-start} nav{margin-top:8px; flex-wrap:wrap} }
+canvas{width:100%; height:300px; background:#e0e0e0; border-radius:8px; margin-top:10px;}
+@media(max-width:600px){header{flex-direction:column; align-items:flex-start} nav{margin-top:8px; flex-wrap:wrap}}
 </style>
 </head>
 <body>
@@ -39,14 +40,14 @@ body.night #loginBox{background:#222; color:#fff; border-color:#555;}
     <button onclick="showSection('homepage')">Homepage</button>
     <button onclick="showSection('tools')">Tools</button>
     <button onclick="showSection('games')">Games</button>
-    <button onclick="document.getElementById('loginBox').style.display='flex'">User Login</button>
+    <button onclick="showLogin()">User Login</button>
   </nav>
 </header>
 
 <div id="container">
   <section id="homepage" class="active">
     <h2>Welcome to GrabVR Suite</h2>
-    <p>Created by <strong>Pakiv Team</strong> (Pakker + Ivy). This is your all-in-one suite for GrabVR tools and games.</p>
+    <p>Created by <strong>Pakiv Team</strong> (Pakker + Ivy). Explore all-in-one tools for GrabVR: download levels, convert OBJ or images to GrabVR levels, play GRABcraft, and manage your account easily. Every tool is designed to enhance your GrabVR experience with simplicity and fun. Useless tools like complexity analyzer and pixel art generator are for fun, while real tools like OBJ→SGM converter and Image→3D Map provide actual level creation power.</p>
     <div id="jsStatus">JS running ✅</div>
   </section>
 
@@ -56,6 +57,8 @@ body.night #loginBox{background:#222; color:#fff; border-color:#555;}
       <button onclick="showTool('Player Lookup')">Player Lookup</button>
       <button onclick="showTool('OBJ→SGM Converter')">OBJ→SGM Converter</button>
       <button onclick="showTool('Image→3D Map')">Image→3D Map</button>
+      <button onclick="showTool('Pixel Art Level')">Pixel Art Level</button>
+      <button onclick="showTool('Grab Complexity Analyzer')">Grab Complexity Analyzer</button>
     </div>
     <div id="toolBox">Select a tool above to start.</div>
   </section>
@@ -82,40 +85,6 @@ body.night #loginBox{background:#222; color:#fff; border-color:#555;}
 </footer>
 
 <button id="themeToggle">Night</button>
-
-<script>
-document.addEventListener('DOMContentLoaded',()=>{
-
-function showSection(id){document.querySelectorAll('section').forEach(s=>s.classList.remove('active')); document.getElementById(id).classList.add('active');}
-
-function showTool(tool){
-  const box=document.getElementById('toolBox'); box.innerHTML='';
-  switch(tool){
-    case 'Level Downloader':
-      box.innerHTML=`<h3>Level Downloader</h3>
-      <input id="levelLink" placeholder="Enter Grab level link">
-      <input id="levelName" placeholder="Optional: File Name">
-      <button class="action" onclick="downloadLevel()">Download</button>
-      <div id="downloadOutput"></div>`; break;
-    default:
-      box.innerHTML='<p>This tool will be available soon...</p>';
-  }
-}
-
-window.downloadLevel=function(){
-  const link=document.getElementById('levelLink').value.trim();
-  const name=document.getElementById('levelName').value.trim()||'level';
-  if(!link){alert('Enter a link');return;}
-  const a=document.createElement('a'); a.href=link; a.download=name+'.level'; a.click();
-  document.getElementById('downloadOutput').textContent='Download started: '+name+'.level';
-};
-
-document.getElementById('themeToggle').onclick=()=>{
-  document.body.classList.toggle('night');
-  document.getElementById('themeToggle').textContent=document.body.classList.contains('night')?'Day':'Night';
-};
-
-});
-</script>
+<script src="main.js" defer></script>
 </body>
 </html>
