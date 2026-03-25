@@ -9,14 +9,14 @@
 html,body{margin:0;padding:0;font-family:'Poppins',sans-serif;height:100%;width:100%;transition:background 0.5s,color 0.5s;}
 body{background:linear-gradient(to bottom,#b3e5fc 0%,#ffffff 50%,#b3e5fc 100%);color:#000;overflow-x:hidden;}
 body.night{background:linear-gradient(to bottom,#000 0%,#333 50%,#000 100%);color:#fff;}
-header{position:fixed;top:0;left:0;width:100%;display:flex;align-items:center;justify-content:space-between;padding:15px 30px;z-index:10;background:transparent;box-sizing:border-box;}
+header{width:100%;display:flex;align-items:center;justify-content:space-between;padding:15px 30px;box-sizing:border-box;}
 header h1{margin:0;font-size:20px;font-weight:700;}
 nav{display:flex;gap:12px;}
 nav button{background:transparent;border:none;font-size:16px;font-weight:600;cursor:pointer;transition:color 0.3s;}
 nav button:hover{color:#0288d1;}
-#loginTopBtn{padding:8px 20px;font-weight:600;border:2px solid #0288d1;background:transparent;cursor:pointer;transition:all 0.3s;border-radius:6px;}
+#loginTopBtn{display:block;margin:10px auto;padding:8px 20px;font-weight:600;border:2px solid #0288d1;background:transparent;cursor:pointer;transition:all 0.3s;border-radius:6px;}
 #loginTopBtn:hover{background:#0288d1;color:#fff;}
-main{padding-top:90px;max-width:1000px;margin:0 auto;}
+main{padding-top:30px;max-width:1000px;margin:0 auto;}
 section{display:none;padding:20px;}
 section.active{display:block;}
 #toolButtons{display:flex;flex-wrap:wrap;gap:12px;margin-bottom:20px;justify-content:center;}
@@ -48,8 +48,8 @@ body.night #gameCanvas{background:#111;}
 <button id="navTools">Tools</button>
 <button id="navGames">Games</button>
 </nav>
-<button id="loginTopBtn">Grab Login</button>
 </header>
+<button id="loginTopBtn">Grab Login</button>
 <main>
 <section id="homepage" class="active">
 <h1>Welcome to GrabVR Suite</h1>
