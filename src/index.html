@@ -69,6 +69,11 @@ background:#5fa9f3;
 color:#fff;
 cursor:pointer;
 }
+footer{
+text-align:center;
+margin:50px 0 20px 0;
+font-size:0.9rem;
+}
 </style>
 </head>
 <body>
@@ -83,9 +88,10 @@ cursor:pointer;
 </header>
 
 <main>
+
 <section id="homepage" class="active">
-<h1>Welcome</h1>
-<p>Real working tools.</p>
+<h1>Welcome to GrabVR Suite</h1>
+<p>Created by the Pakiv team (Pakker + Ivy). Explore GrabVR tools, games, and utilities all in one place. Use our tools to download levels, analyze them, or generate 3D maps from images. This suite is designed for maximum functionality while being easy to use.</p>
 </section>
 
 <section id="tools">
@@ -96,9 +102,14 @@ cursor:pointer;
 <section id="games">
 <h2>Coming Soon</h2>
 </section>
+
 </main>
 
 <div id="themeToggle">🌙</div>
+
+<footer>
+made by ivy • by love from poizonTools team • <a href="https://discord.gg/G6aNgvM7j9" target="_blank">discord.gg/G6aNgvM7j9</a><br>© 2026
+</footer>
 
 <script>
 document.addEventListener("DOMContentLoaded",()=>{
@@ -178,7 +189,6 @@ const url=document.getElementById("lvlUrl").value;
 const name=document.getElementById("fileName").value||"level";
 const id=url.split("level=")[1]?.split(":")[0];
 if(!id)return alert("invalid url");
-
 const link=`https://api.slin.dev/grab/v1/download/${id}`;
 const a=document.createElement("a");
 a.href=link;
@@ -204,7 +214,6 @@ ctx.drawImage(img,0,0,50,50);
 };
 img.src=URL.createObjectURL(file);
 }
-
 if(e.target.id==="mapInput"){
 const file=e.target.files[0];
 const img=new Image();
@@ -224,9 +233,11 @@ night=!night;
 if(night){
 document.body.style.background="linear-gradient(160deg,#000,#222,#000)";
 document.body.style.color="#fff";
+document.getElementById("themeToggle").textContent="☀️";
 }else{
 document.body.style.background="linear-gradient(160deg,#a0d8f1,#bfe6fb,#a0d8f1)";
 document.body.style.color="#000";
+document.getElementById("themeToggle").textContent="🌙";
 }
 };
 
