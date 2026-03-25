@@ -6,118 +6,143 @@
 <title>GrabVR JSON Editor</title>
 <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600&display=swap" rel="stylesheet">
 <style>
-body{margin:0;font-family:'Poppins',sans-serif;height:100vh;display:flex;flex-direction:column;overflow:hidden;background:linear-gradient(160deg,#a0d8f1,#bfe6fb,#a0d8f1)}
-header{display:flex;justify-content:space-between;align-items:center;padding:10px 20px;background:rgba(255,255,255,0.5);backdrop-filter:blur(10px)}
-header .logo{font-weight:600;font-size:1.3rem}
-#mainContainer{display:flex;flex:1;overflow:hidden}
-#palette{width:150px;background:rgba(255,255,255,0.2);backdrop-filter:blur(5px);padding:10px;overflow-y:auto;display:flex;flex-direction:column}
-#palette button{margin:5px 0;padding:8px;border:none;border-radius:6px;background:rgba(255,255,255,0.3);cursor:pointer;transition:0.2s}
-#palette button:hover{background:rgba(95,169,243,0.5);color:#fff}
-#editorContainer{flex:1;display:flex;flex-direction:column;position:relative}
-#viewer{flex:1;width:100%;height:100%;display:block}
-#jsonPanel{height:200px;background:rgba(255,255,255,0.6);backdrop-filter:blur(5px);overflow:auto;padding:10px;font-family:monospace;resize:none;width:100%;border:none}
-#editorControls{display:flex;justify-content:flex-start;padding:5px;background:rgba(255,255,255,0.5);backdrop-filter:blur(5px)}
-#editorControls button{margin-right:5px;padding:6px 12px;border:none;border-radius:6px;background:rgba(95,169,243,0.7);color:#fff;cursor:pointer;transition:0.3s}
-#editorControls button:hover{background:#5fa9f3}
+body, html{margin:0;padding:0;width:100%;height:100%;overflow:hidden;font-family:'Poppins',sans-serif;background:linear-gradient(160deg,#a0d8f1,#bfe6fb,#a0d8f1)}
+#editorUI{position:absolute;top:0;left:0;width:100%;height:100%;display:flex;flex-direction:column}
+header{height:50px;background:rgba(255,255,255,0.6);backdrop-filter:blur(10px);display:flex;align-items:center;padding:0 15px;z-index:1000;flex-shrink:0}
+header h1{font-size:1.1rem;margin:0}
+#mainArea{flex:1;display:flex;overflow:hidden}
+#palette{width:200px;background:rgba(255,255,255,0.2);backdrop-filter:blur(5px);padding:10px;overflow-y:auto;flex-shrink:0}
+#palette h2{margin-top:0}
+#blockPalette{display:grid;grid-template-columns:repeat(3,1fr);gap:5px}
+.blockBtn{width:60px;height:60px;border-radius:6px;background:#fff;cursor:pointer;display:flex;align-items:center;justify-content:center;font-size:0.8rem;color:#000;transition:0.2s}
+.blockBtn:hover{background:#5fa9f3;color:#fff}
+#sceneContainer{flex:1;position:relative}
+canvas{display:block}
+#jsonPanel{position:absolute;top:10px;right:10px;width:300px;height:400px;background:rgba(255,255,255,0.8);backdrop-filter:blur(5px);padding:10px;border-radius:8px;overflow:auto;z-index:1000;font-size:0.8rem}
+#jsonPanel textarea{width:100%;height:calc(100% - 60px);border:none;border-radius:5px;padding:5px;resize:none;font-family:monospace;font-size:0.8rem}
+#jsonPanel button{margin-top:5px;padding:5px;border:none;border-radius:6px;background:#5fa9f3;color:#fff;cursor:pointer;width:100%}
+@media(max-width:768px){#palette{width:100px}#blockPalette{grid-template-columns:repeat(2,1fr)}#jsonPanel{width:200px;height:300px;font-size:0.7rem}}
 </style>
 </head>
 <body>
-<header>
-<div class="logo">GrabVR JSON Editor</div>
-</header>
-<div id="mainContainer">
-<div id="palette"></div>
-<div id="editorContainer">
-<canvas id="viewer"></canvas>
-<div id="editorControls">
-<button id="saveBtn">Save JSON</button>
-<button id="loadBtn">Load JSON</button>
-<button id="resetBtn">Reset</button>
+<div id="editorUI">
+<header><h1>GrabVR JSON Editor</h1></header>
+<div id="mainArea">
+<div id="palette">
+<h2>Palette</h2>
+<div id="blockPalette"></div>
 </div>
-<textarea id="jsonPanel" placeholder="Raw JSON appears here"></textarea>
+<div id="sceneContainer"></div>
+<div id="jsonPanel">
+<textarea id="rawJSON"></textarea>
+<button id="loadJSONBtn">Load JSON</button>
+<button id="exportJSONBtn">Export JSON</button>
 </div>
 </div>
-<script src="https://cdn.jsdelivr.net/npm/three@0.158.0/build/three.min.js"></script>
-<script src="https://cdn.jsdelivr.net/npm/three@0.158.0/examples/js/controls/OrbitControls.js"></script>
-<script src="https://cdn.jsdelivr.net/npm/three@0.158.0/examples/js/controls/TransformControls.js"></script>
+</div>
+<script src="https://cdn.jsdelivr.net/npm/three@0.154.0/build/three.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/three@0.154.0/examples/js/controls/OrbitControls.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/three@0.154.0/examples/js/controls/TransformControls.js"></script>
 <script>
-const canvas=document.getElementById("viewer");
-const scene=new THREE.Scene();
-const camera=new THREE.PerspectiveCamera(75,canvas.clientWidth/canvas.clientHeight,0.1,1000);
-const renderer=new THREE.WebGLRenderer({canvas:canvas,antialias:true});
-renderer.setSize(canvas.clientWidth,canvas.clientHeight);
-renderer.setPixelRatio(window.devicePixelRatio);
+let scene=new THREE.Scene();
+let camera=new THREE.PerspectiveCamera(70,window.innerWidth/window.innerHeight,0.1,1000);
+let renderer=new THREE.WebGLRenderer({antialias:true});
+renderer.setSize(window.innerWidth,window.innerHeight);
+document.getElementById("sceneContainer").appendChild(renderer.domElement);
 
-// Skybox for daytime: light blue top/bottom, white middle
-const skyGeometry=new THREE.BoxGeometry(1000,1000,1000);
-const skyMaterials=[
-new THREE.MeshBasicMaterial({color:0xa0d8f1,side:THREE.BackSide}), // right
-new THREE.MeshBasicMaterial({color:0xa0d8f1,side:THREE.BackSide}), // left
-new THREE.MeshBasicMaterial({color:0xffffff,side:THREE.BackSide}), // top
-new THREE.MeshBasicMaterial({color:0xffffff,side:THREE.BackSide}), // bottom
-new THREE.MeshBasicMaterial({color:0xffffff,side:THREE.BackSide}), // front
-new THREE.MeshBasicMaterial({color:0xffffff,side:THREE.BackSide})  // back
-];
-const skybox=new THREE.Mesh(skyGeometry,skyMaterials);
-scene.add(skybox);
+scene.background=new THREE.CubeTextureLoader().setPath('').load([
+'data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAQAAAC1HAwCAAAAC0lEQVR4nGNgYAAAAAMAASsJTYQAAAAASUVORK5CYII=', 
+'data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAQAAAC1HAwCAAAAC0lEQVR4nGNgYAAAAAMAASsJTYQAAAAASUVORK5CYII=',
+'data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAQAAAC1HAwCAAAAC0lEQVR4nGNgYAAAAAMAASsJTYQAAAAASUVORK5CYII=',
+'data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAQAAAC1HAwCAAAAC0lEQVR4nGNgYAAAAAMAASsJTYQAAAAASUVORK5CYII=',
+'data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAQAAAC1HAwCAAAAC0lEQVR4nGNgYAAAAAMAASsJTYQAAAAASUVORK5CYII=',
+'data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAQAAAC1HAwCAAAAC0lEQVR4nGNgYAAAAAMAASsJTYQAAAAASUVORK5CYII='
+]);
 
-// Camera and controls
+let gridHelper=new THREE.GridHelper(100,100);
+scene.add(gridHelper);
+
+let light=new THREE.AmbientLight(0xffffff,0.8);
+scene.add(light);
+
+let directionalLight=new THREE.DirectionalLight(0xffffff,0.5);
+directionalLight.position.set(50,50,50);
+scene.add(directionalLight);
+
 camera.position.set(5,5,5);
-const orbitControls=new THREE.OrbitControls(camera,renderer.domElement);
-orbitControls.update();
+let orbit=new THREE.OrbitControls(camera,renderer.domElement);
+orbit.enableDamping=true;
+orbit.dampingFactor=0.05;
 
-// Block palette
-const palette=document.getElementById("palette");
-const blocks=["Red","Green","Blue","Yellow","Gray"];
-let selectedBlock=null;
-blocks.forEach(color=>{
-const btn=document.createElement("button");
-btn.textContent=color;
-btn.onclick=()=>selectedBlock=color;
-palette.appendChild(btn);
-});
-
-// Transform controls
-const transformControls=new THREE.TransformControls(camera,renderer.domElement);
+let transformControls=new THREE.TransformControls(camera,renderer.domElement);
 scene.add(transformControls);
 
-const blockObjects=[];
-function addBlock(color,pos){const geom=new THREE.BoxGeometry();const mat=new THREE.MeshStandardMaterial({color:color.toLowerCase()});const cube=new THREE.Mesh(geom,mat);cube.position.copy(pos);scene.add(cube);blockObjects.push(cube);return cube;}
-
-// Lights
-const ambient=new THREE.AmbientLight(0xffffff,0.6);scene.add(ambient);
-const dirLight=new THREE.DirectionalLight(0xffffff,0.8);dirLight.position.set(5,10,7);scene.add(dirLight);
-
-// Mouse interaction
-const raycaster=new THREE.Raycaster();
-const mouse=new THREE.Vector2();
-let selectedObj=null;
-canvas.addEventListener("pointerdown",e=>{
-mouse.x=(e.offsetX/canvas.clientWidth)*2-1;
-mouse.y=-(e.offsetY/canvas.clientHeight)*2+1;
-raycaster.setFromCamera(mouse,camera);
-const intersects=raycaster.intersectObjects(blockObjects);
-if(intersects.length>0){selectedObj=intersects[0].object;transformControls.attach(selectedObj);}
-else if(selectedBlock){const cube=addBlock(selectedBlock,new THREE.Vector3(0,0,0));transformControls.attach(cube);}
+window.addEventListener('resize',()=>{
+camera.aspect=window.innerWidth/window.innerHeight;
+camera.updateProjectionMatrix();
+renderer.setSize(window.innerWidth,window.innerHeight);
 });
 
-// Responsive
-window.addEventListener("resize",()=>{camera.aspect=canvas.clientWidth/canvas.clientHeight;camera.updateProjectionMatrix();renderer.setSize(canvas.clientWidth,canvas.clientHeight);});
+let blocks=[];
+const blockTypes=["Grass","Stone","Wood","Sand","Water","Glass"];
+const blockPaletteDiv=document.getElementById("blockPalette");
 
-// JSON panel sync
-const jsonPanel=document.getElementById("jsonPanel");
-function updateJSON(){const arr=blockObjects.map(b=>({color:b.material.color.getStyle(),position:b.position.toArray(),scale:b.scale.toArray()}));jsonPanel.value=JSON.stringify(arr,null,2);}
-const saveBtn=document.getElementById("saveBtn");
-const loadBtn=document.getElementById("loadBtn");
-const resetBtn=document.getElementById("resetBtn");
+blockTypes.forEach(bt=>{
+let btn=document.createElement("div");
+btn.className="blockBtn";btn.textContent=bt;
+btn.onclick=()=>{
+let geometry=new THREE.BoxGeometry(1,1,1);
+let material=new THREE.MeshStandardMaterial({color:Math.random()*0xffffff});
+let mesh=new THREE.Mesh(geometry,material);
+mesh.userData.type=bt;
+scene.add(mesh);
+blocks.push(mesh);
+};
+blockPaletteDiv.appendChild(btn);
+});
 
-saveBtn.onclick=()=>{updateJSON();alert("JSON updated in panel");};
-loadBtn.onclick=()=>{try{const data=JSON.parse(jsonPanel.value);blockObjects.forEach(b=>scene.remove(b));blockObjects.length=0;data.forEach(d=>addBlock(d.color,new THREE.Vector3(...d.position)));}catch{alert("Invalid JSON")}};
-resetBtn.onclick=()=>{blockObjects.forEach(b=>scene.remove(b));blockObjects.length=0;jsonPanel.value="";};
+renderer.domElement.addEventListener("pointerdown",(e)=>{
+let mouse=new THREE.Vector2();
+mouse.x=(e.clientX/window.innerWidth)*2-1;
+mouse.y=-(e.clientY/window.innerHeight)*2+1;
+let raycaster=new THREE.Raycaster();
+raycaster.setFromCamera(mouse,camera);
+let intersects=raycaster.intersectObjects(blocks);
+if(intersects.length>0){transformControls.attach(intersects[0].object);}
+});
 
-// Animate
+scene.add(transformControls);
+
 function animate(){requestAnimationFrame(animate);renderer.render(scene,camera);}
 animate();
+
+const rawJSON=document.getElementById("rawJSON");
+const loadJSONBtn=document.getElementById("loadJSONBtn");
+const exportJSONBtn=document.getElementById("exportJSONBtn");
+
+exportJSONBtn.onclick=()=>{
+let jsonBlocks=blocks.map(b=>({type:b.userData.type,position:b.position,rotation:b.rotation,scale:b.scale}));
+rawJSON.value=JSON.stringify(jsonBlocks,null,2);
+};
+
+loadJSONBtn.onclick=()=>{
+try{
+let data=JSON.parse(rawJSON.value);
+blocks.forEach(b=>scene.remove(b));
+blocks=[];
+data.forEach(d=>{
+let geo=new THREE.BoxGeometry(1,1,1);
+let mat=new THREE.MeshStandardMaterial({color:Math.random()*0xffffff});
+let mesh=new THREE.Mesh(geo,mat);
+mesh.position.copy(d.position);
+mesh.rotation.copy(d.rotation);
+mesh.scale.copy(d.scale);
+mesh.userData.type=d.type;
+scene.add(mesh);
+blocks.push(mesh);
+});
+}catch{alert("Invalid JSON");}
+};
 </script>
 </body>
 </html>
