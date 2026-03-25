@@ -109,7 +109,20 @@ button:hover {
 </div>
 
 <script>
-async function downloadLevel() {
+function extractIDs(link) {
+  try {
+    const url = new URL(link);
+    const levelParam = url.searchParams.get('level'); // e.g., "2e2l2thhjdbueny6no4kg:1774418385"
+    if (!levelParam) return null;
+    const parts = levelParam.split(':');
+    if (parts.length < 2) return null;
+    return { alphaID: parts[0], numericID: parts[1], version: 1 }; // default version = 1
+  } catch {
+    return null;
+  }
+}
+
+function downloadLevel() {
   const input = document.getElementById('linkInput').value.trim();
   const status = document.getElementById('status');
   const loader = document.getElementById('loader');
@@ -119,50 +132,37 @@ async function downloadLevel() {
   status.textContent = '';
 
   if (!input) {
-    status.textContent = "Enter a valid link";
+    status.textContent = "Enter a valid Grab level link";
     return;
   }
 
-  let id;
-  try {
-    const url = new URL(input);
-    id = url.searchParams.get('level'); // grab full level ID
-  } catch {
-    status.textContent = "Invalid URL";
-    return;
-  }
-
-  if (!id) {
+  const ids = extractIDs(input);
+  if (!ids) {
     status.textContent = "Could not extract level ID";
     return;
   }
 
-  status.textContent = "Fetching level...";
+  const { alphaID, numericID, version } = ids;
+  const downloadURL = `https://api.slin.dev/grab/v1/download/${alphaID}/${numericID}/${version}`;
+
+  status.textContent = "Downloading level...";
   loader.style.display = "block";
 
-  try {
-    const res = await fetch(`https://api.slin.dev/grab/v1/level/${id}`);
-    if (!res.ok) throw new Error("API request failed");
-    const blob = await res.blob(); // grab as blob directly
+  // Create download link
+  const a = document.createElement('a');
+  a.href = downloadURL;
+  a.download = `grab-level-${numericID}.level`;
+  document.body.appendChild(a);
+  a.click();
+  document.body.removeChild(a);
 
-    // Display some info
-    info.style.display = 'block';
-    info.innerHTML = `<strong>Level ID:</strong> ${id}`;
-
-    // Download as .level
-    const urlBlob = URL.createObjectURL(blob);
-    const a = document.createElement('a');
-    a.href = urlBlob;
-    a.download = `grab-level-${id}.level`; // change extension to .level
-    a.click();
-    URL.revokeObjectURL(urlBlob);
-
-    status.textContent = "Download started";
-  } catch (err) {
-    console.error(err);
-    status.textContent = "Failed to fetch level";
-  }
-
+  info.style.display = 'block';
+  info.innerHTML = `
+    <strong>Alphanumeric ID:</strong> ${alphaID}<br>
+    <strong>Numeric ID:</strong> ${numericID}<br>
+    <strong>Version:</strong> ${version}
+  `;
+  status.textContent = "Download started";
   loader.style.display = "none";
 }
 </script>
