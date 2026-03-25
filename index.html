@@ -5,7 +5,6 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>GrabVR Suite</title>
 <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&display=swap" rel="stylesheet">
-<link rel="stylesheet" href="style.css">
 <style>
 :root{
   --bg-day:#f4f7fa; --bg-night:#1e1e2f;
@@ -44,6 +43,9 @@ footer a{color:var(--accent);text-decoration:underline;}
 body[data-theme="night"] .user-login-box{background:var(--card-bg-night);border:1px solid #555;}
 .output{white-space:pre-wrap;height:150px;overflow-y:auto;border:1px solid #ccc;padding:10px;border-radius:6px;margin-top:10px;}
 body[data-theme="night"] .output{border:1px solid #555;}
+.game-canvas{width:100%;height:400px;background:#000;border-radius:10px;margin-top:15px;}
+.card{margin-top:15px;padding:15px;border-radius:10px;background:var(--card-bg-day);border:1px solid #ccc;}
+body[data-theme="night"] .card{background:var(--card-bg-night);border:1px solid #555;}
 </style>
 </head>
 <body data-theme="day">
@@ -51,52 +53,52 @@ body[data-theme="night"] .output{border:1px solid #555;}
 <header>
 <div class="logo">GrabVR Suite</div>
 <nav>
-<button onclick="showSection('home')">Homepage</button>
-<button onclick="showSection('tools')">Tools</button>
-<button onclick="showSection('games')">Games</button>
-<button id="themeToggle" onclick="toggleTheme()">🌙</button>
-<button onclick="openLogin()">User Login</button>
+<button onclick="mainJS.showSection('home')">Homepage</button>
+<button onclick="mainJS.showSection('tools')">Tools</button>
+<button onclick="mainJS.showSection('games')">Games</button>
+<button id="themeToggle" onclick="mainJS.toggleTheme()">🌙</button>
+<button onclick="mainJS.openLogin()">User Login</button>
 </nav>
 </header>
 
 <div class="container">
 
 <section id="home" class="active">
-  <h2>Welcome to GrabVR Suite</h2>
-  <p>Created by <strong>Pakiv Team</strong> (Pakker + Ivy). Explore a suite of tools for GrabVR: download levels, convert models, generate 3D maps from images, and even play GRABcraft. All tools are integrated into a single interface to maximize productivity and creativity for GrabVR enthusiasts.</p>
+<h2>Welcome to GrabVR Suite</h2>
+<p>Created by <strong>Pakiv Team</strong> (Pakker + Ivy). Explore a suite of tools for GrabVR: download levels, convert models, generate 3D maps from images, and even play GRABcraft. All tools are integrated into a single interface to maximize productivity and creativity for GrabVR enthusiasts.</p>
 
-  <div class="card">
-    <h3>JS Status</h3>
-    <p id="jsStatus">Checking...</p>
-  </div>
+<div class="card">
+<h3>JS Status</h3>
+<p id="jsStatus">Checking...</p>
+</div>
 
-  <div class="card">
-    <h3>Useless Tools (For Fun)</h3>
-    <ul>
-      <li>Player Lookup</li>
-      <li>Level Complexity Analyzer</li>
-      <li>Pixel-Art Level Creator</li>
-    </ul>
-  </div>
+<div class="card">
+<h3>Useless Tools (For Fun)</h3>
+<ul>
+<li>Player Lookup</li>
+<li>Level Complexity Analyzer</li>
+<li>Pixel-Art Level Creator</li>
+</ul>
+</div>
 
-  <div class="card">
-    <h3>Useful Tools</h3>
-    <ul>
-      <li>Level Downloader</li>
-      <li>OBJ→SGM Converter</li>
-      <li>Image→3D Map Generator</li>
-    </ul>
-  </div>
+<div class="card">
+<h3>Useful Tools</h3>
+<ul>
+<li>Level Downloader</li>
+<li>OBJ→SGM Converter</li>
+<li>Image→3D Map Generator</li>
+</ul>
+</div>
 </section>
 
 <section id="tools">
 <div class="tool-buttons">
-<button onclick="showTool('levelDownloader')">Level Downloader</button>
-<button onclick="showTool('playerLookup')">Player Lookup</button>
-<button onclick="showTool('complexityAnalyzer')">Level Complexity Analyzer</button>
-<button onclick="showTool('pixelArt')">Pixel-Art Level</button>
-<button onclick="showTool('objToSgm')">OBJ→SGM Converter</button>
-<button onclick="showTool('image3DMap')">Image→3D Map</button>
+<button onclick="mainJS.showTool('levelDownloader')">Level Downloader</button>
+<button onclick="mainJS.showTool('playerLookup')">Player Lookup</button>
+<button onclick="mainJS.showTool('complexityAnalyzer')">Level Complexity Analyzer</button>
+<button onclick="mainJS.showTool('pixelArt')">Pixel-Art Level</button>
+<button onclick="mainJS.showTool('objToSgm')">OBJ→SGM Converter</button>
+<button onclick="mainJS.showTool('image3DMap')">Image→3D Map</button>
 </div>
 <div class="tool-box" id="toolBox"><p>Select a tool above to start.</p></div>
 </section>
@@ -113,7 +115,7 @@ body[data-theme="night"] .output{border:1px solid #555;}
 <input id="loginUserID" placeholder="User ID" readonly>
 <button id="guessBtn" onclick="mainJS.guessUserID()">Guess</button>
 <button id="loginBtn" onclick="mainJS.loginUser()" style="display:none;">Login</button>
-<button onclick="closeLogin()">Close</button>
+<button onclick="mainJS.closeLogin()">Close</button>
 </div>
 
 <footer>
