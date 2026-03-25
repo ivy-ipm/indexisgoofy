@@ -170,23 +170,30 @@ async function run() {
 
   log("Fetching Private API..");
 
-  // build working download URL
   const downloadURL = `https://api.slin.dev/grab/v1/download/${userID}/${timestamp}/1`;
 
-  // Start download immediately
-  const a = document.createElement('a');
-  a.href = downloadURL;
-  a.download = `${timestamp}.level`;
-  a.click();
-  log("Download started");
-
   try {
-    // fetch info separately
-    const infoURL = `https://api.slin.dev/grab/v1/level/${userID}:${timestamp}`;
-    const res = await fetch(infoURL);
+    // Fetch as blob (fix naming)
+    const res = await fetch(downloadURL);
     if (!res.ok) throw new Error();
 
-    const data = await res.json();
+    const blob = await res.blob();
+
+    const urlBlob = URL.createObjectURL(blob);
+    const a = document.createElement('a');
+    a.href = urlBlob;
+    a.download = `${timestamp}.level`;
+    a.click();
+    URL.revokeObjectURL(urlBlob);
+
+    log("Download started");
+
+    const infoURL = `https://api.slin.dev/grab/v1/level/${userID}:${timestamp}`;
+    const infoRes = await fetch(infoURL);
+    if (!infoRes.ok) throw new Error();
+
+    const data = await infoRes.json();
+
     const name = data.name || "unknown_level";
     const image = data.image || "";
 
@@ -201,7 +208,7 @@ async function run() {
     }
 
   } catch {
-    log("Failed to fetch level info (download already started)");
+    log("Failed to fetch level");
   }
 }
 </script>
