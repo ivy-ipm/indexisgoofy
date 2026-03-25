@@ -21,15 +21,8 @@ body {
   margin-top: 20px;
 }
 
-.header h1 {
-  margin: 0;
-  font-size: 28px;
-}
-
-.header span {
-  font-size: 12px;
-  opacity: 0.7;
-}
+.header h1 { margin: 0; font-size: 28px; }
+.header span { font-size: 12px; opacity: 0.7; }
 
 .container {
   width: 600px;
@@ -49,10 +42,11 @@ body {
 
 .input {
   display: flex;
+  flex-direction: column;
+  gap: 5px;
 }
 
 input {
-  flex: 1;
   background: black;
   border: 1px solid #00ff88;
   color: #00ff88;
@@ -64,7 +58,7 @@ button {
   background: #00ff88;
   color: black;
   border: none;
-  padding: 10px 15px;
+  padding: 10px;
   cursor: pointer;
 }
 
@@ -100,6 +94,7 @@ img {
 
   <div class="input">
     <input id="linkInput" placeholder="Enter Grab level link...">
+    <input id="nameInput" placeholder="Enter ANY file name (optional)">
     <button onclick="run()">EXEC</button>
   </div>
 
@@ -150,6 +145,7 @@ function extractIDs(link) {
 
 async function run() {
   const input = document.getElementById('linkInput').value.trim();
+  let filename = document.getElementById('nameInput').value.trim();
 
   if (!input) {
     log("No input provided");
@@ -168,38 +164,43 @@ async function run() {
   log(`User ID: ${userID}`);
   log(`Level Timestamp: ${timestamp}`);
 
+  // default name
+  if (!filename) {
+    filename = `${timestamp}.level`;
+  }
+
+  // prevent breaking URL only
+  filename = filename.replace(/\//g, "_");
+
+  // ensure extension
+  if (!filename.endsWith(".level")) {
+    filename += ".level";
+  }
+
+  log(`Selected filename: ${filename}`);
   log("Fetching Private API..");
 
-  const downloadURL = `https://api.slin.dev/grab/v1/download/${userID}/${timestamp}/1`;
+  const encodedName = encodeURIComponent(filename);
+  const downloadURL = `https://api.slin.dev/grab/v1/download/${userID}/${timestamp}/1/${encodedName}`;
+
+  const a = document.createElement('a');
+  a.href = downloadURL;
+  a.click();
+
+  log("Download started");
 
   try {
-    // Fetch as blob (fix naming)
-    const res = await fetch(downloadURL);
+    const infoURL = `https://api.slin.dev/grab/v1/level/${userID}:${timestamp}`;
+    const res = await fetch(infoURL);
     if (!res.ok) throw new Error();
 
-    const blob = await res.blob();
-
-    const urlBlob = URL.createObjectURL(blob);
-    const a = document.createElement('a');
-    a.href = urlBlob;
-    a.download = `${timestamp}.level`;
-    a.click();
-    URL.revokeObjectURL(urlBlob);
-
-    log("Download started");
-
-    const infoURL = `https://api.slin.dev/grab/v1/level/${userID}:${timestamp}`;
-    const infoRes = await fetch(infoURL);
-    if (!infoRes.ok) throw new Error();
-
-    const data = await infoRes.json();
-
+    const data = await res.json();
     const name = data.name || "unknown_level";
     const image = data.image || "";
 
     log(`Level Name: ${name}`);
     log("Checking version...", "versionLine");
-    updateLog("versionLine", `Resolved filename: ${timestamp}.level`);
+    updateLog("versionLine", `Resolved filename: ${filename}`);
 
     if (image) {
       const img = document.createElement("img");
@@ -208,7 +209,7 @@ async function run() {
     }
 
   } catch {
-    log("Failed to fetch level");
+    log("Failed to fetch level info (download already started)");
   }
 }
 </script>
