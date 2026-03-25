@@ -37,7 +37,12 @@ nav button {
   transition: all 0.3s;
 }
 nav button:hover { background: rgba(95,169,243,0.5); color:#fff; }
-main section { padding:20px; background: rgba(255,255,255,0); }
+main section {
+  display:none;
+  padding:20px;
+  background: rgba(255,255,255,0);
+}
+main section.active { display:block; }
 #toolButtons button {
   margin:5px;
   background: rgba(255,255,255,0.2);
@@ -135,6 +140,7 @@ footer {
 <footer>
   made by ivy • by love from poizonTools team • <a href="https://discord.gg/G6aNgvM7j9" target="_blank">discord.gg/G6aNgvM7j9</a><br>© 2026
 </footer>
+
 <script>
 document.addEventListener('DOMContentLoaded', ()=>{
 let isNight=false;
@@ -143,16 +149,23 @@ const sections={
   tools:document.getElementById('tools'),
   games:document.getElementById('games')
 };
-document.getElementById('navHome').onclick=()=>showSection('homepage');
-document.getElementById('navTools').onclick=()=>showSection('tools');
-document.getElementById('navGames').onclick=()=>showSection('games');
-document.getElementById('navLogin').onclick=()=>document.getElementById('loginBox').style.display='block';
+const navHome=document.getElementById('navHome');
+const navTools=document.getElementById('navTools');
+const navGames=document.getElementById('navGames');
+const navLogin=document.getElementById('navLogin');
+const loginBox=document.getElementById('loginBox');
+
 function showSection(name){
   Object.values(sections).forEach(s=>s.classList.remove('active'));
   sections[name].classList.add('active');
 }
 
-// Tools fully functional
+navHome.onclick=()=>showSection('homepage');
+navTools.onclick=()=>showSection('tools');
+navGames.onclick=()=>showSection('games');
+navLogin.onclick=()=>loginBox.style.display='block';
+
+// Tools
 const toolButtonsDiv=document.getElementById('toolButtons');
 const toolBoxDiv=document.getElementById('toolBox');
 
@@ -195,12 +208,12 @@ loginBtnMain.onclick=()=>{
   }
   loginUserID.value=userID;
   if(username){
-    document.getElementById('navLogin').textContent=username;
-    document.getElementById('loginBox').style.display='none';
+    navLogin.textContent=username;
+    loginBox.style.display='none';
   }
 };
 
-// Theme toggle
+// Theme
 const themeToggle=document.getElementById('themeToggle');
 themeToggle.onclick=()=>{
   isNight=!isNight;
