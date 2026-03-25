@@ -3,48 +3,163 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>GrabVR JSON Editor</title>
+<title>Grab JSON Editor</title>
+<link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600&display=swap" rel="stylesheet">
 <style>
-@import url('https://fonts.googleapis.com/css2?family=Poppins:wght@400;600&display=swap');
-body{margin:0;font-family:'Poppins',sans-serif;background:#f5f5f5;color:#000;}
-header{position:sticky;top:0;background:#fff;display:flex;align-items:center;padding:10px 20px;box-shadow:0 2px 5px rgba(0,0,0,0.1);}
-header h1{margin:0;font-weight:600;}
-nav button{margin:0 5px;background:transparent;border:2px solid #5fa9f3;border-radius:5px;color:#000;padding:5px 10px;cursor:pointer;transition:all 0.3s;}
-nav button:hover{background:#5fa9f3;color:#fff;}
-#editor{margin:20px auto;max-width:800px;display:flex;flex-direction:column;}
-textarea{width:100%;height:400px;border:2px solid #5fa9f3;border-radius:5px;padding:10px;font-family:'Poppins',sans-serif;font-size:14px;}
-#editor button{margin-top:10px;padding:5px 10px;border:2px solid #5fa9f3;background:transparent;border-radius:5px;cursor:pointer;transition:all 0.3s;}
-#editor button:hover{background:#5fa9f3;color:#fff;}
+body {
+  margin:0;
+  font-family:'Poppins',sans-serif;
+  background: linear-gradient(160deg,#a0d8f1,#bfe6fb,#a0d8f1);
+  color:#000;
+  transition:0.3s;
+}
+header {
+  position: sticky;
+  top:0;
+  display:flex;
+  justify-content: space-between;
+  align-items:center;
+  padding:10px 20px;
+  background: rgba(255,255,255,0.5);
+  backdrop-filter: blur(10px);
+  z-index:1000;
+}
+nav button {
+  margin:0 5px;
+  padding:6px 12px;
+  border:none;
+  border-radius:8px;
+  background: rgba(255,255,255,0.2);
+  cursor:pointer;
+  transition:0.2s;
+}
+nav button:hover {
+  background: rgba(95,169,243,0.5);
+  color:#fff;
+}
+main {
+  padding:20px;
+}
+#editorContainer {
+  display:flex;
+  gap:20px;
+  flex-wrap: wrap;
+}
+#jsonEditor {
+  flex:1;
+  height:400px;
+  width:100%;
+  background: rgba(255,255,255,0.2);
+  backdrop-filter: blur(5px);
+  border:none;
+  border-radius:8px;
+  padding:10px;
+  font-family:'Poppins';
+  resize:none;
+}
+#editor3D {
+  flex:1;
+  height:400px;
+  background: rgba(255,255,255,0.1);
+  backdrop-filter: blur(5px);
+  border-radius:8px;
+  perspective:600px;
+  overflow:hidden;
+  position:relative;
+}
+#editor3D div {
+  width:40px;
+  height:40px;
+  position:absolute;
+  transform-style: preserve-3d;
+  background: rgba(95,169,243,0.7);
+  border:1px solid #fff;
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  border-radius:4px;
+  font-size:0.7rem;
+}
+.tool-buttons {
+  margin-top:10px;
+}
+.tool-buttons button {
+  padding:6px 12px;
+  margin:0 5px 5px 0;
+  border:none;
+  border-radius:8px;
+  background: rgba(95,169,243,0.5);
+  color:#fff;
+  cursor:pointer;
+  transition:0.2s;
+}
+.tool-buttons button:hover {
+  background: rgba(95,169,243,0.7);
+}
+footer {
+  text-align:center;
+  margin:50px 0 20px 0;
+  font-size:0.9rem;
+}
 </style>
 </head>
 <body>
 <header>
-<h1>GrabVR JSON Editor</h1>
+<div>Grab JSON Editor</div>
 <nav>
-<button onclick="window.location.href='/src/index.html'">Back</button>
-<button id="import-btn">Import</button>
-<button id="export-btn">Export</button>
+<button onclick="window.location.href='index.html'">Home</button>
 </nav>
 </header>
-
-<div id="editor">
-<textarea id="json-editor" placeholder="Paste or edit your Grab JSON here..."></textarea>
-<button id="place-block">Place Block</button>
-<button id="place-shape">Place Shape</button>
+<main>
+<h1>Grab JSON Level Editor</h1>
+<p>Create and edit your GrabVR levels. Place blocks, edit JSON, and export .level files.</p>
+<div id="editorContainer">
+<textarea id="jsonEditor"></textarea>
+<div>
+<div id="editor3D"></div>
+<div class="tool-buttons">
+<button class="addBlock" data-shape="cube">Add Cube</button>
+<button class="addBlock" data-shape="sphere">Add Sphere</button>
+<button id="exportLevel">Export .level</button>
 </div>
-
+</div>
+</div>
+</main>
+<footer>
+made by ivy • by love from poizonTools team • <a href="https://discord.gg/G6aNgvM7j9" target="_blank">discord.gg/G6aNgvM7j9</a><br>© 2026
+</footer>
 <script>
-const textarea=document.getElementById('json-editor');
-document.getElementById('import-btn').onclick=()=>{
-const input=document.createElement('input');input.type='file';input.accept='.json,.level';
-input.onchange=e=>{const file=e.target.files[0];const reader=new FileReader();reader.onload=ev=>{textarea.value=ev.target.result;};reader.readAsText(file);};
-input.click();
+let sceneData = [];
+const editor3D = document.getElementById('editor3D');
+const jsonEditor = document.getElementById('jsonEditor');
+
+function renderScene(){
+  editor3D.innerHTML='';
+  sceneData.forEach((obj,idx)=>{
+    const el = document.createElement('div');
+    el.innerText=obj.type;
+    el.style.left=50+idx*45+'px';
+    el.style.top=100+'px';
+    editor3D.appendChild(el);
+  });
+  jsonEditor.value = JSON.stringify(sceneData,null,2);
+}
+
+document.querySelectorAll('.addBlock').forEach(btn=>{
+  btn.onclick=()=>{
+    const shape=btn.dataset.shape;
+    sceneData.push({type:shape});
+    renderScene();
+  };
+});
+
+document.getElementById('exportLevel').onclick=()=>{
+  const blob = new Blob([JSON.stringify(sceneData,null,2)],{type:'application/json'});
+  const a = document.createElement('a');
+  a.href = URL.createObjectURL(blob);
+  a.download='level.level';
+  a.click();
 };
-document.getElementById('export-btn').onclick=()=>{
-const blob=new Blob([textarea.value],{type:'application/json'});const url=URL.createObjectURL(blob);const a=document.createElement('a');a.href=url;a.download='level.level';a.click();URL.revokeObjectURL(url);
-};
-document.getElementById('place-block').onclick=()=>{alert('Place Block functionality (not fully implemented)');};
-document.getElementById('place-shape').onclick=()=>{alert('Place Shape functionality (not fully implemented)');};
 </script>
 </body>
 </html>
