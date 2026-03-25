@@ -6,135 +6,93 @@
 <title>Grab JSON Editor</title>
 <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600&display=swap" rel="stylesheet">
 <style>
-body{margin:0;font-family:'Poppins',sans-serif;background:linear-gradient(160deg,#ffecd2,#fcb69f,#ffecd2);color:#000;transition:0.3s}
-header{position:sticky;top:0;display:flex;justify-content:space-between;align-items:center;padding:15px 25px;background:rgba(255,255,255,0.4);backdrop-filter:blur(12px);z-index:1000;border-bottom:1px solid rgba(255,255,255,0.3)}
-header div{font-weight:600;font-size:1.3rem}
-nav button{margin:0 5px;padding:8px 16px;border:none;border-radius:10px;background:rgba(255,255,255,0.25);cursor:pointer;transition:0.3s}
-nav button:hover{background:rgba(95,169,243,0.6);color:#fff}
-main{display:flex;flex-direction:column;padding:20px;gap:15px}
-#editorControls{display:flex;gap:10px;flex-wrap:wrap;margin-bottom:15px}
-#editorControls button,input{padding:8px;border-radius:6px;border:none;background:rgba(255,255,255,0.2);cursor:pointer;transition:0.3s}
-#editorControls button:hover,input:focus{background:rgba(95,169,243,0.6);color:#fff;outline:none}
-#blockPalette{display:flex;gap:8px;flex-wrap:wrap;margin-bottom:15px}
-.block{width:40px;height:40px;border-radius:6px;cursor:pointer;display:flex;align-items:center;justify-content:center;font-size:0.8rem;color:#fff;font-weight:600}
-#threeContainer{width:100%;height:400px;background:#222;border-radius:12px;overflow:hidden}
-#levelJSON{width:100%;height:200px;margin-top:10px;border-radius:10px;padding:10px;background:rgba(255,255,255,0.15);overflow:auto;white-space:pre-wrap;font-family:monospace}
-#templateBox{display:none;position:absolute;top:70px;left:50%;transform:translateX(-50%);background:rgba(255,255,255,0.6);padding:15px;border-radius:10px;backdrop-filter:blur(10px);max-width:90%;max-height:400px;overflow:auto;z-index:1001}
-#templateBox h3{margin-top:0}
+body{margin:0;font-family:'Poppins',sans-serif;background:linear-gradient(160deg,#FFD194,#D1913C,#FFD194);color:#000;transition:0.3s;overflow:hidden}
+header{display:flex;justify-content:space-between;padding:10px 20px;background:rgba(255,255,255,0.6);backdrop-filter:blur(10px)}
+header div{font-weight:600;font-size:1.2rem}
+#editorContainer{display:flex;height:calc(100vh - 60px)}
+#blockPanel{width:200px;background:rgba(255,255,255,0.2);backdrop-filter:blur(8px);padding:10px;overflow-y:auto}
+#blockPanel h3{margin-top:0}
+.block{margin:5px;padding:5px;background:rgba(255,255,255,0.3);cursor:pointer;text-align:center;border-radius:6px;transition:0.2s}
+.block:hover{background:rgba(95,169,243,0.5);color:#fff}
+#mainView{flex:1;position:relative;background:#a0d8f1;display:flex;flex-direction:column}
+#threeContainer{flex:1}
+#rawJson{height:150px;width:100%;font-family:monospace;border:none;padding:10px;box-sizing:border-box;background:rgba(255,255,255,0.2);color:#000;overflow:auto;resize:none}
+#templateBtn{margin:5px;padding:6px;border:none;border-radius:6px;background:#5fa9f3;color:#fff;cursor:pointer}
 </style>
 </head>
 <body>
 <header>
 <div>Grab JSON Editor</div>
-<nav>
-<button id="importBtn">Import .level</button>
-<button id="exportBtn">Export .level</button>
-<button id="templateBtn">Template</button>
-</nav>
+<button id="templateBtn">Templates</button>
 </header>
-<main>
-<div id="editorControls">
-<label>Selected Block:
-<select id="selectedBlock">
-<option value="1">Grass</option>
-<option value="2">Stone</option>
-<option value="3">Water</option>
-<option value="4">Sand</option>
-<option value="5">Wood</option>
-<option value="6">Metal</option>
-<option value="7">Glass</option>
-</select>
-</label>
+<div id="editorContainer">
+<div id="blockPanel">
+<h3>Blocks</h3>
+<div class="block" data-type="1">Grass</div>
+<div class="block" data-type="2">Stone</div>
+<div class="block" data-type="3">Water</div>
+<div class="block" data-type="4">Sand</div>
+<div class="block" data-type="5">Wood</div>
 </div>
-<div id="blockPalette"></div>
+<div id="mainView">
 <div id="threeContainer"></div>
-<pre id="levelJSON"></pre>
-</main>
-<div id="templateBox">
-<h3>Official Templates & Cheat Sheets</h3>
-<ul>
-<li>Lobby Template 1</li>
-<li>Lobby Template 2</li>
-<li>Cheat Sheet: Block Codes</li>
-<li>Cheat Sheet: Event Triggers</li>
-</ul>
-<button onclick="templateBox.style.display='none'">Close</button>
+<textarea id="rawJson" placeholder="Level JSON will appear here"></textarea>
 </div>
-<input type="file" id="fileInput" style="display:none">
-<script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r150/three.min.js"></script>
+</div>
+<script src="https://cdn.jsdelivr.net/npm/three@0.154.0/build/three.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/three@0.154.0/examples/js/controls/OrbitControls.js"></script>
 <script>
-let levelData={blocks:[]};
-const blockColors={1:0x2ecc71,2:0x7f8c8d,3:0x3498db,4:0xf1c40f,5:0x8b4513,6:0x95a5a6,7:0xecf0f1};
-const selectedBlock=document.getElementById("selectedBlock");
-const blockPalette=document.getElementById("blockPalette");
-const levelJSON=document.getElementById("levelJSON");
-const threeContainer=document.getElementById("threeContainer");
-const templateBox=document.getElementById("templateBox");
-const scene=new THREE.Scene();
-const camera=new THREE.PerspectiveCamera(75,threeContainer.clientWidth/threeContainer.clientHeight,0.1,1000);
-const renderer=new THREE.WebGLRenderer({antialias:true});
-renderer.setSize(threeContainer.clientWidth,threeContainer.clientHeight);
-threeContainer.appendChild(renderer.domElement);
-const controls=new THREE.OrbitControls(camera,renderer.domElement);
-camera.position.set(10,15,20);
-const light=new THREE.DirectionalLight(0xffffff,1);light.position.set(10,20,10);scene.add(light);
-const ambient=new THREE.AmbientLight(0xffffff,0.5);scene.add(ambient);
-function addBlockMesh(x,y,z,type){
-const geom=new THREE.BoxGeometry(1,1,1);
-const mat=new THREE.MeshStandardMaterial({color:blockColors[type]||0xffffff});
-const mesh=new THREE.Mesh(geom,mat);
-mesh.position.set(x,y,z);
-scene.add(mesh);
-return mesh;
-}
-function refreshScene(){
-scene.clear();scene.add(light);scene.add(ambient);
-levelData.blocks.forEach(b=>addBlockMesh(b.x,b.y,b.z,b.type));
-levelJSON.textContent=JSON.stringify(levelData,null,2);
-}
-function createPalette(){
-for(let i=1;i<=7;i++){
-const div=document.createElement("div");
-div.className="block";
-div.style.background=`#${blockColors[i].toString(16)}`;
-div.textContent=i;
-div.onclick=()=>{selectedBlock.value=i;};
-blockPalette.appendChild(div);
-}}
-createPalette();
-threeContainer.addEventListener("click",(e)=>{
-const rect=threeContainer.getBoundingClientRect();
-const mouse=new THREE.Vector2();
-mouse.x=((e.clientX-rect.left)/rect.width)*2-1;
-mouse.y=-((e.clientY-rect.top)/rect.height)*2+1;
-const raycaster=new THREE.Raycaster();
-raycaster.setFromCamera(mouse,camera);
-const intersects=raycaster.intersectObjects(scene.children);
-let x=0,y=0,z=0;
-if(intersects.length>0){x=Math.round(intersects[0].point.x);y=Math.round(intersects[0].point.y)+1;z=Math.round(intersects[0].point.z);}
-levelData.blocks.push({x,y,z,type:parseInt(selectedBlock.value)});
-refreshScene();
-});
-document.getElementById("importBtn").onclick=()=>document.getElementById("fileInput").click();
-document.getElementById("fileInput").addEventListener("change",(e)=>{
-const file=e.target.files[0];
-if(!file)return;
-const reader=new FileReader();
-reader.onload=function(){try{levelData=JSON.parse(reader.result);refreshScene();}catch{alert("Invalid JSON");}}
-reader.readAsText(file);
-});
-document.getElementById("exportBtn").onclick=()=>{
-const blob=new Blob([JSON.stringify(levelData,null,2)],{type:"application/json"});
-const a=document.createElement("a");
-a.href=URL.createObjectURL(blob);
-a.download="level.level";
-a.click();
+let scene, camera, renderer, controls;
+let levelData = {blocks:[]};
+const blockSize = 1;
+const blockTypes = {
+1:0x3CB371,
+2:0xA9A9A9,
+3:0x1E90FF,
+4:0xFFD700,
+5:0x8B4513
 };
-document.getElementById("templateBtn").onclick=()=>templateBox.style.display="block";
-function animate(){requestAnimationFrame(animate);renderer.render(scene,camera);}
+function initThree(){
+scene=new THREE.Scene();
+camera=new THREE.PerspectiveCamera(75,window.innerWidth/window.innerHeight,0.1,1000);
+renderer=new THREE.WebGLRenderer({antialias:true});
+renderer.setSize(window.innerWidth-200,window.innerHeight-60);
+document.getElementById("threeContainer").appendChild(renderer.domElement);
+controls=new THREE.OrbitControls(camera,renderer.domElement);
+camera.position.set(5,10,15);
+controls.update();
+const light=new THREE.DirectionalLight(0xffffff,1);light.position.set(10,20,10);scene.add(light);
+const amb=new THREE.AmbientLight(0xcccccc);scene.add(amb);
 animate();
-window.addEventListener("resize",()=>{camera.aspect=threeContainer.clientWidth/threeContainer.clientHeight;camera.updateProjectionMatrix();renderer.setSize(threeContainer.clientWidth,threeContainer.clientHeight);});
+}
+function animate(){requestAnimationFrame(animate);renderer.render(scene,camera);}
+function addBlock(x,y,z,type){const geometry=new THREE.BoxGeometry(blockSize,blockSize,blockSize);
+const material=new THREE.MeshStandardMaterial({color:blockTypes[type]||0xffffff});
+const cube=new THREE.Mesh(geometry,material);cube.position.set(x,y,z);scene.add(cube);
+levelData.blocks.push({x,y,z,type});updateRaw();}
+function removeBlock(x,y,z){const found=levelData.blocks.findIndex(b=>b.x===x&&b.y===y&&b.z===z);if(found!==-1){
+levelData.blocks.splice(found,1);updateScene();updateRaw();}}
+function updateScene(){while(scene.children.length>2)scene.remove(scene.children[2]);levelData.blocks.forEach(b=>addBlockVisual(b));}
+function addBlockVisual(b){const geometry=new THREE.BoxGeometry(blockSize,blockSize,blockSize);
+const material=new THREE.MeshStandardMaterial({color:blockTypes[b.type]||0xffffff});
+const cube=new THREE.Mesh(geometry,material);cube.position.set(b.x,b.y,b.z);scene.add(cube);}
+function updateRaw(){document.getElementById("rawJson").value=JSON.stringify(levelData,null,2);}
+document.querySelectorAll(".block").forEach(b=>b.addEventListener("click",()=>{
+const type=parseInt(b.getAttribute("data-type"));
+const x=Math.floor(Math.random()*5);const y=Math.floor(Math.random()*5);const z=Math.floor(Math.random()*5);
+addBlock(x,y,z,type);
+}));
+document.getElementById("rawJson").addEventListener("change",()=>{
+try{levelData=JSON.parse(document.getElementById("rawJson").value);updateScene();}catch(e){alert("Invalid JSON")}});
+
+document.getElementById("templateBtn").onclick=()=>{
+const templates=[{name:"Lobby 1",blocks:[{x:0,y:0,z:0,type:1},{x:1,y:0,z:0,type:2}]},
+{name:"Lobby 2",blocks:[{x:0,y:0,z:0,type:3},{x:0,y:1,z:0,type:4}]}];
+let t=prompt("Select template:\n1: Lobby 1\n2: Lobby 2","1");t=parseInt(t);if(t>=1&&t<=templates.length){
+levelData=JSON.parse(JSON.stringify(templates[t-1]));updateScene();updateRaw();}
+};
+window.addEventListener("resize",()=>{camera.aspect=(window.innerWidth-200)/ (window.innerHeight-60);camera.updateProjectionMatrix();renderer.setSize(window.innerWidth-200,window.innerHeight-60);});
+initThree();
 </script>
-<script src="https://cdn.jsdelivr.net/npm/three@0.150.1/examples/js/controls/OrbitControls.min.js"></script>
 </body>
 </html>
