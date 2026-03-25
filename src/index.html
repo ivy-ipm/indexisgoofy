@@ -9,8 +9,8 @@
 body {
   margin:0;
   font-family:'Poppins',sans-serif;
-  background: linear-gradient(to bottom, #a0d8f1, #ffffff, #a0d8f1);
-  transition: background 0.5s;
+  background: linear-gradient(to bottom, #a0d8f1, #dff6ff, #a0d8f1);
+  transition: background 0.5s, color 0.5s;
   color:#000;
 }
 header {
@@ -57,6 +57,19 @@ nav button:hover {
 #toolButtons button:hover {
   background: rgba(95,169,243,0.5);
   color:#fff;
+}
+#toolBox {
+  margin-top:10px;
+  padding:15px;
+  border-radius:10px;
+  min-height:100px;
+  background: rgba(255,255,255,0.2);
+  backdrop-filter: blur(10px);
+  transition: all 0.3s ease-in-out;
+}
+#toolBox.active {
+  transform: scale(1.03);
+  box-shadow: 0 10px 20px rgba(95,169,243,0.4);
 }
 #loginBox {
   display:none;
@@ -140,7 +153,7 @@ footer {
     <div id="toolBox"></div>
   </section>
   <section id="games">
-    <canvas id="gameCanvas" width="600" height="400"></canvas>
+    <p>Coming Soon</p>
   </section>
 </main>
 <div id="loginBox">
@@ -156,82 +169,75 @@ footer {
 <footer>
   made by ivy • by love from poizonTools team • <a href="https://discord.gg/G6aNgvM7j9" target="_blank">discord.gg/G6aNgvM7j9</a><br>© 2026
 </footer>
-
 <script>
-// DOM glitch fix
+document.addEventListener('DOMContentLoaded', ()=>{
 let isNight = false;
-
 const sections = {
   homepage: document.getElementById('homepage'),
   tools: document.getElementById('tools'),
   games: document.getElementById('games')
 };
-
-document.getElementById('navHome').onclick = () => showSection('homepage');
-document.getElementById('navTools').onclick = () => showSection('tools');
-document.getElementById('navGames').onclick = () => showSection('games');
-document.getElementById('navLogin').onclick = () => {
-  document.getElementById('loginBox').style.display = 'block';
-};
-
+document.getElementById('navHome').onclick = ()=>showSection('homepage');
+document.getElementById('navTools').onclick = ()=>showSection('tools');
+document.getElementById('navGames').onclick = ()=>showSection('games');
+document.getElementById('navLogin').onclick = ()=>document.getElementById('loginBox').style.display='block';
 function showSection(name){
-  Object.values(sections).forEach(s => s.classList.remove('active'));
+  Object.values(sections).forEach(s=>s.classList.remove('active'));
   sections[name].classList.add('active');
 }
-
-// Tools
-const toolButtonsDiv = document.getElementById('toolButtons');
-const toolBoxDiv = document.getElementById('toolBox');
-
-const tools = [
-  {name:'Level Complexity Analyzer', action:()=> toolBoxDiv.innerHTML='<p>Analyzing level complexity...</p>'},
-  {name:'Player Lookup', action:()=> toolBoxDiv.innerHTML='<p>Looking up player info...</p>'},
-  {name:'OBJ to SGM Converter', action:()=> toolBoxDiv.innerHTML='<p>Convert OBJ to SGM loaded.</p>'},
-  {name:'Image to Pixel Art Level', action:()=> toolBoxDiv.innerHTML='<p>Image to Pixel Art Level loaded.</p>'},
-  {name:'Image to 3D Map', action:()=> toolBoxDiv.innerHTML='<p>Image to 3D Map loaded.</p>'},
-  {name:'Grab JSON Editor', action:()=> window.location.href='/grabeditor'}
+const toolButtonsDiv=document.getElementById('toolButtons');
+const toolBoxDiv=document.getElementById('toolBox');
+const tools=[
+  {name:'Level Complexity Analyzer', action:()=>animateToolBox('Analyzing level complexity...')},
+  {name:'Player Lookup', action:()=>animateToolBox('Looking up player info...')},
+  {name:'OBJ to SGM Converter', action:()=>animateToolBox('Convert OBJ to SGM loaded.')},
+  {name:'Image to Pixel Art Level', action:()=>animateToolBox('Image to Pixel Art Level loaded.')},
+  {name:'Image to 3D Map', action:()=>animateToolBox('Image to 3D Map loaded.')},
+  {name:'Grab JSON Editor', action:()=>window.location.href='grabeditor.html'}
 ];
-
 tools.forEach(t=>{
-  const btn = document.createElement('button');
-  btn.textContent = t.name;
-  btn.onclick = t.action;
+  const btn=document.createElement('button');
+  btn.textContent=t.name;
+  btn.onclick=t.action;
   toolButtonsDiv.appendChild(btn);
 });
-
-// Login
-const loginUsername = document.getElementById('loginUsername');
-const loginLevelURL = document.getElementById('loginLevelURL');
-const loginUserID = document.getElementById('loginUserID');
-const loginBtnMain = document.getElementById('loginBtnMain');
-
-loginBtnMain.onclick = ()=>{
-  const username = loginUsername.value.trim();
-  const levelURL = loginLevelURL.value.trim();
-  let userID = '';
+function animateToolBox(text){
+  toolBoxDiv.innerHTML=`<p>${text}</p>`;
+  toolBoxDiv.classList.add('active');
+  setTimeout(()=>toolBoxDiv.classList.remove('active'),400);
+}
+const loginUsername=document.getElementById('loginUsername');
+const loginLevelURL=document.getElementById('loginLevelURL');
+const loginUserID=document.getElementById('loginUserID');
+const loginBtnMain=document.getElementById('loginBtnMain');
+loginBtnMain.onclick=()=>{
+  const username=loginUsername.value.trim();
+  const levelURL=loginLevelURL.value.trim();
+  let userID='';
   if(levelURL.includes('level=')){
-    const parts = levelURL.split('level=')[1];
-    userID = parts.includes(':') ? parts.split(':')[1] : parts.split('/')[0];
+    const parts=levelURL.split('level=')[1];
+    userID=parts.includes(':') ? parts.split(':')[1] : parts.split('/')[0];
   }
-  loginUserID.value = userID;
+  loginUserID.value=userID;
   if(username){
-    document.getElementById('navLogin').textContent = username;
-    document.getElementById('loginBox').style.display = 'none';
+    document.getElementById('navLogin').textContent=username;
+    document.getElementById('loginBox').style.display='none';
   }
 };
-
-// Theme Toggle
-const themeToggle = document.getElementById('themeToggle');
-themeToggle.onclick = ()=>{
-  isNight = !isNight;
+const themeToggle=document.getElementById('themeToggle');
+themeToggle.onclick=()=>{
+  isNight=!isNight;
   if(isNight){
     document.body.style.background='linear-gradient(135deg, #000000, #222222, #000000)';
+    document.body.style.color='#fff';
     themeToggle.textContent='☀️';
   } else {
-    document.body.style.background='linear-gradient(to bottom, #a0d8f1, #ffffff, #a0d8f1)';
+    document.body.style.background='linear-gradient(to bottom, #a0d8f1, #dff6ff, #a0d8f1)';
+    document.body.style.color='#000';
     themeToggle.textContent='🌙';
   }
 };
+});
 </script>
 </body>
 </html>
