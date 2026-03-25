@@ -111,11 +111,28 @@ img {
 </div>
 
 <script>
-function log(msg) {
+function log(msg, id=null) {
   const output = document.getElementById('output');
   const time = new Date().toLocaleTimeString();
-  output.innerHTML += `[${time}] ${msg}\n`;
+
+  if (id) {
+    const div = document.createElement("div");
+    div.id = id;
+    div.textContent = `[${time}] ${msg}`;
+    output.appendChild(div);
+  } else {
+    output.innerHTML += `[${time}] ${msg}\n`;
+  }
+
   output.scrollTop = output.scrollHeight;
+}
+
+function updateLog(id, newMsg) {
+  const el = document.getElementById(id);
+  if (el) {
+    const time = new Date().toLocaleTimeString();
+    el.textContent = `[${time}] ${newMsg}`;
+  }
 }
 
 function extractIDs(link) {
@@ -166,11 +183,10 @@ async function run() {
     const image = data.image || "";
 
     log(`Level Name: ${name}`);
-    log("Resolving version: 1");
 
-    setTimeout(() => {
-      log(`Resolved filename: ${timestamp}.level`);
-    }, 400);
+    log("Checking version...", "versionLine");
+
+    updateLog("versionLine", `Resolved filename: ${timestamp}.level`);
 
     log("Preparing download...");
 
