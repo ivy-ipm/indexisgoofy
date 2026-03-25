@@ -112,7 +112,6 @@ function extractIDs(link) {
   }
 }
 
-// base64 encoded API base
 const encodedAPI = "aHR0cHM6Ly9hcGkuc2xpbi5kZXYvZ3JhYi92MQ==";
 function getAPI() {
   return atob(encodedAPI);
@@ -144,7 +143,7 @@ async function run() {
     const apiBase = getAPI();
 
     const infoURL = `${apiBase}/level/${userID}:${timestamp}`;
-    const downloadURL = `${apiBase}/download/${userID}/${timestamp}/${timestamp}`;
+    const downloadURL = `${apiBase}/download/${userID}/${timestamp}`;
 
     const res = await fetch(infoURL);
     if (!res.ok) throw new Error();
