@@ -18,6 +18,7 @@ header h1{font-size:1.2rem;margin:0;font-weight:600;flex-grow:1}
 #blockPalette{display:grid;grid-template-columns:repeat(4,1fr);gap:6px}
 .block{width:60px;height:60px;background:#ccc;display:flex;align-items:center;justify-content:center;border-radius:6px;cursor:pointer;user-select:none;transition:0.2s}
 .block:hover{background:#5fa9f3;color:#fff;font-weight:600}
+.block.selected{outline:3px solid #ff0}
 #canvasContainer{flex:1;position:relative;background:#87ceeb;display:flex;align-items:center;justify-content:center}
 canvas{width:100%;height:100%;display:block;background:#87ceeb}
 #axisGizmo{position:absolute;top:10px;left:10px;width:150px;height:150px;background:rgba(255,255,255,0.1);border-radius:8px;display:flex;flex-direction:column;align-items:center;justify-content:center}
@@ -67,18 +68,25 @@ footer{height:30px;background:#5fa9f3;color:#fff;display:flex;align-items:center
 </div>
 <footer>GrabVR JSON Editor • © 2026 • by Ivy & Pakker</footer>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r152/three.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/three@0.152.2/examples/js/controls/OrbitControls.js"></script>
 <script>
 const canvas=document.getElementById("sceneCanvas");
 let scene=new THREE.Scene();
 let camera=new THREE.PerspectiveCamera(75,canvas.clientWidth/canvas.clientHeight,0.1,1000);
 let renderer=new THREE.WebGLRenderer({canvas,antialias:true});
 renderer.setSize(canvas.clientWidth,canvas.clientHeight);
+renderer.setPixelRatio(window.devicePixelRatio);
 renderer.setClearColor(0x87ceeb);
 camera.position.set(0,5,10);
-let controls=new THREE.OrbitControls(camera,renderer.domElement);
+const controls=new THREE.OrbitControls(camera,renderer.domElement);
+controls.enableDamping=true;
+
 let blocks=[];
 let selectedBlock=null;
 let blockId=0;
+
+function render(){renderer.render(scene,camera);requestAnimationFrame(render);}
+render();
 
 function addBlock(type="Cube"){
 let geometry=new THREE.BoxGeometry(1,1,1);
@@ -88,13 +96,15 @@ mesh.position.set(Math.random()*2-1,1,Math.random()*2-1);
 mesh.userData={id:blockId++,type:type};
 scene.add(mesh);
 blocks.push(mesh);
-render();
 selectBlock(mesh);
 updateJSON();
 }
 
 function selectBlock(block){
+blocks.forEach(b=>b.meshDiv?.classList?.remove("selected"));
 selectedBlock=block;
+if(block?.meshDiv) block.meshDiv.classList.add("selected");
+updateJSON();
 }
 
 function deleteBlock(){
@@ -137,17 +147,17 @@ render();
 }catch(e){alert("Invalid JSON");}
 }
 
-document.getElementById("addBlockBtn").onclick=()=>addBlock();
-document.getElementById("deleteBlockBtn").onclick=deleteBlock;
-document.getElementById("resetSceneBtn").onclick=resetScene;
-document.getElementById("toggleJSON").onclick=()=>{let editor=document.getElementById("jsonEditor");editor.style.display=editor.style.display==="flex"?"none":"flex";}
-document.getElementById("applyJSON").onclick=applyJSON;
+document.getElementById("addBlockBtn").addEventListener("click",()=>addBlock());
+document.getElementById("deleteBlockBtn").addEventListener("click",deleteBlock);
+document.getElementById("resetSceneBtn").addEventListener("click",resetScene);
+document.getElementById("toggleJSON").addEventListener("click",()=>{let editor=document.getElementById("jsonEditor");editor.style.display=editor.style.display==="flex"?"none":"flex";});
+document.getElementById("applyJSON").addEventListener("click",applyJSON);
 
 const palette=["Cube","Sphere","Cylinder","Cone","Pyramid","Ramp"];
 const blockPalette=document.getElementById("blockPalette");
 palette.forEach(p=>{
 let b=document.createElement("div");b.className="block";b.textContent=p;
-b.onclick=()=>addBlock(p);
+b.addEventListener("click",()=>addBlock(p));
 blockPalette.appendChild(b);
 });
 
@@ -155,7 +165,7 @@ const templateList=["Lobby 1","Lobby 2","Cheat Sheet 1","Cheat Sheet 2"];
 const templates=document.getElementById("templates");
 templateList.forEach(t=>{
 let btn=document.createElement("button");btn.textContent=t;
-btn.onclick=()=>{alert("Loading template: "+t);};
+btn.addEventListener("click",()=>{alert("Loading template: "+t);});
 templates.appendChild(btn);
 });
 
@@ -166,7 +176,7 @@ scene.add(light);
 let ambient=new THREE.AmbientLight(0xffffff,0.5);
 scene.add(ambient);
 
-// Skybox simulation (top:light blue, middle:white, bottom:light blue)
+// Skybox top:light blue, middle:white, bottom:light blue
 scene.background=new THREE.CubeTextureLoader().load([
 'data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAQAAAC1HAwCAAAAC0lEQVR42mP8/wIAAgkA+yC3K4cAAAAASUVORK5CYII=',
 'data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAQAAAC1HAwCAAAAC0lEQVR42mP8/wIAAgkA+yC3K4cAAAAASUVORK5CYII=',
@@ -176,12 +186,7 @@ scene.background=new THREE.CubeTextureLoader().load([
 'data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAQAAAC1HAwCAAAAC0lEQVR42mP8/wIAAgkA+yC3K4cAAAAASUVORK5CYII='
 ]);
 
-// Renderer
-function render(){
-renderer.render(scene,camera);
-requestAnimationFrame(render);
-}
-render();
+window.addEventListener("resize",()=>{camera.aspect=canvas.clientWidth/canvas.clientHeight;camera.updateProjectionMatrix();renderer.setSize(canvas.clientWidth,canvas.clientHeight);});
 </script>
 </body>
 </html>
