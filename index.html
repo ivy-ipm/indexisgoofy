@@ -51,7 +51,7 @@ body.night #profileMenu{background:#222;border-color:#0288d1;color:#fff;}
 <main>
 <section id="homepage" class="active">
 <h1>Welcome to GrabVR Suite</h1>
-<p>Created by the Pakiv team, a collaboration between Pakker and Ivy. GrabVR Suite is the ultimate toolkit — manage levels, convert assets, analyze content, and unlock your full potential. Our tools empower creators and players alike, whether you want to download levels, convert models, generate 3D maps, or experiment with creative level designs.</p>
+<p>Created by the Pakiv team, a collaboration between Pakker and Ivy. GrabVR Suite is the ultimate toolkit — manage levels, convert assets, analyze content, and unlock your full potential. Our tools empower creators and players alike, whether you want to download levels, convert models, generate 3D maps, or experiment with creative level designs. All features are designed to enhance your GrabVR experience with maximum control and flexibility.</p>
 </section>
 <section id="tools">
 <div id="toolButtons"></div>
@@ -77,7 +77,7 @@ body.night #profileMenu{background:#222;border-color:#0288d1;color:#fff;}
 </div>
 <button id="themeToggle">🌙</button>
 <script>
-document.addEventListener('DOMContentLoaded',()=>{
+window.addEventListener('DOMContentLoaded',()=>{
 const body=document.body;
 const navHome=document.getElementById('navHome');
 const navTools=document.getElementById('navTools');
@@ -98,10 +98,10 @@ const toolButtons=document.getElementById('toolButtons');
 const toolBox=document.getElementById('toolBox');
 const themeToggle=document.getElementById('themeToggle');
 let loggedUser=null;
-function showSection(sec){homepage.classList.remove('active');tools.classList.remove('active');games.classList.remove('active');sec.classList.add('active');}
-navHome.addEventListener('click',()=>{showSection(homepage)});
-navTools.addEventListener('click',()=>{showSection(tools)});
-navGames.addEventListener('click',()=>{showSection(games)});
+function showSection(sec){[homepage,tools,games].forEach(s=>s.classList.remove('active'));sec.classList.add('active');}
+navHome.addEventListener('click',()=>showSection(homepage));
+navTools.addEventListener('click',()=>showSection(tools));
+navGames.addEventListener('click',()=>showSection(games));
 loginTopBtn.addEventListener('click',()=>{if(loggedUser){profileMenu.style.display='flex'}else{loginBox.style.display='flex'}});
 closeLogin.addEventListener('click',()=>{loginBox.style.display='none'});
 logoutBtn.addEventListener('click',()=>{loggedUser=null;loginTopBtn.textContent='Grab Login';profileMenu.style.display='none'});
@@ -109,6 +109,7 @@ guessBtn.addEventListener('click',()=>{const uid=extractUserIDFromLevel(loginLev
 loginBtn.addEventListener('click',()=>{if(loginUsername.value){loggedUser=loginUsername.value;loginTopBtn.textContent=loggedUser;loginBox.style.display='none';profileMenu.querySelector('p').textContent='Profile Management (Coming Soon)'}});
 themeToggle.addEventListener('click',()=>{body.classList.toggle('night');themeToggle.textContent=body.classList.contains('night')?'☀️':'🌙'});
 function extractUserIDFromLevel(link){try{const url=new URL(link);const lvl=url.searchParams.get('level');if(!lvl)return null;return lvl.split(':')[0]||null}catch{return null}};const toolList=[{name:'Download Level',func:function(){toolBox.innerHTML=`<h3>Download Level</h3><input id="levelInput" placeholder="Enter level link"><input id="levelNameInput" placeholder="Optional level name"><button id="runDownload">Run</button>`;document.getElementById('runDownload').addEventListener('click',()=>{const link=document.getElementById('levelInput').value;const name=document.getElementById('levelNameInput').value||'level';if(link){const ids=extractUserIDFromLevel(link);const timestamp=link.split(':')[1]||Date.now();const a=document.createElement('a');a.href=`https://api.slin.dev/grab/v1/download/${ids}/${timestamp}/1/${name}`;a.download=`${name}.level`;a.click()}})}},{name:'OBJ to SGM',func:function(){toolBox.innerHTML=`<h3>OBJ to SGM</h3><input type="file" id="objFile"><button id="convertObj">Convert</button>`;document.getElementById('convertObj').addEventListener('click',()=>{alert('OBJ converted to SGM!')})}},{name:'Image to Pixel Art',func:function(){toolBox.innerHTML=`<h3>Image to Pixel Art</h3><input type="file" id="imgFile"><button id="convertImg">Convert</button>`;document.getElementById('convertImg').addEventListener('click',()=>{alert('Image converted to Pixel Art Level!')})}},{name:'Image to 3D Map',func:function(){toolBox.innerHTML=`<h3>Image to 3D Map</h3><input type="file" id="mapFile"><button id="generateMap">Generate</button>`;document.getElementById('generateMap').addEventListener('click',()=>{alert('3D Map generated!')})}},{name:'Level Complexity Analyzer (Useless)',func:function(){toolBox.innerHTML=`<h3>Level Complexity Analyzer</h3><p>Tool loaded but does nothing useful.</p>`}},{name:'Player Lookup (Useless)',func:function(){toolBox.innerHTML=`<h3>Player Lookup</h3><p>Tool loaded but does nothing useful.</p>`}}];toolList.forEach(t=>{const btn=document.createElement('button');btn.textContent=t.name;btn.addEventListener('click',t.func);toolButtons.appendChild(btn)});
+});
 </script>
 </body>
 </html>
