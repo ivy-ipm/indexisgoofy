@@ -172,7 +172,7 @@ async function run() {
 
   try {
     const infoURL = `https://api.slin.dev/grab/v1/level/${userID}:${timestamp}`;
-    const downloadURL = `https://api.slin.dev/grab/v1/download/${userID}/${timestamp}/1`;
+    const downloadURL = `https://api.slin.dev/grab/v1/download/${userID}/${timestamp}`;
 
     const res = await fetch(infoURL);
     if (!res.ok) throw new Error();
@@ -184,8 +184,7 @@ async function run() {
 
     log(`Level Name: ${name}`);
 
-    log("Checking version...", "versionLine");
-
+    log("Checking version: 1", "versionLine");
     updateLog("versionLine", `Resolved filename: ${timestamp}.level`);
 
     log("Preparing download...");
