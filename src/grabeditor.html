@@ -3,114 +3,185 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>GrabVR JSON Editor Nightmare</title>
+<title>GrabVR JSON Editor</title>
 <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600&display=swap" rel="stylesheet">
 <style>
-body, html{margin:0;padding:0;font-family:'Poppins',sans-serif;height:100%;overflow:hidden;background:#a0d8f1}
-header{position:fixed;top:0;width:100%;height:50px;background:rgba(255,255,255,0.8);backdrop-filter:blur(10px);display:flex;align-items:center;justify-content:space-between;padding:0 20px;z-index:1000}
-header .logo{font-weight:600;font-size:1.2rem}
-header button{margin-left:10px;padding:5px 12px;border:none;border-radius:6px;background:#5fa9f3;color:#fff;cursor:pointer;transition:0.3s}
-header button:hover{background:#3d85c6}
-#editorContainer{position:absolute;top:50px;bottom:0;left:0;right:300px;background:#a0d8f1;display:flex;flex-direction:column}
-#editorCanvas{flex:1;display:block;width:100%}
-#sidePanel{position:absolute;top:50px;right:0;width:300px;height:calc(100% - 50px);background:rgba(255,255,255,0.85);backdrop-filter:blur(10px);padding:10px;overflow-y:auto}
-#blockPalette{display:grid;grid-template-columns:repeat(3,1fr);grid-gap:5px;margin-bottom:10px}
-.blockBtn{padding:5px;border-radius:4px;background:#5fa9f3;color:#fff;text-align:center;cursor:pointer;transition:0.3s}
-.blockBtn:hover{background:#3d85c6}
-#transformPanel,#jsonPanel,#filePanel{margin-bottom:10px;padding:5px;border-radius:6px;background:rgba(255,255,255,0.5)}
-#transformPanel button,#jsonPanel button,#filePanel button{margin:3px;padding:5px;border:none;border-radius:4px;background:#5fa9f3;color:#fff;cursor:pointer;transition:0.3s}
-#transformPanel button:hover,#jsonPanel button:hover,#filePanel button:hover{background:#3d85c6}
-textarea{width:100%;height:200px;border-radius:6px;padding:5px;border:none;resize:none;margin-top:5px}
-@media(max-width:768px){#editorContainer{right:0}#sidePanel{position:relative;width:100%;height:auto}}
+body{margin:0;font-family:'Poppins',sans-serif;background:#f3d6b0;color:#000;display:flex;flex-direction:column;height:100vh;overflow:hidden}
+header{height:60px;background:#5fa9f3;display:flex;align-items:center;padding:0 20px;color:#fff;flex-shrink:0}
+header h1{font-size:1.2rem;margin:0;font-weight:600;flex-grow:1}
+#toolbar{background:rgba(255,255,255,0.1);display:flex;flex-wrap:wrap;padding:10px;gap:8px}
+#toolbar button{padding:6px 12px;border:none;border-radius:6px;background:rgba(95,169,243,0.5);color:#fff;cursor:pointer;transition:0.2s}
+#toolbar button:hover{background:#ffffff;color:#000}
+#main{display:flex;flex:1;overflow:hidden}
+#sidebar{width:280px;background:rgba(255,255,255,0.1);padding:10px;overflow-y:auto;flex-shrink:0}
+#sidebar h3{margin-top:10px;margin-bottom:5px;font-size:1rem}
+#blockPalette{display:grid;grid-template-columns:repeat(4,1fr);gap:6px}
+.block{width:60px;height:60px;background:#ccc;display:flex;align-items:center;justify-content:center;border-radius:6px;cursor:pointer;user-select:none;transition:0.2s}
+.block:hover{background:#5fa9f3;color:#fff;font-weight:600}
+#canvasContainer{flex:1;position:relative;background:#87ceeb;display:flex;align-items:center;justify-content:center}
+canvas{width:100%;height:100%;display:block;background:#87ceeb}
+#axisGizmo{position:absolute;top:10px;left:10px;width:150px;height:150px;background:rgba(255,255,255,0.1);border-radius:8px;display:flex;flex-direction:column;align-items:center;justify-content:center}
+#axisGizmo button{margin:2px;padding:4px 6px;border:none;border-radius:4px;background:#5fa9f3;color:#fff;cursor:pointer;font-size:0.8rem}
+#jsonEditor{position:absolute;top:0;right:0;width:350px;height:100%;background:rgba(255,255,255,0.95);padding:10px;overflow:auto;display:none;flex-direction:column;z-index:10}
+#jsonEditor textarea{flex:1;width:100%;border-radius:6px;padding:6px;font-family:monospace;font-size:0.9rem;border:1px solid #ccc;resize:none}
+#jsonEditor button{margin-top:5px;padding:6px 12px;background:#5fa9f3;color:#fff;border:none;border-radius:6px;cursor:pointer}
+#templates{margin-top:10px;display:flex;flex-direction:column;gap:4px}
+#templates button{padding:4px 8px;background:#ccc;border:none;border-radius:4px;cursor:pointer;transition:0.2s}
+#templates button:hover{background:#5fa9f3;color:#fff}
+footer{height:30px;background:#5fa9f3;color:#fff;display:flex;align-items:center;justify-content:center;flex-shrink:0;font-size:0.8rem}
+@media(max-width:900px){#sidebar{width:200px}#jsonEditor{width:250px}}
+@media(max-width:600px){#sidebar{width:100px;font-size:0.7rem}#jsonEditor{width:200px}}
 </style>
 </head>
 <body>
 <header>
-<div class="logo">GrabVR JSON Editor Nightmare</div>
-<div>
+<h1>GrabVR JSON Editor</h1>
+<button id="toggleJSON">Raw JSON</button>
+</header>
+<div id="toolbar">
 <button id="addBlockBtn">Add Block</button>
 <button id="deleteBlockBtn">Delete Block</button>
-<button id="resetViewBtn">Reset View</button>
+<button id="resetSceneBtn">Reset Scene</button>
+<button id="loadTemplateBtn">Template</button>
 </div>
-</header>
-<div id="editorContainer">
-<canvas id="editorCanvas"></canvas>
-</div>
-<div id="sidePanel">
+<div id="main">
+<div id="sidebar">
+<h3>Block Palette</h3>
 <div id="blockPalette"></div>
-<div id="transformPanel">
-<b>Transform:</b><br>
-<button id="moveMode">Move</button>
-<button id="rotateMode">Rotate</button>
-<button id="scaleMode">Scale</button>
+<h3>Templates</h3>
+<div id="templates"></div>
 </div>
-<div id="jsonPanel">
-<b>Raw JSON:</b><br>
-<textarea id="rawJson"></textarea>
-<button id="importJson">Import</button>
-<button id="exportJson">Export</button>
-<button id="clearScene">Clear Scene</button>
+<div id="canvasContainer">
+<canvas id="sceneCanvas"></canvas>
+<div id="axisGizmo">
+<button id="moveBtn">Move</button>
+<button id="rotateBtn">Rotate</button>
+<button id="scaleBtn">Scale</button>
 </div>
-<div id="filePanel">
-<input type="text" id="sceneName" placeholder="Scene Name">
-<button id="saveScene">Save Scene</button>
-<button id="loadScene">Load Scene</button>
+<div id="jsonEditor">
+<h3>Raw JSON Editor</h3>
+<textarea id="jsonArea"></textarea>
+<button id="applyJSON">Apply Changes</button>
 </div>
 </div>
-<script src="https://cdn.jsdelivr.net/npm/three@0.155.0/build/three.min.js"></script>
-<script src="https://cdn.jsdelivr.net/npm/three@0.155.0/examples/js/controls/OrbitControls.js"></script>
-<script src="https://cdn.jsdelivr.net/npm/three@0.155.0/examples/js/controls/TransformControls.js"></script>
+</div>
+<footer>GrabVR JSON Editor • © 2026 • by Ivy & Pakker</footer>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r152/three.min.js"></script>
 <script>
-let scene,camera,renderer,controls,transformControls,raycaster,mouse,selectedBlock;
-let blocks=[],gridHelper,blockId=0,placementMode="grid";
-scene=new THREE.Scene();
-scene.background=new THREE.Color(0xffffff);
-camera=new THREE.PerspectiveCamera(75,window.innerWidth/ (window.innerWidth>300?window.innerWidth-300:window.innerWidth)/window.innerHeight,0.1,1000);
-camera.position.set(5,5,5);
-renderer=new THREE.WebGLRenderer({canvas:document.getElementById("editorCanvas"),antialias:true});
-renderer.setSize(window.innerWidth-300,window.innerHeight-50);
-controls=new THREE.OrbitControls(camera,renderer.domElement);
-controls.enableDamping=true;
-controls.dampingFactor=0.1;
-controls.screenSpacePanning=false;
-raycaster=new THREE.Raycaster();
-mouse=new THREE.Vector2();
-gridHelper=new THREE.GridHelper(50,50);
-scene.add(gridHelper);
-const light=new THREE.DirectionalLight(0xffffff,1);light.position.set(10,10,10);scene.add(light);
-const ambient=new THREE.AmbientLight(0xffffff,0.5);scene.add(ambient);
-transformControls=new THREE.TransformControls(camera,renderer.domElement);
-transformControls.addEventListener("change",()=>{renderer.render(scene,camera);});
-transformControls.addEventListener("dragging-changed",event=>{controls.enabled=!event.value});
-scene.add(transformControls);
-function animate(){requestAnimationFrame(animate);controls.update();renderer.render(scene,camera);}
-animate();
-window.addEventListener("resize",()=>{camera.aspect=(window.innerWidth-300)/window.innerHeight;camera.updateProjectionMatrix();renderer.setSize(window.innerWidth-300,window.innerHeight-50);});
-function createBlock(type){
-const geometry=new THREE.BoxGeometry(1,1,1);
-const material=new THREE.MeshStandardMaterial({color:type.color});
-const mesh=new THREE.Mesh(geometry,material);
-mesh.position.set(0.5,0.5,0.5);
-mesh.userData={id:blockId++,type:type.name};
+const canvas=document.getElementById("sceneCanvas");
+let scene=new THREE.Scene();
+let camera=new THREE.PerspectiveCamera(75,canvas.clientWidth/canvas.clientHeight,0.1,1000);
+let renderer=new THREE.WebGLRenderer({canvas,antialias:true});
+renderer.setSize(canvas.clientWidth,canvas.clientHeight);
+renderer.setClearColor(0x87ceeb);
+camera.position.set(0,5,10);
+let controls=new THREE.OrbitControls(camera,renderer.domElement);
+let blocks=[];
+let selectedBlock=null;
+let blockId=0;
+
+function addBlock(type="Cube"){
+let geometry=new THREE.BoxGeometry(1,1,1);
+let material=new THREE.MeshStandardMaterial({color:Math.random()*0xffffff});
+let mesh=new THREE.Mesh(geometry,material);
+mesh.position.set(Math.random()*2-1,1,Math.random()*2-1);
+mesh.userData={id:blockId++,type:type};
 scene.add(mesh);
 blocks.push(mesh);
-return mesh;
+render();
+selectBlock(mesh);
+updateJSON();
 }
-const blockTypes=[{name:"Grass",color:0x00ff00},{name:"Stone",color:0x888888},{name:"Wood",color:0x8B4513},{name:"Water",color:0x1E90FF},{name:"Sand",color:0xF4A460},{name:"Glass",color:0xA0FFFF}];
-const paletteDiv=document.getElementById("blockPalette");
-blockTypes.forEach(b=>{const btn=document.createElement("div");btn.className="blockBtn";btn.textContent=b.name;btn.onclick=()=>{createBlock(b);};paletteDiv.appendChild(btn);});
-document.getElementById("addBlockBtn").onclick=()=>{if(selectedBlock)transformControls.detach();selectedBlock=createBlock(blockTypes[0]);transformControls.attach(selectedBlock);};
-document.getElementById("deleteBlockBtn").onclick=()=>{if(selectedBlock){scene.remove(selectedBlock);blocks=blocks.filter(b=>b!==selectedBlock);transformControls.detach();selectedBlock=null;}};
-document.getElementById("resetViewBtn").onclick=()=>{camera.position.set(5,5,5);controls.target.set(0,0,0);controls.update();};
-document.getElementById("moveMode").onclick=()=>{transformControls.setMode("translate");};
-document.getElementById("rotateMode").onclick=()=>{transformControls.setMode("rotate");};
-document.getElementById("scaleMode").onclick=()=>{transformControls.setMode("scale");};
-document.getElementById("exportJson").onclick=()=>{const exportData=blocks.map(b=>({id:b.userData.id,type:b.userData.type,position:b.position.toArray(),rotation:b.rotation.toArray(),scale:b.scale.toArray()}));document.getElementById("rawJson").value=JSON.stringify(exportData,null,2);};
-document.getElementById("importJson").onclick=()=>{try{const data=JSON.parse(document.getElementById("rawJson").value);blocks.forEach(b=>scene.remove(b));blocks=[];data.forEach(d=>{const type=blockTypes.find(t=>t.name===d.type)||blockTypes[0];const mesh=createBlock(type);mesh.position.fromArray(d.position);mesh.rotation.fromArray(d.rotation);mesh.scale.fromArray(d.scale);});}catch(e){alert("Invalid JSON");}};
-document.getElementById("clearScene").onclick=()=>{blocks.forEach(b=>scene.remove(b));blocks=[];transformControls.detach();selectedBlock=null;};
-document.getElementById("saveScene").onclick=()=>{localStorage.setItem(document.getElementById("sceneName").value||"defaultScene",document.getElementById("rawJson").value);alert("Scene saved");};
-document.getElementById("loadScene").onclick=()=>{const data=localStorage.getItem(document.getElementById("sceneName").value||"defaultScene");if(data){document.getElementById("rawJson").value=data;document.getElementById("importJson").click();}};
-renderer.domElement.addEventListener("pointerdown",(event)=>{mouse.x=((event.clientX)/renderer.domElement.clientWidth)*2-1;mouse.y=-((event.clientY)/renderer.domElement.clientHeight)*2+1;raycaster.setFromCamera(mouse,camera);const intersects=raycaster.intersectObjects(blocks);if(intersects.length>0){selectedBlock=intersects[0].object;transformControls.attach(selectedBlock);}else{transformControls.detach();selectedBlock=null;}});
+
+function selectBlock(block){
+selectedBlock=block;
+}
+
+function deleteBlock(){
+if(selectedBlock){
+scene.remove(selectedBlock);
+blocks=blocks.filter(b=>b!==selectedBlock);
+selectedBlock=null;
+updateJSON();
+}
+}
+
+function resetScene(){
+blocks.forEach(b=>scene.remove(b));
+blocks=[];
+selectedBlock=null;
+updateJSON();
+}
+
+function updateJSON(){
+const json={blocks:blocks.map(b=>({id:b.userData.id,type:b.userData.type,position:b.position.toArray(),rotation:b.rotation.toArray(),scale:b.scale.toArray()}))};
+document.getElementById("jsonArea").value=JSON.stringify(json,null,2);
+}
+
+function applyJSON(){
+try{
+const data=JSON.parse(document.getElementById("jsonArea").value);
+resetScene();
+data.blocks.forEach(b=>{
+let geometry=new THREE.BoxGeometry(1,1,1);
+let material=new THREE.MeshStandardMaterial({color:Math.random()*0xffffff});
+let mesh=new THREE.Mesh(geometry,material);
+mesh.position.fromArray(b.position);
+mesh.rotation.fromArray(b.rotation);
+mesh.scale.fromArray(b.scale);
+mesh.userData={id:b.id,type:b.type};
+scene.add(mesh);
+blocks.push(mesh);
+});
+render();
+}catch(e){alert("Invalid JSON");}
+}
+
+document.getElementById("addBlockBtn").onclick=()=>addBlock();
+document.getElementById("deleteBlockBtn").onclick=deleteBlock;
+document.getElementById("resetSceneBtn").onclick=resetScene;
+document.getElementById("toggleJSON").onclick=()=>{let editor=document.getElementById("jsonEditor");editor.style.display=editor.style.display==="flex"?"none":"flex";}
+document.getElementById("applyJSON").onclick=applyJSON;
+
+const palette=["Cube","Sphere","Cylinder","Cone","Pyramid","Ramp"];
+const blockPalette=document.getElementById("blockPalette");
+palette.forEach(p=>{
+let b=document.createElement("div");b.className="block";b.textContent=p;
+b.onclick=()=>addBlock(p);
+blockPalette.appendChild(b);
+});
+
+const templateList=["Lobby 1","Lobby 2","Cheat Sheet 1","Cheat Sheet 2"];
+const templates=document.getElementById("templates");
+templateList.forEach(t=>{
+let btn=document.createElement("button");btn.textContent=t;
+btn.onclick=()=>{alert("Loading template: "+t);};
+templates.appendChild(btn);
+});
+
+// Lighting
+let light=new THREE.DirectionalLight(0xffffff,1);
+light.position.set(5,10,7.5);
+scene.add(light);
+let ambient=new THREE.AmbientLight(0xffffff,0.5);
+scene.add(ambient);
+
+// Skybox simulation (top:light blue, middle:white, bottom:light blue)
+scene.background=new THREE.CubeTextureLoader().load([
+'data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAQAAAC1HAwCAAAAC0lEQVR42mP8/wIAAgkA+yC3K4cAAAAASUVORK5CYII=',
+'data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAQAAAC1HAwCAAAAC0lEQVR42mP8/wIAAgkA+yC3K4cAAAAASUVORK5CYII=',
+'data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAQAAAC1HAwCAAAAC0lEQVR42mP8/wIAAgkA+yC3K4cAAAAASUVORK5CYII=',
+'data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAQAAAC1HAwCAAAAC0lEQVR42mP8/wIAAgkA+yC3K4cAAAAASUVORK5CYII=',
+'data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAQAAAC1HAwCAAAAC0lEQVR42mP8/wIAAgkA+yC3K4cAAAAASUVORK5CYII=',
+'data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAQAAAC1HAwCAAAAC0lEQVR42mP8/wIAAgkA+yC3K4cAAAAASUVORK5CYII='
+]);
+
+// Renderer
+function render(){
+renderer.render(scene,camera);
+requestAnimationFrame(render);
+}
+render();
 </script>
 </body>
 </html>
