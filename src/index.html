@@ -7,25 +7,24 @@
 <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600&display=swap" rel="stylesheet">
 <style>
 body{margin:0;font-family:'Poppins',sans-serif;background:linear-gradient(160deg,#a0d8f1,#bfe6fb,#a0d8f1);color:#000;transition:0.3s}
-header{position:sticky;top:0;display:flex;justify-content:space-between;padding:10px 20px;background:rgba(255,255,255,0.5);backdrop-filter:blur(10px)}
+header{position:sticky;top:0;display:flex;justify-content:space-between;padding:10px 20px;background:rgba(255,255,255,0.5);backdrop-filter:blur(10px);z-index:1000}
 nav button{margin:0 5px;padding:6px 12px;border:none;border-radius:8px;background:rgba(255,255,255,0.2);cursor:pointer;transition:0.2s}
 nav button:hover{background:rgba(95,169,243,0.5);color:#fff}
 main section{display:none;padding:20px}
 .active{display:block}
 #toolButtons button{margin:5px;padding:6px 12px;border:none;border-radius:8px;background:rgba(255,255,255,0.2);cursor:pointer;transition:0.2s}
 #toolButtons button:hover{background:rgba(95,169,243,0.5);color:#fff}
-.toolUI{margin-top:10px;padding:15px;border-radius:10px;background:rgba(255,255,255,0.15);backdrop-filter:blur(5px)}
+#toolBox{margin-top:15px;padding:15px;border-radius:10px;background:rgba(255,255,255,0.15);backdrop-filter:blur(5px);min-height:150px}
 input,button{font-family:'Poppins';margin:5px 0;padding:6px;border:none;border-radius:6px}
+#loginBox,#profileBox{display:none;position:fixed;top:60px;left:50%;transform:translateX(-50%);background:rgba(255,255,255,0.6);padding:20px;border-radius:10px;z-index:1001;min-width:300px}
+#themeToggle{position:fixed;bottom:20px;right:20px;width:50px;height:50px;border-radius:50%;display:flex;align-items:center;justify-content:center;background:#5fa9f3;color:#fff;cursor:pointer;transition:0.3s}
+footer{text-align:center;margin:50px 0 20px 0;font-size:0.9rem}
 .level{background:rgba(255,255,255,0.2);padding:10px;border-radius:8px;margin:5px 0;display:flex;align-items:center;justify-content:space-between}
 .level-info{display:flex;align-items:center}
 .level-info img{width:60px;height:60px;border-radius:6px;margin-right:10px}
-#loginBox,#profileBox{display:none;position:fixed;top:60px;left:50%;transform:translateX(-50%);background:rgba(255,255,255,0.6);padding:20px;border-radius:10px;z-index:1001}
-#themeToggle{position:fixed;bottom:20px;right:20px;width:50px;height:50px;border-radius:50%;display:flex;align-items:center;justify-content:center;background:#5fa9f3;color:#fff;cursor:pointer;transition:0.3s}
-footer{text-align:center;margin:50px 0 20px 0;font-size:0.9rem}
 </style>
 </head>
 <body>
-
 <header>
 <div>GrabVR Suite</div>
 <nav>
@@ -44,19 +43,7 @@ footer{text-align:center;margin:50px 0 20px 0;font-size:0.9rem}
 
 <section id="tools">
 <div id="toolButtons"></div>
-
-<div id="playerTool" class="toolUI">
-<h3>Player Lookup</h3>
-<input id="playerUrl" placeholder="Enter GrabVR Level URL">
-<div id="levels"></div>
-</div>
-
-<div id="downloadTool" class="toolUI">
-<h3>Level Downloader</h3>
-<input id="lvlUrl" placeholder="Enter GrabVR Level URL">
-<input id="fileName" placeholder="File name">
-<button id="downloadManual">Download</button>
-</div>
+<div id="toolBox">Select a tool above to get started.</div>
 </section>
 
 <section id="games">
@@ -98,7 +85,6 @@ navHome.onclick=()=>show("home");
 navTools.onclick=()=>show("tools");
 navGames.onclick=()=>show("games");
 
-// Login/Profile
 const navLogin=document.getElementById("navLogin");
 const loginBox=document.getElementById("loginBox");
 const loginUsername=document.getElementById("loginUsername");
@@ -115,77 +101,29 @@ navLogin.textContent="User Login";
 profileBox.style.display="none";
 };
 
-// Tools buttons
+// Tools
 const toolButtons=document.getElementById("toolButtons");
-const playerTool=document.getElementById("playerTool");
-const downloadTool=document.getElementById("downloadTool");
+const toolBox=document.getElementById("toolBox");
 
-["Player Lookup","Level Downloader"].forEach(name=>{
-const btn=document.createElement("button");
-btn.textContent=name;
-btn.onclick=()=>{
-playerTool.style.display="none";
-downloadTool.style.display="none";
-if(name==="Player Lookup")playerTool.style.display="block";
-if(name==="Level Downloader")downloadTool.style.display="block";
-};
-toolButtons.appendChild(btn);
-});
+const tools=[
+{name:"Level Complexity Analyzer",action:()=>{toolBox.innerHTML="<p>Analyzing level complexity...</p>"}},
+{name:"Player Lookup",action:()=>{toolBox.innerHTML=`<input id='playerUrl' placeholder='Enter GrabVR Level URL'><div id='levels'></div>`;const lvls=document.getElementById("levels");document.getElementById("playerUrl").addEventListener("change",async()=>{lvls.innerHTML="Loading...";const url=document.getElementById("playerUrl").value;const id=url.split("level=")[1]?.split(":")[0];if(!id)return;try{const res=await fetch(`https://api.slin.dev/grab/v1/list/${id}`);const data=await res.json();lvls.innerHTML="";data.levels.forEach(l=>{const div=document.createElement("div");div.className="level";const info=document.createElement("div");info.className="level-info";const img=document.createElement("img");img.src=l.thumbnail||"https://via.placeholder.com/60";const text=document.createElement("div");text.innerHTML=`<b>${l.name}</b><br>Difficulty: ${l.difficulty||"N/A"}`;info.appendChild(img);info.appendChild(text);const btn=document.createElement("button");btn.textContent="Download";btn.onclick=()=>{const a=document.createElement("a");a.href=`https://api.slin.dev/grab/v1/download/${l.id}`;a.download=l.name+".level";a.click()};div.appendChild(info);div.appendChild(btn);lvls.appendChild(div)})}catch{lvls.innerHTML="Failed to fetch levels"}}})}},
+{name:"OBJ to SGM Converter",action:()=>{toolBox.innerHTML="<p>Convert OBJ to SGM loaded.</p>"}},
+{name:"Image to Pixel Art Level",action:()=>{toolBox.innerHTML="<p>Image to Pixel Art Level loaded.</p>"}},
+{name:"Image to 3D Map",action:()=>{toolBox.innerHTML="<p>Image to 3D Map loaded.</p>"}},
+{name:"Level Downloader",action:()=>{toolBox.innerHTML=`<input id='lvlUrl' placeholder='Enter GrabVR Level URL'><input id='fileName' placeholder='File name'><button id='downloadManual'>Download</button>`;document.getElementById("downloadManual").onclick=()=>{const url=document.getElementById("lvlUrl").value;const name=document.getElementById("fileName").value||"level";const id=url.split("level=")[1]?.split(":")[0];if(!id)return alert("invalid url");const a=document.createElement("a");a.href=`https://api.slin.dev/grab/v1/download/${id}`;a.download=name+".level";a.click()}}}
+];
 
-// Player Lookup with thumbnails
-const levels=document.getElementById("levels");
-document.getElementById("playerUrl").addEventListener("change",async()=>{
-levels.innerHTML="";
-const url=document.getElementById("playerUrl").value;
-const id=url.split("level=")[1]?.split(":")[0];
-if(!id)return;
-levels.innerHTML="Loading...";
-try{
-const res=await fetch(`https://api.slin.dev/grab/v1/list/${id}`);
-const data=await res.json();
-levels.innerHTML="";
-data.levels.forEach(l=>{
-const div=document.createElement("div");
-div.className="level";
-const info=document.createElement("div");
-info.className="level-info";
-const img=document.createElement("img");
-img.src=l.thumbnail||"https://via.placeholder.com/60";
-const text=document.createElement("div");
-text.innerHTML=`<b>${l.name}</b><br>Difficulty: ${l.difficulty||"N/A"}`;
-info.appendChild(img);
-info.appendChild(text);
-const btn=document.createElement("button");
-btn.textContent="Download";
-btn.onclick=()=>{const a=document.createElement("a");a.href=`https://api.slin.dev/grab/v1/download/${l.id}`;a.download=l.name+".level";a.click()};
-div.appendChild(info);
-div.appendChild(btn);
-levels.appendChild(div);
-});
-}catch{levels.innerHTML="Failed to fetch levels";}
-});
+tools.forEach(t=>{const btn=document.createElement("button");btn.textContent=t.name;btn.onclick=t.action;toolButtons.appendChild(btn)});
 
-// Manual download
-document.getElementById("downloadManual").onclick=()=>{
-const url=document.getElementById("lvlUrl").value;
-const name=document.getElementById("fileName").value||"level";
-const id=url.split("level=")[1]?.split(":")[0];
-if(!id)return alert("invalid url");
-const a=document.createElement("a");
-a.href=`https://api.slin.dev/grab/v1/download/${id}`;
-a.download=name+".level";
-a.click();
-};
-
-// Login Submit: auto fetch userID
+// Login Submit
 document.getElementById("loginSubmit").onclick=()=>{
 const username=loginUsername.value.trim();
 const lvlURL=loginLevelURL.value.trim();
 let userID="";
 if(lvlURL.includes("level="))userID=lvlURL.split("level=")[1].split(":")[0];
-if(username){navLogin.textContent=username;loginBox.style.display="none";profileBox.style.display="block";profileName.textContent="Username: "+username;profileID.textContent="UserID: "+userID}
-};
-
+if(username){navLogin.textContent=username;loginBox.style.display="none";profileBox.style.display="block";profileName.textContent="Username: "+username;profileID.textContent="UserID: "+userID}};
+  
 // Theme toggle
 let night=false;
 const themeToggle=document.getElementById("themeToggle");
@@ -195,9 +133,7 @@ document.body.style.background=night?"linear-gradient(160deg,#000,#222,#000)":"l
 document.body.style.color=night?"#fff":"#000";
 themeToggle.textContent=night?"☀️":"🌙";
 };
-
 });
 </script>
-
 </body>
 </html>
