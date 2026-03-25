@@ -5,7 +5,6 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Grab Level Downloader</title>
 <style>
-/* General styles */
 body {
   margin: 0;
   font-family: Arial, sans-serif;
@@ -83,13 +82,13 @@ button:hover {
   background: #1e293b;
   border-radius: 10px;
   font-size: 14px;
+  word-break: break-word;
 }
 
 @keyframes spin {
   to { transform: rotate(360deg); }
 }
 
-/* Responsive */
 @media (max-width: 500px) {
   .container {
     padding: 20px;
@@ -97,8 +96,8 @@ button:hover {
 }
 </style>
 </head>
-
 <body>
+
 <div class="container">
   <h1>Grab Level Downloader</h1>
   <input id="linkInput" placeholder="Paste Grab level link here">
@@ -110,11 +109,6 @@ button:hover {
 </div>
 
 <script>
-function extractID(link) {
-  const match = link.match(/(\d+)/);
-  return match ? match[0] : null;
-}
-
 async function downloadLevel() {
   const input = document.getElementById('linkInput').value.trim();
   const status = document.getElementById('status');
@@ -129,9 +123,17 @@ async function downloadLevel() {
     return;
   }
 
-  const id = extractID(input);
+  let id;
+  try {
+    const url = new URL(input);
+    id = url.searchParams.get('level'); // grab full level ID
+  } catch {
+    status.textContent = "Invalid URL";
+    return;
+  }
+
   if (!id) {
-    status.textContent = "Invalid link format";
+    status.textContent = "Could not extract level ID";
     return;
   }
 
@@ -140,35 +142,30 @@ async function downloadLevel() {
 
   try {
     const res = await fetch(`https://api.slin.dev/grab/v1/level/${id}`);
-    const data = await res.json();
+    if (!res.ok) throw new Error("API request failed");
+    const blob = await res.blob(); // grab as blob directly
 
-    if (!data || !data.name) throw new Error("No data");
-
-    // Show level info
+    // Display some info
     info.style.display = 'block';
-    info.innerHTML = `
-      <strong>Name:</strong> ${data.name}<br>
-      <strong>Creator:</strong> ${data.creator || 'Unknown'}<br>
-      <strong>Complexity:</strong> ${data.complexity || 'N/A'}<br>
-      <strong>ID:</strong> ${id}
-    `;
+    info.innerHTML = `<strong>Level ID:</strong> ${id}`;
 
-    // Download JSON
-    const blob = new Blob([JSON.stringify(data, null, 2)], { type: "application/json" });
-    const url = URL.createObjectURL(blob);
+    // Download as .level
+    const urlBlob = URL.createObjectURL(blob);
     const a = document.createElement('a');
-    a.href = url;
-    a.download = `grab-level-${id}.json`;
+    a.href = urlBlob;
+    a.download = `grab-level-${id}.level`; // change extension to .level
     a.click();
-    URL.revokeObjectURL(url);
+    URL.revokeObjectURL(urlBlob);
 
     status.textContent = "Download started";
   } catch (err) {
+    console.error(err);
     status.textContent = "Failed to fetch level";
   }
 
   loader.style.display = "none";
 }
 </script>
+
 </body>
 </html>
