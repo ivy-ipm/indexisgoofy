@@ -3,155 +3,154 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>GRAB JSON Level Editor</title>
+<title>GRAB Suite Editor</title>
 <style>
-:root {
-  --bg: #0a0a0d;
-  --surf: #13131a;
-  --surf2: #1c1c26;
-  --surf3: #242432;
-  --accent: #00e5a0;
-  --accent2: #00b87a;
-  --muted: #3a3a50;
-  --fg: #e8e8f0;
-  --red: #ff4060;
-  --yellow: #ffd166;
-  --blue: #4da6ff;
-  --border: #2a2a3a;
+:root{
+  --bg:#0a0a0d;
+  --surf:#13131a;
+  --surf2:#1c1c26;
+  --surf3:#242432;
+  --accent:#00e5a0;
+  --accent2:#00b87a;
+  --muted:#3a3a50;
+  --fg:#e8e8f0;
+  --red:#ff4060;
+  --yellow:#ffd166;
+  --blue:#4da6ff;
+  --border:#2a2a3a;
 }
 *{box-sizing:border-box;margin:0;padding:0;}
-body{background:var(--bg);color:var(--fg);font-family:"Courier New",monospace;font-size:12px;height:100vh;overflow:hidden;display:flex;flex-direction:column;}
-
-/* TOP BAR */
-#topbar{background:var(--surf);border-bottom:2px solid var(--accent);padding:6px 12px;display:flex;align-items:center;gap:8px;flex-shrink:0;z-index:100;}
-#topbar .logo{font-size:14px;font-weight:bold;color:var(--accent);letter-spacing:1px;}
+body{background:var(--bg);color:var(--fg);font-family:"Courier New",monospace;font-size:12px;height:100vh;display:flex;flex-direction:column;overflow:hidden;}
+#topbar{background:var(--surf);border-bottom:2px solid var(--accent);padding:8px 12px;display:flex;align-items:center;gap:8px;flex-shrink:0;position:fixed;top:0;left:0;right:0;z-index:1000;}
+#topbar .logo{font-size:16px;font-weight:bold;color:var(--accent);letter-spacing:1px;}
 #topbar .logo span{color:var(--fg);}
-.tb-btn{background:var(--surf2);color:var(--fg);border:1px solid var(--border);font-family:"Courier New",monospace;font-size:11px;padding:4px 10px;cursor:pointer;white-space:nowrap;border-radius:4px;}
+.tb-btn{background:var(--surf2);color:var(--fg);border:1px solid var(--border);font-family:"Courier New",monospace;font-size:11px;padding:5px 10px;cursor:pointer;white-space:nowrap;}
 .tb-btn:hover{background:var(--surf3);border-color:var(--accent);}
 .tb-btn.primary{background:var(--accent);color:var(--bg);border-color:var(--accent);font-weight:bold;}
 .tb-btn.primary:hover{background:var(--accent2);}
 .tb-btn.danger{color:var(--red);border-color:var(--red);}
 .tb-btn.danger:hover{background:#ff406020;}
 .tb-sep{width:1px;height:20px;background:var(--border);margin:0 4px;}
-#topbar input[type=text]{background:var(--surf2);border:1px solid var(--border);color:var(--fg);font-family:"Courier New",monospace;font-size:11px;padding:4px 8px;width:140px;outline:none;border-radius:3px;}
+#topbar input[type=text]{background:var(--surf2);border:1px solid var(--border);color:var(--fg);font-family:"Courier New",monospace;font-size:11px;padding:5px 8px;width:150px;outline:none;}
 #topbar input[type=text]:focus{border-color:var(--accent);}
-#level-title-input{width:180px;}
 .tb-spacer{flex:1;}
 #status-bar{font-size:10px;color:var(--muted);white-space:nowrap;}
 
-/* MAIN LAYOUT */
-#main{display:flex;flex:1;overflow:hidden;}
+/* MAIN */
+#main{display:flex;flex:1;overflow:hidden;margin-top:42px;}
 
-/* LEFT PANEL - node tree */
-#panel-left{width:180px;background:var(--surf);border-right:1px solid var(--border);display:flex;flex-direction:column;flex-shrink:0;}
-#panel-left .panel-header{padding:6px 10px;border-bottom:1px solid var(--border);font-size:10px;color:var(--muted);letter-spacing:2px;text-transform:uppercase;display:flex;align-items:center;justify-content:space-between;}
+/* LEFT PANEL */
+#panel-left{width:220px;background:var(--surf);border-right:1px solid var(--border);display:flex;flex-direction:column;flex-shrink:0;overflow:hidden;}
+#panel-left .panel-header{padding:8px 12px;border-bottom:1px solid var(--border);font-size:10px;color:var(--muted);letter-spacing:2px;text-transform:uppercase;display:flex;justify-content:space-between;}
 #node-tree{flex:1;overflow-y:auto;overflow-x:hidden;}
-.node-item{padding:4px 6px;cursor:pointer;border-bottom:1px solid rgba(255,255,255,0.03);display:flex;align-items:center;gap:4px;user-select:none;}
+.node-item{padding:4px 8px 4px 12px;cursor:pointer;border-bottom:1px solid rgba(255,255,255,0.03);display:flex;align-items:center;gap:4px;user-select:none;}
 .node-item:hover{background:var(--surf2);}
 .node-item.selected{background:var(--surf3);border-left:2px solid var(--accent);}
 .node-item.group{padding-left:6px;}
 .node-indent{display:inline-block;width:12px;flex-shrink:0;}
 .node-icon{font-size:10px;flex-shrink:0;}
 .node-label{font-size:11px;color:var(--fg);overflow:hidden;text-overflow:ellipsis;white-space:nowrap;flex:1;}
+.node-label.muted{color:var(--muted);}
 .node-color-dot{width:8px;height:8px;border-radius:50%;flex-shrink:0;}
 .node-expand{font-size:9px;color:var(--muted);cursor:pointer;padding:2px 4px;flex-shrink:0;}
 .node-expand:hover{color:var(--accent);}
 .node-children{display:none;}
 .node-children.open{display:block;}
 
-/* CENTER - 3D VIEW */
+/* CENTER */
 #panel-center{flex:1;display:flex;flex-direction:column;position:relative;overflow:hidden;}
-#canvas{display:block;width:100%;height:100%;}
-#view-overlay{position:absolute;top:6px;right:6px;display:flex;flex-direction:column;gap:4px;pointer-events:none;}
-.view-badge{background:rgba(13,13,15,0.8);border:1px solid var(--border);padding:2px 6px;font-size:9px;color:var(--muted);letter-spacing:1px;border-radius:3px;}
-#view-controls{position:absolute;bottom:6px;right:6px;display:flex;gap:4px;}
-.view-btn{background:rgba(19,19,26,0.9);color:var(--muted);border:1px solid var(--border);font-family:"Courier New",monospace;font-size:10px;padding:3px 6px;cursor:pointer;border-radius:3px;}
+#canvas-container{flex:1;position:relative;overflow:hidden;}
+#canvas{width:100%;height:100%;display:block;}
+#view-overlay{position:absolute;top:8px;right:8px;display:flex;flex-direction:column;gap:4px;pointer-events:none;}
+.view-badge{background:rgba(13,13,15,0.8);border:1px solid var(--border);padding:3px 8px;font-size:9px;color:var(--muted);letter-spacing:1px;}
+#view-controls{position:absolute;bottom:8px;right:8px;display:flex;gap:4px;}
+.view-btn{background:rgba(19,19,26,0.9);color:var(--muted);border:1px solid var(--border);font-family:"Courier New",monospace;font-size:10px;padding:4px 8px;cursor:pointer;}
 .view-btn:hover{color:var(--accent);border-color:var(--accent);}
-#cam-info{position:absolute;bottom:6px;left:6px;font-size:9px;color:var(--muted);pointer-events:none;}
-#node-count{position:absolute;top:6px;left:6px;font-size:9px;color:var(--muted);pointer-events:none;}
+#cam-info{position:absolute;bottom:8px;left:8px;font-size:9px;color:var(--muted);pointer-events:none;}
+#node-count{position:absolute;top:8px;left:8px;font-size:9px;color:var(--muted);pointer-events:none;}
 
-/* RIGHT PANEL - properties */
-#panel-right{width:220px;background:var(--surf);border-left:1px solid var(--border);display:flex;flex-direction:column;flex-shrink:0;}
-#panel-right .panel-header{padding:6px 10px;border-bottom:1px solid var(--border);font-size:10px;color:var(--muted);letter-spacing:2px;text-transform:uppercase;}
-#props-panel{flex:1;overflow-y:auto;padding:6px;}
-.prop-section{margin-bottom:10px;}
-.prop-section-title{font-size:9px;color:var(--accent);letter-spacing:2px;text-transform:uppercase;margin-bottom:4px;padding-bottom:2px;border-bottom:1px solid var(--border);}
-.prop-row{display:flex;align-items:center;margin-bottom:4px;gap:4px;}
-.prop-label{font-size:10px;color:var(--muted);width:60px;flex-shrink:0;}
-.prop-input{flex:1;background:var(--surf2);border:1px solid var(--border);color:var(--fg);font-family:"Courier New",monospace;font-size:11px;padding:2px 4px;outline:none;width:100%;border-radius:3px;}
+/* RIGHT PANEL */
+#panel-right{width:260px;background:var(--surf);border-left:1px solid var(--border);display:flex;flex-direction:column;flex-shrink:0;overflow:hidden;}
+#panel-right .panel-header{padding:8px 12px;border-bottom:1px solid var(--border);font-size:10px;color:var(--muted);letter-spacing:2px;text-transform:uppercase;}
+#props-panel{flex:1;overflow-y:auto;padding:8px;}
+.prop-section{margin-bottom:12px;}
+.prop-section-title{font-size:9px;color:var(--accent);letter-spacing:2px;text-transform:uppercase;margin-bottom:6px;padding-bottom:3px;border-bottom:1px solid var(--border);}
+.prop-row{display:flex;align-items:center;margin-bottom:4px;gap:6px;}
+.prop-label{font-size:10px;color:var(--muted);width:70px;flex-shrink:0;}
+.prop-input{flex:1;background:var(--surf2);border:1px solid var(--border);color:var(--fg);font-family:"Courier New",monospace;font-size:11px;padding:3px 6px;outline:none;width:100%;}
 .prop-input:focus{border-color:var(--accent);}
-.prop-color{width:30px;height:22px;border:1px solid var(--border);cursor:pointer;padding:0;background:none;border-radius:3px;}
-.prop-select{flex:1;background:var(--surf2);border:1px solid var(--border);color:var(--fg);font-family:"Courier New",monospace;font-size:11px;padding:2px 4px;outline:none;border-radius:3px;}
+.prop-input.wide{width:100%;}
+.prop-color{width:30px;height:22px;border:1px solid var(--border);cursor:pointer;padding:0;background:none;}
+.prop-select{flex:1;background:var(--surf2);border:1px solid var(--border);color:var(--fg);font-family:"Courier New",monospace;font-size:11px;padding:3px 6px;outline:none;}
 .prop-checkbox{accent-color:var(--accent);}
 .prop-vec3{display:flex;gap:3px;flex:1;}
 .prop-vec3 input{flex:1;min-width:0;}
 .prop-xyz{font-size:9px;color:var(--muted);width:10px;flex-shrink:0;}
-.no-selection{padding:12px;color:var(--muted);font-size:11px;line-height:1.6;}
+.no-selection{padding:16px;color:var(--muted);font-size:11px;line-height:1.6;}
 
-/* BOTTOM - JSON editor */
-#panel-bottom{height:180px;background:var(--surf);border-top:1px solid var(--border);display:flex;flex-direction:column;flex-shrink:0;}
-#panel-bottom .panel-header{padding:4px 10px;border-bottom:1px solid var(--border);font-size:10px;color:var(--muted);letter-spacing:2px;text-transform:uppercase;display:flex;align-items:center;gap:6px;flex-shrink:0;}
-#json-editor{flex:1;background:var(--bg);color:#6be5b0;font-family:"Courier New",monospace;font-size:11px;padding:6px 10px;border:none;outline:none;resize:none;line-height:1.5;overflow-y:auto;}
-#json-error{padding:4px 10px;font-size:10px;color:var(--red);background:#ff406010;display:none;}
+/* BOTTOM JSON */
+#panel-bottom{height:200px;background:var(--surf);border-top:1px solid var(--border);display:flex;flex-direction:column;flex-shrink:0;}
+#panel-bottom .panel-header{padding:6px 12px;border-bottom:1px solid var(--border);font-size:10px;color:var(--muted);letter-spacing:2px;text-transform:uppercase;display:flex;align-items:center;gap:8px;flex-shrink:0;}
+#json-editor{flex:1;background:var(--bg);color:#6be5b0;font-family:"Courier New",monospace;font-size:11px;padding:8px 12px;border:none;outline:none;resize:none;line-height:1.6;overflow-y:auto;}
+#json-error{padding:4px 12px;font-size:10px;color:var(--red);background:#ff406010;display:none;}
 
 /* SCROLLBARS */
 ::-webkit-scrollbar{width:5px;height:5px;}
 ::-webkit-scrollbar-track{background:var(--surf);}
 ::-webkit-scrollbar-thumb{background:var(--muted);}
-
-/* ADD NODE DROPDOWN */
-#add-menu{position:absolute;background:var(--surf);border:1px solid var(--accent);z-index:200;min-width:140px;display:none;border-radius:4px;}
-#add-menu.open{display:block;}
-.add-item{padding:4px 8px;cursor:pointer;font-size:11px;color:var(--fg);}
-.add-item:hover{background:var(--surf2);color:var(--accent);}
 </style>
 </head>
 <body>
 
-<!-- TOP BAR -->
 <div id="topbar">
   <span class="logo">&#9672; GRAB <span>Editor</span></span>
   <div class="tb-sep"></div>
   <button class="tb-btn" onclick="newLevel()">New</button>
   <button class="tb-btn" onclick="document.getElementById('file-input').click()">Open</button>
-  <input type="file" id="file-input" accept=".json" style="display:none" onchange="openFile(event)">
+  <input type="file" id="file-input" accept=".level,.json" style="display:none" onchange="openFile(event)">
   <button class="tb-btn primary" onclick="saveFile()">Save</button>
   <button class="tb-btn" onclick="exportJSON()">Export JSON</button>
   <div class="tb-sep"></div>
   <input type="text" id="level-title-input" placeholder="Level title..." oninput="level.title=this.value;markDirty()">
-  <input type="text" id="level-creators-input" placeholder="Creators..." oninput="level.creators=this.value;markDirty()">
+  <input type="text" id="level-creators-input" placeholder="Creators..." style="width:140px" value="grabvrsuite-editor" oninput="level.creators=this.value;markDirty()">
   <div class="tb-sep"></div>
   <button class="tb-btn" onclick="toggleAddMenu()">+ Add Node &#9660;</button>
-  <div id="add-menu">
+  <div id="add-menu" style="display:none;position:absolute;background:var(--surf);border:1px solid var(--accent);z-index:200;">
     <div class="add-item" onclick="addNode('static','CUBE')">Static Cube</div>
     <div class="add-item" onclick="addNode('static','SPHERE')">Static Sphere</div>
+    <div class="add-item" onclick="addNode('static','CYLINDER')">Static Cylinder</div>
     <div class="add-item" onclick="addNode('group')">Group</div>
     <div class="add-item" onclick="addNode('start')">Start Point</div>
     <div class="add-item" onclick="addNode('finish')">Finish Point</div>
+    <div class="add-item" onclick="addNode('sign')">Sign</div>
+    <div class="add-item" onclick="addNode('gravity')">Gravity Zone</div>
+    <div class="add-item" onclick="addNode('trigger')">Trigger</div>
+    <div class="add-item" onclick="addNode('sound')">Sound</div>
   </div>
   <button class="tb-btn danger" onclick="deleteSelected()">Delete</button>
   <div class="tb-spacer"></div>
   <span id="status-bar">Ready</span>
 </div>
 
-<!-- MAIN -->
 <div id="main">
   <div id="panel-left">
     <div class="panel-header">NODES <span id="tree-count">0</span></div>
     <div id="node-tree"></div>
   </div>
-
   <div id="panel-center">
-    <canvas id="canvas"></canvas>
-    <div id="view-overlay"><div class="view-badge">3D View</div></div>
-    <div id="view-controls">
-      <button class="view-btn" onclick="setCamPreset('top')">TOP</button>
-      <button class="view-btn" onclick="setCamPreset('front')">FRONT</button>
-      <button class="view-btn" onclick="setCamPreset('side')">SIDE</button>
-      <button class="view-btn" onclick="resetCamera()">RESET</button>
+    <div id="canvas-container">
+      <canvas id="canvas"></canvas>
+      <div id="view-overlay"><div class="view-badge" id="view-mode-badge">PERSPECTIVE</div></div>
+      <div id="view-controls">
+        <button class="view-btn" onclick="setCamPreset('top')">TOP</button>
+        <button class="view-btn" onclick="setCamPreset('front')">FRONT</button>
+        <button class="view-btn" onclick="setCamPreset('side')">SIDE</button>
+        <button class="view-btn" onclick="resetCamera()">RESET</button>
+      </div>
+      <div id="cam-info"></div>
+      <div id="node-count"></div>
     </div>
   </div>
-
   <div id="panel-right">
     <div class="panel-header">PROPERTIES</div>
     <div id="props-panel"><div class="no-selection">Select a node to edit its properties.</div></div>
@@ -161,129 +160,72 @@ body{background:var(--bg);color:var(--fg);font-family:"Courier New",monospace;fo
 <div id="panel-bottom">
   <div class="panel-header">
     JSON EDITOR
-    <button class="tb-btn" onclick="applyJSON()" style="font-size:10px;padding:2px 6px;">Apply</button>
-    <button class="tb-btn" onclick="formatJSON()" style="font-size:10px;padding:2px 6px;">Format</button>
-    <button class="tb-btn" onclick="copyJSON()" style="font-size:10px;padding:2px 6px;">Copy</button>
+    <button class="tb-btn" onclick="applyJSON()" style="padding:2px 8px;font-size:10px">Apply</button>
+    <button class="tb-btn" onclick="formatJSON()" style="padding:2px 8px;font-size:10px">Format</button>
+    <button class="tb-btn" onclick="copyJSON()" style="padding:2px 8px;font-size:10px">Copy</button>
   </div>
   <div id="json-error"></div>
-  <textarea id="json-editor"></textarea>
+  <textarea id="json-editor" spellcheck="false"></textarea>
 </div>
 
-<script src="https://cdn.jsdelivr.net/npm/three@0.152.2/build/three.min.js"></script>
-<script src="https://cdn.jsdelivr.net/npm/three@0.152.2/examples/js/controls/OrbitControls.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/three@0.161.0/build/three.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/three@0.161.0/examples/js/controls/OrbitControls.js"></script>
 <script>
-let level={title:'New Level',creators:'',levelNodes:[]};
-let selectedNode=null;
-let selectedPath=null;
-let dirty=false;
-let nodeIdCounter=0;
+// ═════════ LEVEL DATA ═════════
+const SHAPE={CUBE:1000,SPHERE:1001,CYLINDER:1002,PYRAMID:1003};
+const SHAPE_NAME={1000:'CUBE',1001:'SPHERE',1002:'CYLINDER',1003:'PYRAMID'};
+const MAT_COLORS={0:[.75,.75,.75],1:[.2,.6,1],2:[.8,.95,1],3:[1,.3,0],4:[.55,.35,.15],5:[.2,.8,.2],6:[.8,.4,0],7:[.6,.4,.2],8:[.75,.75,.75],9:[.9,.9,.1],10:[.9,.95,1]};
+let level={formatVersion:20,title:'New Level',creators:'grabvrsuite-editor',levelNodes:[]};
+let selectedNode=null,selectedPath=null,dirty=false,nodeIdCounter=0;
 
+// ═════════ STATUS ═════════
 function markDirty(){dirty=true;setStatus('Unsaved changes');}
 function setStatus(s){document.getElementById('status-bar').textContent=s;}
 
-// 3D Setup
-let scene=new THREE.Scene();
-scene.background=new THREE.Color(0x445566);
-let camera=new THREE.PerspectiveCamera(60,window.innerWidth/window.innerHeight,0.1,1000);
-camera.position.set(10,10,10);
-let renderer=new THREE.WebGLRenderer({canvas:document.getElementById('canvas'),antialias:true});
-renderer.setSize(window.innerWidth-400, window.innerHeight-180);
-window.addEventListener('resize',()=>{renderer.setSize(window.innerWidth-400,window.innerHeight-180);camera.aspect=(window.innerWidth-400)/(window.innerHeight-180);camera.updateProjectionMatrix();});
+// ═════════ NODE TREE & JSON ═════════
+function countNodes(nodes){let c=0;for(const n of(nodes||[])){c++;if(n.levelNodeGroup)c+=countNodes(n.levelNodeGroup.childNodes);}return c;}
+function renderTree(){const tree=document.getElementById('node-tree');let html='';(level.levelNodes||[]).forEach((node,i)=>{html+=buildTreeNode(node,[i],0);});tree.innerHTML=html||'<div style="padding:12px;color:var(--muted)">No nodes</div>';document.getElementById('tree-count').textContent=countNodes(level.levelNodes||[]);}
+function buildTreeNode(node,path,depth){const t=getNodeType(node);const label=getNodeLabel(node);const color=getNodeColor(node);const icon=getNodeIcon(t);const isSelected=selectedPath&&JSON.stringify(path)===JSON.stringify(selectedPath);const isGroup=t==='group';const children=isGroup?(node.levelNodeGroup.childNodes||[]):[];const hasChildren=children.length>0;const groupId='grp_'+path.join('_');let html=`<div class="node-item${isGroup?' group':''}${isSelected?' selected':''}" onclick="selectNode(${JSON.stringify(path)})">`;html+=`<span class="node-indent" style="width:${depth*14}px"></span>`;if(isGroup&&hasChildren){html+=`<span class="node-expand" onclick="event.stopPropagation();toggleGroup('${groupId}')" id="exp_${groupId}">&#9654;</span>`;}else{html+=`<span style="width:14px;display:inline-block"></span>`;}html+=`<span class="node-icon">${icon}</span>`;html+=`<span class="node-color-dot" style="background:${color}"></span>`;html+=`<span class="node-label">${label}</span></div>`;if(isGroup&&hasChildren){html+=`<div class="node-children" id="${groupId}">`;children.forEach((child,i)=>{html+=buildTreeNode(child,[...path,i],depth+1);});html+=`</div>`;}return html;}
+function toggleGroup(id){const el=document.getElementById(id);const exp=document.getElementById('exp_'+id);if(el){el.classList.toggle('open');if(exp)exp.innerHTML=el.classList.contains('open')?'&#9660;':'&#9654;';}}
+function getNodeType(node){if(node.levelNodeStatic)return'static';if(node.levelNodeCrumbling)return'crumbling';if(node.levelNodeGroup)return'group';if(node.levelNodeStart)return'start';if(node.levelNodeFinish)return'finish';if(node.levelNodeSign)return'sign';if(node.levelNodeGravity)return'gravity';if(node.levelNodeTrigger)return'trigger';if(node.levelNodeSound)return'sound';return'unknown';}
+function getNodeData(node){const t=getNodeType(node);if(t==='static')return node.levelNodeStatic;return node;}
+function getNodeLabel(node){const t=getNodeType(node);if(t==='group')return node.levelNodeGroup?.name||'Group';if(t==='start')return 'Start';if(t==='finish')return 'Finish';if(t==='sign')return node.levelNodeSign?.text||'Sign';if(t==='gravity')return 'Gravity';if(t==='trigger')return 'Trigger';if(t==='sound')return node.levelNodeSound?.name||'Sound';if(t==='static')return node.levelNodeStatic?.type||'Static';return'Node';}
+function getNodeColor(node){const t=getNodeType(node);if(t==='static')return'#888';if(t==='crumbling')return'#f90';if(t==='start')return'#0f0';if(t==='finish')return'#f00';if(t==='sign')return'#ff0';if(t==='gravity')return'#0ff';if(t==='trigger')return'#f0f';if(t==='sound')return'#4af';if(t==='group')return'#666';return'#888';}
+function getNodeIcon(type){const icons={static:'■',crumbling:'▒',group:'▣',start:'▶',finish:'■',sign:'✎',gravity:'↯',trigger:'⚡',sound:'♪'};return icons[type]||'?';}
 
-let controls=new THREE.OrbitControls(camera,renderer.domElement);
-controls.enableDamping=true;
+// ═════════ NODE SELECTION ═════════
+function selectNode(path){selectedPath=path;let n=level.levelNodes[path[0]];for(let i=1;i<path.length;i++){if(n.levelNodeGroup)n=n.levelNodeGroup.childNodes[path[i]];}selectedNode=n;renderTree();renderProps();}
 
-// Lighting
-let light=new THREE.DirectionalLight(0xffffff,1);
-light.position.set(10,10,10);
-scene.add(light);
-scene.add(new THREE.AmbientLight(0x888888));
+// ═════════ PROPERTIES PANEL ═════════
+function renderProps(){const panel=document.getElementById('props-panel');if(!selectedNode){panel.innerHTML='<div class="no-selection">Select a node to edit its properties.</div>';return;}let html='';const t=getNodeType(selectedNode);html+=`<div class="prop-section"><div class="prop-section-title">GENERAL</div>`;html+=`<div class="prop-row"><span class="prop-label">Type</span><input class="prop-input" value="${t}" readonly></div>`;if(t==='static'){html+=`<div class="prop-row"><span class="prop-label">Shape</span><input class="prop-input" value="${selectedNode.levelNodeStatic.type}"></div>`;}html+='</div>';panel.innerHTML=html;}
 
-// Skybox
-let skyGeo=new THREE.BoxGeometry(500,500,500);
-let skyMat=new THREE.MeshBasicMaterial({color:0x223344,side:THREE.BackSide});
-scene.add(new THREE.Mesh(skyGeo,skyMat));
+// ═════════ ADD / DELETE NODES ═════════
+function addNode(type,shape){let node={};if(type==='static')node={levelNodeStatic:{type:shape||'CUBE',position:[0,0,0],rotation:[0,0,0],scale:[1,1,1]}};else if(type==='group')node={levelNodeGroup:{name:'Group',childNodes:[]}};else if(type==='start')node={levelNodeStart:{position:[0,0,0]}};else if(type==='finish')node={levelNodeFinish:{position:[0,0,0]}};else if(type==='sign')node={levelNodeSign:{text:'Sign',position:[0,0,0]}};else if(type==='gravity')node={levelNodeGravity:{area:[0,0,0]}};else if(type==='trigger')node={levelNodeTrigger:{event:'Trigger'}};else if(type==='sound')node={levelNodeSound:{name:'Sound'}};level.levelNodes.push(node);renderTree();updateJSON();render3D();markDirty();}
+function deleteSelected(){if(!selectedPath)return;let nodes=level.levelNodes;for(let i=0;i<selectedPath.length-1;i++){nodes=nodes[selectedPath[i]].levelNodeGroup.childNodes;}nodes.splice(selectedPath[selectedPath.length-1],1);selectedNode=null;selectedPath=null;renderTree();renderProps();updateJSON();render3D();markDirty();}
+function toggleAddMenu(){const m=document.getElementById('add-menu');m.style.display=(m.style.display==='none')?'block':'none';}
 
-let meshes={};
+// ═════════ JSON PANEL ═════════
+function updateJSON(){document.getElementById('json-editor').value=JSON.stringify(level,null,2);document.getElementById('node-count').textContent=countNodes(level.levelNodes||[])+' nodes';}
+function applyJSON(){try{level=JSON.parse(document.getElementById('json-editor').value);selectedNode=null;selectedPath=null;renderTree();renderProps();render3D();document.getElementById('json-error').style.display='none';}catch(e){document.getElementById('json-error').style.display='block';document.getElementById('json-error').textContent=e.message;}}
+function formatJSON(){try{document.getElementById('json-editor').value=JSON.stringify(JSON.parse(document.getElementById('json-editor').value),null,2);document.getElementById('json-error').style.display='none';}catch(e){document.getElementById('json-error').style.display='block';document.getElementById('json-error').textContent=e.message;}}
+function copyJSON(){document.getElementById('json-editor').select();document.execCommand('copy');setStatus('JSON copied');}
+function newLevel(){level={formatVersion:20,title:'New Level',creators:'grabvrsuite-editor',levelNodes:[]};selectedNode=null;selectedPath=null;renderTree();renderProps();updateJSON();render3D();markDirty();}
+function openFile(e){const f=e.target.files[0];if(!f)return;const r=new FileReader();r.onload=ev=>{try{level=JSON.parse(ev.target.result);selectedNode=null;selectedPath=null;renderTree();renderProps();updateJSON();render3D();setStatus('File loaded');}catch(err){alert('Invalid file');}};r.readAsText(f);}
+function saveFile(){const blob=new Blob([JSON.stringify(level,null,2)],{type:'application/json'});const url=URL.createObjectURL(blob);const a=document.createElement('a');a.href=url;a.download=(level.title||'level')+'.json';a.click();URL.revokeObjectURL(url);}
+function exportJSON(){copyJSON();setStatus('JSON exported');}
 
+// ═════════ CAMERA & 3D ═════════
+let scene,camera,renderer,controls;
+function init3D(){scene=new THREE.Scene();scene.background=new THREE.CubeTextureLoader().setPath('https://threejs.org/examples/textures/cube/skyboxsun25deg/').load(['px.jpg','nx.jpg','py.jpg','ny.jpg','pz.jpg','nz.jpg']);camera=new THREE.PerspectiveCamera(60,window.innerWidth/window.innerHeight,0.1,1000);camera.position.set(5,5,5);renderer=new THREE.WebGLRenderer({canvas:document.getElementById('canvas'),antialias:true});renderer.setSize(window.innerWidth-480,window.innerHeight-242);controls=new THREE.OrbitControls(camera,renderer.domElement);controls.target.set(0,0,0);window.addEventListener('resize',()=>{renderer.setSize(window.innerWidth-480,window.innerHeight-242);camera.aspect=(window.innerWidth-480)/(window.innerHeight-242);camera.updateProjectionMatrix();});render3D();animate();}
 function animate(){requestAnimationFrame(animate);controls.update();renderer.render(scene,camera);}
-animate();
+function render3D(){if(!scene)return;while(scene.children.length>0){scene.remove(scene.children[0]);}level.levelNodes.forEach(n=>spawnNode3D(n));}
+function spawnNode3D(node,parent=null){const t=getNodeType(node);let mesh=null;if(t==='static'){const g=new THREE.BoxGeometry(node.levelNodeStatic.scale[0],node.levelNodeStatic.scale[1],node.levelNodeStatic.scale[2]);const m=new THREE.MeshStandardMaterial({color:0x888888});mesh=new THREE.Mesh(g,m);mesh.position.set(...node.levelNodeStatic.position);if(parent)parent.add(mesh);else scene.add(mesh);}else if(t==='group'){const grp=new THREE.Group();grp.name=node.levelNodeGroup.name;scene.add(grp);(node.levelNodeGroup.childNodes||[]).forEach(c=>spawnNode3D(c,grp));}else if(t==='start'){const g=new THREE.SphereGeometry(0.3,8,8);const m=new THREE.MeshStandardMaterial({color:0x0f0});mesh=new THREE.Mesh(g,m);mesh.position.set(...node.levelNodeStart.position);scene.add(mesh);}else if(t==='finish'){const g=new THREE.BoxGeometry(0.5,0.5,0.5);const m=new THREE.MeshStandardMaterial({color:0xf00});mesh=new THREE.Mesh(g,m);mesh.position.set(...node.levelNodeFinish.position);scene.add(mesh);}if(mesh){mesh.userData=node;}}
+function setCamPreset(p){if(!camera)return;if(p==='top'){camera.position.set(0,10,0);controls.target.set(0,0,0);}else if(p==='front'){camera.position.set(0,0,10);controls.target.set(0,0,0);}else if(p==='side'){camera.position.set(10,0,0);controls.target.set(0,0,0);}controls.update();}
+function resetCamera(){camera.position.set(5,5,5);controls.target.set(0,0,0);controls.update();}
 
-function addNode(type,shape='CUBE'){
-  let node={id:nodeIdCounter++,type:type,shape:shape,position:{x:0,y:0,z:0}};
-  if(type==='group')node.children=[];
-  level.levelNodes.push(node);
-  selectedNode=node;selectedPath=[level.levelNodes.length-1];
-  renderTree();renderProps();
-  spawnMesh(node);
-  markDirty();
-}
-
-function spawnMesh(node){
-  let geo;
-  switch(node.shape){
-    case'CUBE':geo=new THREE.BoxGeometry(1,1,1);break;
-    case'SPHERE':geo=new THREE.SphereGeometry(0.5,16,16);break;
-    default:geo=new THREE.BoxGeometry(1,1,1);
-  }
-  let mat=new THREE.MeshStandardMaterial({color:0x00e5a0});
-  let mesh=new THREE.Mesh(geo,mat);
-  mesh.position.set(node.position.x,node.position.y,node.position.z);
-  scene.add(mesh);
-  meshes[node.id]=mesh;
-}
-
-// NODE TREE
-function renderTree(){
-  const tree=document.getElementById('node-tree');
-  let html='';
-  level.levelNodes.forEach((node,i)=>{html+=`<div class="node-item${selectedNode===node?' selected':''}" onclick="selectNode(${i})">${node.type} ${node.shape}</div>`;});
-  tree.innerHTML=html||'<div style="padding:8px;color:var(--muted)">No nodes</div>';
-  document.getElementById('tree-count').textContent=level.levelNodes.length;
-}
-
-function selectNode(i){selectedNode=level.levelNodes[i];selectedPath=[i];renderTree();renderProps();}
-
-function renderProps(){
-  const panel=document.getElementById('props-panel');
-  if(!selectedNode){panel.innerHTML='<div class="no-selection">Select a node to edit its properties.</div>';return;}
-  panel.innerHTML=`<div class="prop-row"><span class="prop-label">X:</span><input class="prop-input" type="number" value="${selectedNode.position.x}" onchange="updatePos('x',this.value)"></div>
-                   <div class="prop-row"><span class="prop-label">Y:</span><input class="prop-input" type="number" value="${selectedNode.position.y}" onchange="updatePos('y',this.value)"></div>
-                   <div class="prop-row"><span class="prop-label">Z:</span><input class="prop-input" type="number" value="${selectedNode.position.z}" onchange="updatePos('z',this.value)"></div>`;
-}
-
-function updatePos(axis,val){
-  selectedNode.position[axis]=parseFloat(val);
-  let mesh=meshes[selectedNode.id];
-  if(mesh)mesh.position[axis]=parseFloat(val);
-}
-
-function deleteSelected(){
-  if(!selectedNode)return;
-  let idx=level.levelNodes.indexOf(selectedNode);
-  if(idx!==-1){level.levelNodes.splice(idx,1);scene.remove(meshes[selectedNode.id]);delete meshes[selectedNode.id];selectedNode=null;selectedPath=null;renderTree();renderProps();}
-}
-
-function toggleAddMenu(){document.getElementById('add-menu').classList.toggle('open');}
-
-// JSON
-function exportJSON(){document.getElementById('json-editor').value=JSON.stringify(level,null,2);}
-function applyJSON(){try{level=JSON.parse(document.getElementById('json-editor').value);renderTree();setStatus('JSON applied');}catch(e){document.getElementById('json-error').style.display='block';document.getElementById('json-error').textContent=e.message;}}
-function formatJSON(){try{document.getElementById('json-editor').value=JSON.stringify(JSON.parse(document.getElementById('json-editor').value),null,2);}catch{}}
-function copyJSON(){navigator.clipboard.writeText(document.getElementById('json-editor').value);setStatus('JSON copied');}
-function newLevel(){level={title:'New Level',creators:'',levelNodes:[]};selectedNode=null;selectedPath=null;meshes={};renderTree();renderProps();exportJSON();setStatus('New level');}
-function saveFile(){const blob=new Blob([JSON.stringify(level,null,2)],{type:'application/json'});const a=document.createElement('a');a.href=URL.createObjectURL(blob);a.download=(level.title||'level')+'.json';a.click();}
-function openFile(evt){const file=evt.target.files[0];const reader=new FileReader();reader.onload=e=>{level=JSON.parse(e.target.result);renderTree();renderProps();exportJSON();setStatus('File loaded');};reader.readAsText(file);}
-function setCamPreset(p){
-  switch(p){
-    case'top':camera.position.set(0,15,0);camera.up.set(0,0,-1);break;
-    case'front':camera.position.set(0,5,15);camera.up.set(0,1,0);break;
-    case'side':camera.position.set(15,5,0);camera.up.set(0,1,0);break;
-  }
-  controls.target.set(0,0,0);controls.update();
-}
-function resetCamera(){camera.position.set(10,10,10);camera.up.set(0,1,0);controls.target.set(0,0,0);controls.update();}
+init3D();
+renderTree();
+updateJSON();
 </script>
-
 </body>
 </html>
