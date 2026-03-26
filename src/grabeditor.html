@@ -2,191 +2,187 @@
 <html lang="en">
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>GrabVR JSON Editor</title>
-<link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600&display=swap" rel="stylesheet">
+<title>GrabEditor</title>
 <style>
-body{margin:0;font-family:'Poppins',sans-serif;background:#f3d6b0;color:#000;display:flex;flex-direction:column;height:100vh;overflow:hidden}
-header{height:60px;background:#5fa9f3;display:flex;align-items:center;padding:0 20px;color:#fff;flex-shrink:0}
-header h1{font-size:1.2rem;margin:0;font-weight:600;flex-grow:1}
-#toolbar{background:rgba(255,255,255,0.1);display:flex;flex-wrap:wrap;padding:10px;gap:8px}
-#toolbar button{padding:6px 12px;border:none;border-radius:6px;background:rgba(95,169,243,0.5);color:#fff;cursor:pointer;transition:0.2s}
-#toolbar button:hover{background:#ffffff;color:#000}
-#main{display:flex;flex:1;overflow:hidden}
-#sidebar{width:280px;background:rgba(255,255,255,0.1);padding:10px;overflow-y:auto;flex-shrink:0}
-#sidebar h3{margin-top:10px;margin-bottom:5px;font-size:1rem}
-#blockPalette{display:grid;grid-template-columns:repeat(4,1fr);gap:6px}
-.block{width:60px;height:60px;background:#ccc;display:flex;align-items:center;justify-content:center;border-radius:6px;cursor:pointer;user-select:none;transition:0.2s}
-.block:hover{background:#5fa9f3;color:#fff;font-weight:600}
-.block.selected{outline:3px solid #ff0}
-#canvasContainer{flex:1;position:relative;background:#87ceeb;display:flex;align-items:center;justify-content:center}
-canvas{width:100%;height:100%;display:block;background:#87ceeb}
-#axisGizmo{position:absolute;top:10px;left:10px;width:150px;height:150px;background:rgba(255,255,255,0.1);border-radius:8px;display:flex;flex-direction:column;align-items:center;justify-content:center}
-#axisGizmo button{margin:2px;padding:4px 6px;border:none;border-radius:4px;background:#5fa9f3;color:#fff;cursor:pointer;font-size:0.8rem}
-#jsonEditor{position:absolute;top:0;right:0;width:350px;height:100%;background:rgba(255,255,255,0.95);padding:10px;overflow:auto;display:none;flex-direction:column;z-index:10}
-#jsonEditor textarea{flex:1;width:100%;border-radius:6px;padding:6px;font-family:monospace;font-size:0.9rem;border:1px solid #ccc;resize:none}
-#jsonEditor button{margin-top:5px;padding:6px 12px;background:#5fa9f3;color:#fff;border:none;border-radius:6px;cursor:pointer}
-#templates{margin-top:10px;display:flex;flex-direction:column;gap:4px}
-#templates button{padding:4px 8px;background:#ccc;border:none;border-radius:4px;cursor:pointer;transition:0.2s}
-#templates button:hover{background:#5fa9f3;color:#fff}
-footer{height:30px;background:#5fa9f3;color:#fff;display:flex;align-items:center;justify-content:center;flex-shrink:0;font-size:0.8rem}
-@media(max-width:900px){#sidebar{width:200px}#jsonEditor{width:250px}}
-@media(max-width:600px){#sidebar{width:100px;font-size:0.7rem}#jsonEditor{width:200px}}
+body, html{margin:0;padding:0;font-family:sans-serif;height:100%;background:#1e1e1e;color:#eee;display:flex;flex-direction:column;}
+#top-bar{height:40px;background:#2a2a2a;display:flex;align-items:center;padding:0 10px;gap:10px;}
+button{background:#3a3a3a;color:#eee;border:none;padding:5px 10px;cursor:pointer;}
+button:hover{background:#505050;}
+#container{flex:1;display:flex;overflow:hidden;}
+#tree-panel{width:250px;background:#252525;overflow:auto;padding:10px;}
+#props-panel{width:250px;background:#252525;overflow:auto;padding:10px;}
+#editor-panel{flex:1;display:flex;flex-direction:column;align-items:center;justify-content:center;position:relative;}
+#canvas3d{width:100%;height:100%;background:#000;}
+.node-item{padding:2px 5px;margin:2px 0;border-radius:3px;cursor:pointer;}
+.node-item.selected{background:#3a3a3a;}
+.prop-section{margin-bottom:10px;}
+.prop-section-title{font-weight:bold;margin-bottom:5px;}
+.prop-row{display:flex;justify-content:space-between;margin-bottom:3px;}
+.prop-input{width:60px;}
+.wide{width:100%;}
+#add-menu{position:absolute;top:40px;left:10px;background:#2a2a2a;padding:5px;display:none;flex-direction:column;gap:3px;border-radius:3px;}
+#add-menu.open{display:flex;}
+textarea{width:100%;height:150px;background:#111;color:#eee;border:1px solid #333;padding:5px;resize:none;}
 </style>
 </head>
 <body>
-<header>
-<h1>GrabVR JSON Editor</h1>
-<button id="toggleJSON">Raw JSON</button>
-</header>
-<div id="toolbar">
-<button id="addBlockBtn">Add Block</button>
-<button id="deleteBlockBtn">Delete Block</button>
-<button id="resetSceneBtn">Reset Scene</button>
-<button id="loadTemplateBtn">Template</button>
-</div>
-<div id="main">
-<div id="sidebar">
-<h3>Block Palette</h3>
-<div id="blockPalette"></div>
-<h3>Templates</h3>
-<div id="templates"></div>
-</div>
-<div id="canvasContainer">
-<canvas id="sceneCanvas"></canvas>
-<div id="axisGizmo">
-<button id="moveBtn">Move</button>
-<button id="rotateBtn">Rotate</button>
-<button id="scaleBtn">Scale</button>
-</div>
-<div id="jsonEditor">
-<h3>Raw JSON Editor</h3>
-<textarea id="jsonArea"></textarea>
-<button id="applyJSON">Apply Changes</button>
+<div id="top-bar">
+<button id="btn-add">Add Node</button>
+<button id="btn-delete">Delete Node</button>
+<button id="btn-copy-json">Copy JSON</button>
+<button id="btn-apply-json">Apply JSON</button>
+<button id="btn-format-json">Format JSON</button>
+<div id="add-menu">
+<button onclick="addNode('static','cube')">Static Cube</button>
+<button onclick="addNode('group')">Group</button>
+<button onclick="addNode('start')">Start</button>
+<button onclick="addNode('finish')">Finish</button>
+<button onclick="addNode('sign')">Sign</button>
+<button onclick="addNode('gravity')">Gravity</button>
+<button onclick="addNode('trigger')">Trigger</button>
+<button onclick="addNode('sound')">Sound</button>
 </div>
 </div>
+<div id="container">
+<div id="tree-panel"></div>
+<div id="editor-panel">
+<canvas id="canvas3d"></canvas>
+<textarea id="json-editor"></textarea>
 </div>
-<footer>GrabVR JSON Editor • © 2026 • by Ivy & Pakker</footer>
-<script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r152/three.min.js"></script>
-<script src="https://cdn.jsdelivr.net/npm/three@0.152.2/examples/js/controls/OrbitControls.js"></script>
+<div id="props-panel"></div>
+</div>
 <script>
-const canvas=document.getElementById("sceneCanvas");
-let scene=new THREE.Scene();
-let camera=new THREE.PerspectiveCamera(75,canvas.clientWidth/canvas.clientHeight,0.1,1000);
-let renderer=new THREE.WebGLRenderer({canvas,antialias:true});
-renderer.setSize(canvas.clientWidth,canvas.clientHeight);
-renderer.setPixelRatio(window.devicePixelRatio);
-renderer.setClearColor(0x87ceeb);
-camera.position.set(0,5,10);
-const controls=new THREE.OrbitControls(camera,renderer.domElement);
-controls.enableDamping=true;
+const SHAPE={cube:1000,sphere:1001,cylinder:1002};
+let level={levelNodes:[]};
+let selectedNode=null;
+let selectedPath=null;
 
-let blocks=[];
-let selectedBlock=null;
-let blockId=0;
-
-function render(){renderer.render(scene,camera);requestAnimationFrame(render);}
-render();
-
-function addBlock(type="Cube"){
-let geometry=new THREE.BoxGeometry(1,1,1);
-let material=new THREE.MeshStandardMaterial({color:Math.random()*0xffffff});
-let mesh=new THREE.Mesh(geometry,material);
-mesh.position.set(Math.random()*2-1,1,Math.random()*2-1);
-mesh.userData={id:blockId++,type:type};
-scene.add(mesh);
-blocks.push(mesh);
-selectBlock(mesh);
-updateJSON();
+function markDirty(){renderTree();renderProps();updateJSON();}
+function getNodeType(node){
+  if(node.levelNodeStatic)return'static';
+  if(node.levelNodeGroup)return'group';
+  if(node.levelNodeStart)return'start';
+  if(node.levelNodeFinish)return'finish';
+  if(node.levelNodeSign)return'sign';
+  if(node.levelNodeGravity)return'gravity';
+  if(node.levelNodeTrigger)return'trigger';
+  if(node.levelNodeSound)return'sound';
+  return'unknown';
 }
-
-function selectBlock(block){
-blocks.forEach(b=>b.meshDiv?.classList?.remove("selected"));
-selectedBlock=block;
-if(block?.meshDiv) block.meshDiv.classList.add("selected");
-updateJSON();
+function getNodeData(node){
+  const t=getNodeType(node);
+  return node['levelNode'+t.charAt(0).toUpperCase()+t.slice(1)];
 }
-
-function deleteBlock(){
-if(selectedBlock){
-scene.remove(selectedBlock);
-blocks=blocks.filter(b=>b!==selectedBlock);
-selectedBlock=null;
-updateJSON();
+function getNodeAtPath(path){
+  let nodes=level.levelNodes;let node=null;
+  for(let i=0;i<path.length;i++){
+    node=nodes[path[i]];
+    if(i<path.length-1){
+      nodes=node.levelNodeGroup?node.levelNodeGroup.childNodes:[];
+    }
+  }
+  return node;
 }
+function renderTree(){
+  const panel=document.getElementById('tree-panel');panel.innerHTML='';
+  function recurse(nodes,path){
+    nodes.forEach((node,i)=>{
+      const div=document.createElement('div');
+      div.className='node-item'+(selectedPath&&selectedPath.join(',')===path.concat(i).join(',')?' selected':'');
+      div.textContent=getNodeType(node);
+      div.onclick=e=>{
+        e.stopPropagation();
+        selectedNode=node;selectedPath=path.concat(i);
+        markDirty();
+      };
+      panel.appendChild(div);
+      if(node.levelNodeGroup&&node.levelNodeGroup.childNodes.length>0){
+        const childDiv=document.createElement('div');childDiv.style.paddingLeft='15px';
+        div.appendChild(childDiv);
+        recurse(node.levelNodeGroup.childNodes,path.concat(i));
+      }
+    });
+  }
+  recurse(level.levelNodes,[]);
 }
-
-function resetScene(){
-blocks.forEach(b=>scene.remove(b));
-blocks=[];
-selectedBlock=null;
-updateJSON();
+function renderProps(){
+  const panel=document.getElementById('props-panel');panel.innerHTML='';
+  if(!selectedNode){panel.innerHTML='<div class="no-selection">Select a node to edit its properties.</div>';return;}
+  const type=getNodeType(selectedNode);
+  const data=getNodeData(selectedNode);
+  let html='';
+  if(type==='static'||type==='crumbling'){
+    html+=`<div class="prop-section">
+      <div class="prop-section-title">Transform</div>
+      <div class="prop-row"><span class="prop-label">X</span><input class="prop-input" type="number" value="${data.position?.x||0}" oninput="data.position.x=parseFloat(this.value);markDirty()"></div>
+      <div class="prop-row"><span class="prop-label">Y</span><input class="prop-input" type="number" value="${data.position?.y||0}" oninput="data.position.y=parseFloat(this.value);markDirty()"></div>
+      <div class="prop-row"><span class="prop-label">Z</span><input class="prop-input" type="number" value="${data.position?.z||0}" oninput="data.position.z=parseFloat(this.value);markDirty()"></div>
+    </div>`;
+  }else if(type==='group'){
+    html+=`<div class="prop-section">
+      <div class="prop-section-title">Group Name</div>
+      <input class="prop-input wide" type="text" value="${data.name||''}" oninput="data.name=this.value;markDirty();renderTree()">
+    </div>`;
+  }else if(type==='start'||type==='finish'){
+    html+=`<div class="prop-section">
+      <div class="prop-section-title">${type.charAt(0).toUpperCase()+type.slice(1)} Point</div>
+      <div class="prop-row"><span class="prop-label">Radius</span><input class="prop-input" type="number" value="${data.radius||1}" oninput="data.radius=parseFloat(this.value);markDirty()"></div>
+    </div>`;
+  }else if(type==='sign'){
+    html+=`<div class="prop-section">
+      <div class="prop-section-title">Sign</div>
+      <div class="prop-row"><span class="prop-label">Text</span><input class="prop-input wide" type="text" value="${data.text||''}" oninput="data.text=this.value;markDirty()"></div>
+    </div>`;
+  }
+  panel.innerHTML=html;
 }
-
+function addNode(type,shape){
+  const newNode={};
+  if(type==='static'){newNode.levelNodeStatic={shape:SHAPE[shape]||1000,material:0,position:{x:0,y:0,z:0},scale:{x:1,y:1,z:1},rotation:{w:1},color1:{r:1,g:1,b:1,a:1},isNeon:false,isTransparent:false};}
+  else if(type==='group'){newNode.levelNodeGroup={name:'New Group',childNodes:[],position:{x:0,y:0,z:0},scale:{x:1,y:1,z:1},rotation:{w:1}};}
+  else if(type==='start'){newNode.levelNodeStart={position:{x:0,y:0,z:0},rotation:{w:1},radius:1,name:'Start'};}
+  else if(type==='finish'){newNode.levelNodeFinish={position:{x:0,y:0,z:0},radius:1};}
+  else if(type==='sign'){newNode.levelNodeSign={position:{x:0,y:0,z:0},rotation:{w:1},text:'Sign',scale:1};}
+  else if(type==='gravity'){newNode.levelNodeGravity={position:{x:0,y:0,z:0},scale:{x:1,y:1,z:1},rotation:{w:1},mode:0};}
+  else if(type==='trigger'){newNode.levelNodeTrigger={position:{x:0,y:0,z:0},scale:{x:1,y:1,z:1},rotation:{w:1}};}
+  else if(type==='sound'){newNode.levelNodeSound={position:{x:0,y:0,z:0},name:'Sound'};}
+  if(selectedNode&&selectedNode.levelNodeGroup){selectedNode.levelNodeGroup.childNodes.push(newNode);}
+  else{level.levelNodes.push(newNode);}
+  markDirty();
+  renderTree();
+}
+function deleteSelected(){
+  if(!selectedPath)return;
+  let nodes=level.levelNodes;
+  for(let i=0;i<selectedPath.length-1;i++){
+    const node=nodes[selectedPath[i]];
+    nodes=node.levelNodeGroup?node.levelNodeGroup.childNodes:[];
+  }
+  nodes.splice(selectedPath[selectedPath.length-1],1);
+  selectedNode=null;
+  selectedPath=null;
+  markDirty();
+}
 function updateJSON(){
-const json={blocks:blocks.map(b=>({id:b.userData.id,type:b.userData.type,position:b.position.toArray(),rotation:b.rotation.toArray(),scale:b.scale.toArray()}))};
-document.getElementById("jsonArea").value=JSON.stringify(json,null,2);
+  document.getElementById('json-editor').value=JSON.stringify(level,null,2);
 }
-
 function applyJSON(){
-try{
-const data=JSON.parse(document.getElementById("jsonArea").value);
-resetScene();
-data.blocks.forEach(b=>{
-let geometry=new THREE.BoxGeometry(1,1,1);
-let material=new THREE.MeshStandardMaterial({color:Math.random()*0xffffff});
-let mesh=new THREE.Mesh(geometry,material);
-mesh.position.fromArray(b.position);
-mesh.rotation.fromArray(b.rotation);
-mesh.scale.fromArray(b.scale);
-mesh.userData={id:b.id,type:b.type};
-scene.add(mesh);
-blocks.push(mesh);
-});
-render();
-}catch(e){alert("Invalid JSON");}
+  try{
+    const val=JSON.parse(document.getElementById('json-editor').value);
+    level=val;selectedNode=null;selectedPath=null;markDirty();
+  }catch(e){alert('Invalid JSON');}
 }
-
-document.getElementById("addBlockBtn").addEventListener("click",()=>addBlock());
-document.getElementById("deleteBlockBtn").addEventListener("click",deleteBlock);
-document.getElementById("resetSceneBtn").addEventListener("click",resetScene);
-document.getElementById("toggleJSON").addEventListener("click",()=>{let editor=document.getElementById("jsonEditor");editor.style.display=editor.style.display==="flex"?"none":"flex";});
-document.getElementById("applyJSON").addEventListener("click",applyJSON);
-
-const palette=["Cube","Sphere","Cylinder","Cone","Pyramid","Ramp"];
-const blockPalette=document.getElementById("blockPalette");
-palette.forEach(p=>{
-let b=document.createElement("div");b.className="block";b.textContent=p;
-b.addEventListener("click",()=>addBlock(p));
-blockPalette.appendChild(b);
-});
-
-const templateList=["Lobby 1","Lobby 2","Cheat Sheet 1","Cheat Sheet 2"];
-const templates=document.getElementById("templates");
-templateList.forEach(t=>{
-let btn=document.createElement("button");btn.textContent=t;
-btn.addEventListener("click",()=>{alert("Loading template: "+t);});
-templates.appendChild(btn);
-});
-
-// Lighting
-let light=new THREE.DirectionalLight(0xffffff,1);
-light.position.set(5,10,7.5);
-scene.add(light);
-let ambient=new THREE.AmbientLight(0xffffff,0.5);
-scene.add(ambient);
-
-// Skybox top:light blue, middle:white, bottom:light blue
-scene.background=new THREE.CubeTextureLoader().load([
-'data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAQAAAC1HAwCAAAAC0lEQVR42mP8/wIAAgkA+yC3K4cAAAAASUVORK5CYII=',
-'data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAQAAAC1HAwCAAAAC0lEQVR42mP8/wIAAgkA+yC3K4cAAAAASUVORK5CYII=',
-'data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAQAAAC1HAwCAAAAC0lEQVR42mP8/wIAAgkA+yC3K4cAAAAASUVORK5CYII=',
-'data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAQAAAC1HAwCAAAAC0lEQVR42mP8/wIAAgkA+yC3K4cAAAAASUVORK5CYII=',
-'data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAQAAAC1HAwCAAAAC0lEQVR42mP8/wIAAgkA+yC3K4cAAAAASUVORK5CYII=',
-'data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAQAAAC1HAwCAAAAC0lEQVR42mP8/wIAAgkA+yC3K4cAAAAASUVORK5CYII='
-]);
-
-window.addEventListener("resize",()=>{camera.aspect=canvas.clientWidth/canvas.clientHeight;camera.updateProjectionMatrix();renderer.setSize(canvas.clientWidth,canvas.clientHeight);});
+function formatJSON(){updateJSON();}
+document.getElementById('btn-add').onclick=e=>{
+  document.getElementById('add-menu').classList.toggle('open');
+};
+document.getElementById('btn-delete').onclick=deleteSelected;
+document.getElementById('btn-copy-json').onclick=()=>{navigator.clipboard.writeText(JSON.stringify(level,null,2));};
+document.getElementById('btn-apply-json').onclick=applyJSON;
+document.getElementById('btn-format-json').onclick=formatJSON;
+updateJSON();
+renderTree();
+renderProps();
 </script>
 </body>
 </html>
